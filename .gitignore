@@ -1,0 +1,24 @@
+# LaTeX compilation artifacts
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.nav
+*.snm
+*.vrb
+
+# OS generated files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Editor and IDE settings
+.vscode/
+.idea/

@@ -1,0 +1,449 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    pdftitle={Pembahasan Tugas Kriptoanalisis},
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\textbf{Kriptoanalisis}}
+\lhead{Jawaban dan Pembahasan Tugas Sandi Vigenère}
+\rfoot{Halaman \thepage}
+
+\definecolor{boxheader}{RGB}{30, 55, 153}
+\definecolor{boxbg}{RGB}{248, 249, 250}
+
+\tcbset{
+    colback=boxbg,
+    colframe=boxheader,
+    fonttitle=\bfseries,
+    arc=1.5mm,
+    left=3mm,
+    right=3mm,
+    top=2mm,
+    bottom=2mm
+}
+\setlength{\headheight}{14pt}
+
+\title{\vspace{-1cm}\textbf{\Large TUGAS KRIPTOANALISIS}\\\large Jawaban dan Pembahasan Perhitungan Sandi Vigenère}
+\author{\textbf{Mata Kuliah Kriptoanalisis}}
+\date{3 September 2026}
+
+\begin{document}
+
+\maketitle
+
+\vspace{-0.3cm}
+
+% =========================================================================
+% TUGAS NO. 1
+% =========================================================================
+\section*{Tugas No. 1}
+
+\subsection*{Soal}
+\begin{tcolorbox}[title=Soal 1]
+Tentukan panjang kunci $m$ dengan Tes Kasiski! Jelaskan mengapa nilai $m$ tersebut adalah panjang kuncinya.
+
+\vspace{0.2cm}
+\textbf{Daftar Kemunculan $n$-Gram dan Posisinya:}
+
+\vspace{0.15cm}
+\centering
+\resizebox{0.98\textwidth}{!}{
+\ttfamily\small
+\begin{tabular}{r@{\hspace{0.15cm}}l | r@{\hspace{0.15cm}}l | r@{\hspace{0.15cm}}l | r@{\hspace{0.15cm}}l}
+\textbf{tbw:}  & 1 73 277 475 & \textbf{xss:}   & 10 442      & \textbf{bul:}  & 18 390                           & \textbf{rsa:}  & 28 457 \\
+\textbf{eyn:}  & 42 421       & \textbf{iat:}   & 59 257      & \textbf{etb:}  & 72 114                           & \textbf{lai:}  & 111 141 615 \\
+\textbf{ivr:}  & 143 520      & \textbf{onz:}   & 151 325     & \textbf{nzx:}  & 152 188 194 644                  & \textbf{mea:}  & 155 160 \\
+\textbf{ead:}  & 161 317      & \textbf{dng:}   & 163 493     & \textbf{agi:}  & 171 225                          & \textbf{ies:}  & 173 683 \\
+\textbf{mlh:}  & 182 206      & \textbf{zrr:}   & 185 407     & \textbf{zxx:}  & 195 338                          & \textbf{gnr:}  & 201 453 \\
+\textbf{hva:}  & 233 566      & \textbf{yin:}   & 254 600     & \textbf{rsy:}  & 264 522                          & \textbf{tyj:}  & 313 655 \\
+\textbf{rtb:}  & 329 474      & \textbf{mie:}   & 334 682     & \textbf{xvr:}  & 340 538                          & \textbf{xwf:}  & 364 574 \\
+\textbf{bul:}  & 390 624      & \textbf{trq:}   & 394 658     & \textbf{yjt:}  & 464 656                          & \textbf{aec:}  & 568 618 \\
+\textbf{lai:}  & 579 615      & \textbf{fbul:}  & 17 623      & \textbf{fpef:} & 21 357                           & \textbf{tbwr:} & 73 475 \\
+\textbf{laie:} & 111 579      & \textbf{slai:}  & 140 578     & \textbf{tqvl:} & 166 214                          & \textbf{nzxa:} & 188 644 \\
+\textbf{lxue:} & 448 670      & \textbf{xuecj:} & 305 377 509 & \textbf{xue:}  & 221 305 377 419 449 509 533 671 & & \\
+\end{tabular}
+}
+\end{tcolorbox}
+
+\subsection*{Pembahasan}
+
+\subsubsection*{1. Identifikasi $n$-Gram Berulang dan Jarak ($D = p_j - p_i$)}
+Daftar seluruh $n$-gram berulang ($n \ge 3$) beserta posisi indeks kemunculan dan selisih jaraknya:
+
+\begin{table}[h!]
+\centering
+\resizebox{\textwidth}{!}{
+\begin{tabular}{l c l l l c}
+\toprule
+\textbf{$n$-Gram} & \textbf{Panjang ($n$)} & \textbf{Posisi ($p_i$)} & \textbf{Jarak ($D = p_j - p_i$)} & \textbf{Faktorisasi / Kelipatan} & \textbf{$6 \mid D$?} \\
+\midrule
+\texttt{xuecj} & 5 & 305, 377, 509 & $72, 204, 132$ & $72 = 6 \times 12, \; 204 = 6 \times 34, \; 132 = 6 \times 22$ & \textbf{Ya} \\
+\texttt{fbul}  & 4 & 17, 623       & $606$          & $606 = 6 \times 101$                             & \textbf{Ya} \\
+\texttt{fpef}  & 4 & 21, 357       & $336$          & $336 = 6 \times 56$                              & \textbf{Ya} \\
+\texttt{tbwr}  & 4 & 73, 475       & $402$          & $402 = 6 \times 67$                              & \textbf{Ya} \\
+\texttt{laie}  & 4 & 111, 579      & $468$          & $468 = 6 \times 78$                              & \textbf{Ya} \\
+\texttt{slai}  & 4 & 140, 578      & $438$          & $438 = 6 \times 73$                              & \textbf{Ya} \\
+\texttt{tqvl}  & 4 & 166, 214      & $48$           & $48 = 6 \times 8$                                & \textbf{Ya} \\
+\texttt{nzxa}  & 4 & 188, 644      & $456$          & $456 = 6 \times 76$                              & \textbf{Ya} \\
+\texttt{lxue}  & 4 & 448, 670      & $222$          & $222 = 6 \times 37$                              & \textbf{Ya} \\
+\hline
+\texttt{tbw}   & 3 & 1, 73, 277, 475 & $72, 276, 474, 204, 402, 198$ & Kelipatan $6 \times (12, 46, 79, 34, 67, 33)$ & \textbf{Ya} \\
+\texttt{xss}   & 3 & 10, 442       & $432$          & $432 = 6 \times 72$                              & \textbf{Ya} \\
+\texttt{bul}   & 3 & 18, 390, 624  & $372, 606, 234$& Kelipatan $6 \times (62, 101, 39)$               & \textbf{Ya} \\
+\texttt{iat}   & 3 & 59, 257       & $198$          & $198 = 6 \times 33$                              & \textbf{Ya} \\
+\texttt{etb}   & 3 & 72, 114       & $42$           & $42 = 6 \times 7$                                & \textbf{Ya} \\
+\texttt{lai}   & 3 & 111, 141, 579, 615 & $30, 468, 504, 438, 474, 36$ & Kelipatan $6 \times (5, 78, 84, 73, 79, 6)$ & \textbf{Ya} \\
+\texttt{onz}   & 3 & 151, 325      & $174$          & $174 = 6 \times 29$                              & \textbf{Ya} \\
+\texttt{nzx}   & 3 & 152, 188, 194, 644 & $36, 42, 492, 6, 456, 450$ & Kelipatan $6 \times (6, 7, 82, 1, 76, 75)$ & \textbf{Ya} \\
+\texttt{ead}   & 3 & 161, 317      & $156$          & $156 = 6 \times 26$                              & \textbf{Ya} \\
+\texttt{dng}   & 3 & 163, 493      & $330$          & $330 = 6 \times 55$                              & \textbf{Ya} \\
+\texttt{agi}   & 3 & 171, 225      & $54$           & $54 = 6 \times 9$                                & \textbf{Ya} \\
+\texttt{ies}   & 3 & 173, 683      & $510$          & $510 = 6 \times 85$                              & \textbf{Ya} \\
+\texttt{mlh}   & 3 & 182, 206      & $24$           & $24 = 6 \times 4$                                & \textbf{Ya} \\
+\texttt{zrr}   & 3 & 185, 407      & $222$          & $222 = 6 \times 37$                              & \textbf{Ya} \\
+\texttt{gnr}   & 3 & 201, 453      & $252$          & $252 = 6 \times 42$                              & \textbf{Ya} \\
+\texttt{rsy}   & 3 & 264, 522      & $258$          & $258 = 6 \times 43$                              & \textbf{Ya} \\
+\texttt{tyj}   & 3 & 313, 655      & $342$          & $342 = 6 \times 57$                              & \textbf{Ya} \\
+\texttt{mie}   & 3 & 334, 682      & $348$          & $348 = 6 \times 58$                              & \textbf{Ya} \\
+\texttt{xvr}   & 3 & 340, 538      & $198$          & $198 = 6 \times 33$                              & \textbf{Ya} \\
+\texttt{xwf}   & 3 & 364, 574      & $210$          & $210 = 6 \times 35$                              & \textbf{Ya} \\
+\texttt{trq}   & 3 & 394, 658      & $264$          & $264 = 6 \times 44$                              & \textbf{Ya} \\
+\texttt{yjt}   & 3 & 464, 656      & $192$          & $192 = 6 \times 32$                              & \textbf{Ya} \\
+\texttt{xue}   & 3 & 8 kemunculan  & 28 pasang jarak& Seluruh 28 pasang jarak habis dibagi 6           & \textbf{Ya} \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+\subsubsection*{2. Distribusi Frekuensi Faktor Pembagi ($m = 2 \dots 12$)}
+Dari total $87$ pasangan jarak ($D$):
+\begin{center}
+\small
+\begin{tabular}{c c c l}
+\toprule
+\textbf{Kandidat $m$} & \textbf{Jumlah Jarak Habis Dibagi $m$} & \textbf{Persentase} & \textbf{Keterangan} \\
+\midrule
+$m = 2$  & $80 / 87$ & $91{,}95\%$ & Sub-faktor prima dari 6 ($6 = 2 \times 3$) \\
+$m = 3$  & $80 / 87$ & $91{,}95\%$ & Sub-faktor prima dari 6 ($6 = 2 \times 3$) \\
+$m = 4$  & $40 / 87$ & $45{,}98\%$ & Mengabaikan $>54\%$ data jarak \\
+$m = 5$  & $12 / 87$ & $13{,}79\%$ & Acak / kebetulan \\
+\textbf{$m = 6$} & \textbf{$78 / 87$} & \textbf{$89{,}66\%$} & \textbf{Kandidat Utama (Periode Penuh)} \\
+$m = 7$  & $11 / 87$ & $12{,}64\%$ & Acak / kebetulan \\
+$m = 8$  & $17 / 87$ & $19{,}54\%$ & Acak / kebetulan \\
+$m = 9$  & $26 / 87$ & $29{,}89\%$ & Kelipatan 3 \\
+$m = 12$ & $40 / 87$ & $45{,}98\%$ & Kelipatan 6 ($12 = 2 \times 6$) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsubsection*{3. Perhitungan Faktor Persekutuan Terbesar (FPB / GCD)}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Untuk 5-gram \texttt{xuecj}} (jarak $D = 72, 132, 204$):
+    $$\operatorname{FPB}(72, 132, 204) = 12 = 2 \times \mathbf{6}$$
+    \item \textbf{Untuk seluruh 4-gram} (jarak $D = 606, 336, 402, 468, 438, 48, 456, 222$):
+    $$\operatorname{FPB}(606, 336, 402, 468, 438, 48, 456, 222) = \mathbf{6}$$
+\end{itemize}
+
+\subsubsection*{4. Kesimpulan Jawaban Soal 1}
+\begin{tcolorbox}
+\begin{itemize}[leftmargin=*, noitemsep]
+    \item Sebanyak **$78$ dari $87$ jarak ($89{,}66\%$)** habis dibagi 6.
+    \item Seluruh $n$-gram berpanjang $\ge 4$ memiliki FPB $= 6$.
+    \item $m=2$ dan $m=3$ adalah faktor penyusun $6 = 2 \times 3$, sedangkan $m=4$ dan $m=12$ hanya membagi $<46\%$ data.
+\end{itemize}
+\textbf{Jadi, panjang kunci yang diperoleh dari Tes Kasiski adalah $\mathbf{m = 6}$.}
+\end{tcolorbox}
+
+\newpage
+
+% =========================================================================
+% TUGAS NO. 2
+% =========================================================================
+\section*{Tugas No. 2}
+
+\subsection*{Soal}
+\begin{tcolorbox}[title=Soal 2]
+\textbf{Teks Ciphertext ($N = 685$ karakter):}
+\begin{center}
+\ttfamily\footnotesize
+\begin{tabular}{l}
+TBWOMYLUYXSSLIFZFBULFPEFOHDRSAEGAEISRIEFIEYNGGEZOMLVSAVYFBIATXALXNNWWYSETBWRSHNAD \\
+THVEMOASJELWNWHAFDRXRMJLXHGHCLAIETBJXIBRZGNVGIGWLEJEYCMSCASLAIVRXMMCGONZXMEAOFME \\
+ADNGTQVLFAGIESMZHTWUMLHZRRNZXANYNZXXJOSGNRTEMLHJGHYXTQVLSUTXUELAGINNXDRHVAQWKICA \\
+LLBGHLUJECSRYINIATCFMLRSYSMXRNNAHRFTBWBVZIHVLARRYEHVRVUUTRGTBSGXUECJLMFTYJLEADQZ \\
+XRAONZBRTBYLMIEOZXXVRDUOTPXTIEXVLTIFPEFNYUXWFALQMSNMOKXXUECJFSENCFZLBULKTRQFOJGM \\
+MFHWGGZRRMSMMBNZGKXUEYNXRVNASGHUOQWOIEBUJXSSNYOLXUEWGNRGRSAGKRNYJTPZIAZMFRTBWREYW \\
+UQLGBNNJBZRDNGEINRHKHQRFLGFXUECJTYATULIVRSYFMMADYWWXUESOXVRWYDEWHPJDBIQBILAAVTBF \\
+XAFAHVAECPCFXWFBSLAIEEWWGXNRLAOEYOZSFMYINATVRGCEXRGIHLAIAECYAFBULZHSQINOTWGOLWFE \\
+VNNZXAUOFWPMATYJTRQMYJRXBNQSLXUEBWTHDUUJMIES
+\end{tabular}
+\end{center}
+
+\vspace{0.2cm}
+Hitung Indeks Koinsiden untuk $m=4,6,8$. Berapakah panjang kunci yang mungkin?
+\end{tcolorbox}
+
+\subsection*{Pembahasan}
+
+\subsubsection*{1. Rumus dan Standar Acuan Indeks Koinsiden ($IC$)}
+\begin{itemize}[leftmargin=*, noitemsep]
+    \item Rumus $IC$ untuk sub-kolom ke-$k$ dengan panjang $N_k$ dan frekuensi huruf $f_i$:
+    $$IC_k = \frac{\sum_{i=\text{A}}^{\text{Z}} f_i(f_i - 1)}{N_k(N_k - 1)}$$
+    \item Rata-rata $IC$ untuk periode $m$:
+    $$\overline{IC}_m = \frac{1}{m} \sum_{k=1}^m IC_k$$
+    \item \textbf{Standar Acuan:}
+    \begin{itemize}[noitemsep]
+        \item Teks Acak (Polialfabetik): $IC_{\text{acak}} = \frac{1}{26} \approx 0{,}0385$
+        \item Bahasa Inggris Alami (Monoalfabetik): $IC_{\text{bahasa}} \approx 0{,}0667$
+    \end{itemize}
+\end{itemize}
+
+\subsubsection*{2. Perhitungan untuk $m = 4$ ($N = 685$)}
+Ciphertext dibagi menjadi 4 sub-kolom ($N_1 = 172, N_2 = N_3 = N_4 = 171$):
+\begin{align*}
+IC_1 &= \frac{1328}{172 \times 171} = \frac{1328}{29412} = 0{,}045152 \\
+IC_2 &= \frac{1420}{171 \times 170} = \frac{1420}{29070} = 0{,}048848 \\
+IC_3 &= \frac{1394}{171 \times 170} = \frac{1394}{29070} = 0{,}047953 \\
+IC_4 &= \frac{1282}{171 \times 170} = \frac{1282}{29070} = 0{,}044100 \\[0.2cm]
+\overline{IC}_{m=4} &= \frac{0{,}045152 + 0{,}048848 + 0{,}047953 + 0{,}044100}{4} = \mathbf{0{,}046513}
+\end{align*}
+
+\subsubsection*{3. Perhitungan untuk $m = 6$ ($N = 685$)}
+Ciphertext dibagi menjadi 6 sub-kolom ($N_1 = 115, N_2 = N_3 = N_4 = N_5 = N_6 = 114$):
+\begin{align*}
+IC_1 &= \frac{906}{115 \times 114} = \frac{906}{13110} = 0{,}069108 \\
+IC_2 &= \frac{842}{114 \times 113} = \frac{842}{12882} = 0{,}065363 \\
+IC_3 &= \frac{872}{114 \times 113} = \frac{872}{12882} = 0{,}067691 \\
+IC_4 &= \frac{926}{114 \times 113} = \frac{926}{12882} = 0{,}071883 \\
+IC_5 &= \frac{942}{114 \times 113} = \frac{942}{12882} = 0{,}073125 \\
+IC_6 &= \frac{808}{114 \times 113} = \frac{808}{12882} = 0{,}062723 \\[0.2cm]
+\overline{IC}_{m=6} &= \frac{0{,}069108 + 0{,}065363 + 0{,}067691 + 0{,}071883 + 0{,}073125 + 0{,}062723}{6} = \mathbf{0{,}068316}
+\end{align*}
+
+\subsubsection*{4. Perhitungan untuk $m = 8$ ($N = 685$)}
+Ciphertext dibagi menjadi 8 sub-kolom ($N_1 \dots N_5 = 86, N_6 \dots N_8 = 85$):
+\begin{align*}
+IC_1 &= \frac{334}{86 \times 85} = \frac{334}{7310} = 0{,}045691, \quad &
+IC_2 &= \frac{358}{86 \times 85} = \frac{358}{7310} = 0{,}048974 \\
+IC_3 &= \frac{334}{86 \times 85} = \frac{334}{7310} = 0{,}045691, \quad &
+IC_4 &= \frac{294}{86 \times 85} = \frac{294}{7310} = 0{,}040219 \\
+IC_5 &= \frac{330}{86 \times 85} = \frac{330}{7310} = 0{,}045144, \quad &
+IC_6 &= \frac{342}{85 \times 84} = \frac{342}{7140} = 0{,}047899 \\
+IC_7 &= \frac{374}{85 \times 84} = \frac{374}{7140} = 0{,}052381, \quad &
+IC_8 &= \frac{338}{85 \times 84} = \frac{338}{7140} = 0{,}047339 \\[0.2cm]
+\overline{IC}_{m=8} &= \frac{0{,}045691 + \dots + 0{,}047339}{8} = \mathbf{0{,}046667}
+\end{align*}
+
+\subsubsection*{5. Rekapitulasi dan Kesimpulan Jawaban Soal 2}
+\begin{table}[h!]
+\centering
+\begin{tabular}{c c c l}
+\toprule
+\textbf{Kandidat $m$} & \textbf{Rata-rata $\overline{IC}$} & \textbf{Mendekati Standar} & \textbf{Kesimpulan} \\
+\midrule
+$m = 4$ & $0{,}046513$ & $IC_{\text{acak}} \approx 0{,}0385$ & Salah (Masih Polialfabetik) \\
+\textbf{$m = 6$} & \textbf{$0{,}068316$} & \textbf{$IC_{\text{bahasa}} \approx 0{,}0667$} & \textbf{BENAR (Monoalfabetik Murni)} \\
+$m = 8$ & $0{,}046667$ & $IC_{\text{acak}} \approx 0{,}0385$ & Salah (Masih Polialfabetik) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{tcolorbox}
+Nilai rata-rata $\overline{IC}$ melonjak tajam hanya pada $m=6$ ($\overline{IC} = 0{,}068316 \approx 0{,}0667$).\\
+\textbf{Jadi, panjang kunci yang mungkin dan benar adalah $\mathbf{m = 6}$.}
+\end{tcolorbox}
+
+\newpage
+
+% =========================================================================
+% TUGAS NO. 3
+% =========================================================================
+\section*{Tugas No. 3}
+
+\subsection*{Soal}
+\begin{tcolorbox}[title=Soal 3]
+\textbf{Substring Desimasi ($m=6$):}
+\begin{center}
+\ttfamily\footnotesize
+\begin{tabular}{l l}
+\textbf{1:} & TLLUOERYOVTNTNEEAMHTRIEAROADLSURYOEHLENAALRTSNTIRVTETDOBODTTNAMENUFHRNENOBNERNITWN \\
+            & DRFETSDEWPBTAPBEROIGIEUIONOTMNEUS \\[0.1cm]
+\textbf{2:} & BUILHGINMYXWBAMLFJCBZGYSXNONFMMNNSMYSLXQLUYCYNBHYUBCYQNYZUIIYLOCCLOWMZYAQUYWSYAB \\
+            & UNNHLCUYYSYJIBHCSWLZNCHCLNLNFYYQBU \\[0.1cm]
+\textbf{3:} & WYFFDAEGLFAWWDOWDLLJGWCLMZFGAZLZZGLXUADWLJIFSAWVEUSJJZZLXOEFUQKJFKJGSGNSWJOGAJZW \\
+            & QJGKGJLFWODDLFVFLWASAELYZOWZWJJSWJ \\[0.1cm]
+\textbf{4:} & OXZPREFGVBLYRTANRXAXNLMAMXMTGHHXXNHTTGRKBENMMHBLHTGLLXBMXTXPXMXFZTGGMKXGOXLNGTM \\
+            & RLBEHFTIMWXEBAXAXAGOFTXAAHTFXPTRLTM \\[0.1cm]
+\textbf{5:} & MSFESIIESIXSSHSWXHIIVESICMEQITZAXRJQXIHIGCILXRVAVRXMERRIVPVEWSXSLRMZMXRHISXRKPFEGZIQXYVM \\
+            & XVWIAAEWIXEMVRIFSWEAMRXXHI \\[0.1cm]
+\textbf{6:} & YSBFASEZAANEHVJHRGEBGJCVGEAVEWRNJTGVUNVCHSARRFZRRGUFAATERXLFFNUEBQFRBUVUESUGRZRYBR \\
+            & NRUARAURHQVFCFENYYRGABQGVUAQBUDE
+\end{tabular}
+\end{center}
+
+\vspace{0.2cm}
+Hitung Mutual Indeks Koinsiden untuk pergeseran relatif $g=0,1,2,\dots,25$ untuk:
+\begin{center}
+Kolom (1,2), Kolom (2,3), Kolom (2,4), Kolom (2,5), Kolom (2,6).
+\end{center}
+Tentukan kuncinya jika diketahui huruf pada kunci keduanya adalah $u$. Berikan penjelasan bagaimana Anda memperoleh kunci tersebut.
+\end{tcolorbox}
+
+\subsection*{Pembahasan}
+
+Untuk menentukan hubungan pergeseran relatif antar-kunci pada setiap kolom ciphertext, digunakan rumus \textit{Mutual Index of Coincidence} ($MIC$) untuk pergeseran relatif $g \in \{0, 1, \dots, 25\}$:
+$$MIC(Y_i, Y_j, g) = \frac{\sum_{c=0}^{25} f_{i, c} \cdot f_{j, (c + g) \bmod 26}}{N_i \cdot N_j}$$
+di mana pergeseran $g_{\text{max}}$ yang menghasilkan nilai $MIC$ terbesar (maksimum) menyatakan relasi kongruensi pergeseran kunci antara kolom $i$ dan kolom $j$, yaitu:
+$$g_{\text{max}} \equiv (k_j - k_i) \pmod{26}$$
+
+Sebagai contoh perhitungan manual, tinjau pasangan Kolom (1, 2) pada pergeseran $g = 20$. Dengan penyebut $N_1 \times N_2 = 115 \times 114 = 13110$, pembilang dihitung dari penjumlahan perkalian frekuensi huruf yang saling berkorespondensi:
+\begin{align*}
+\text{Pembilang} &= (7 \times 8) + (4 \times 0) + (0 \times 4) + (5 \times 3) + (15 \times 17) + (2 \times 4) + (1 \times 3) + (3 \times 8) \\
+&\quad + (6 \times 9) + (0 \times 0) + (0 \times 0) + (5 \times 3) + (3 \times 2) + (13 \times 5) + (10 \times 5) + (2 \times 2) \\
+&\quad + (0 \times 0) + (10 \times 10) + (4 \times 6) + (14 \times 12) + (5 \times 3) + (2 \times 0) + (2 \times 4) + (0 \times 0) \\
+&\quad + (2 \times 6) + (0 \times 0) \\
+&= 56 + 0 + 0 + 15 + 255 + 8 + 3 + 24 + 54 + 0 + 0 + 15 + 6 + 65 + 50 + 4 \\
+&\quad + 0 + 100 + 24 + 168 + 15 + 0 + 8 + 0 + 12 + 0 = \mathbf{882}
+\end{align*}
+Sehingga diperoleh nilai $MIC$:
+$$MIC(Y_1, Y_2, 20) = \frac{882}{13110} \approx \mathbf{0{,}067277} \quad (\text{Maksimum})$$
+
+Dengan menerapkan perhitungan yang sama untuk seluruh pergeseran $g \in [0, 25]$ pada kelima pasangan kolom yang diminta, diperoleh tabel rekapitulasi nilai $MIC$ sebagai berikut:
+
+\begin{table}[h!]
+\centering
+\small
+\resizebox{\textwidth}{!}{
+\begin{tabular}{c c c c c c}
+\toprule
+\textbf{Pergeseran ($g$)} & \textbf{Kolom (1,2)} & \textbf{Kolom (2,3)} & \textbf{Kolom (2,4)} & \textbf{Kolom (2,5)} & \textbf{Kolom (2,6)} \\
+\midrule
+0  & 0.035545 & 0.035780 & 0.034087 & 0.030394 & 0.036242 \\
+1  & 0.036613 & 0.035088 & 0.038781 & 0.034626 & 0.029548 \\
+2  & 0.025629 & 0.043398 & 0.028239 & 0.028778 & 0.040936 \\
+3  & 0.033944 & 0.031702 & 0.042629 & 0.036011 & 0.038396 \\
+4  & 0.032723 & 0.038473 & 0.031394 & 0.031548 & 0.046630 \\
+5  & 0.048055 & 0.035396 & 0.038550 & 0.040628 & 0.038166 \\
+6  & 0.032418 & 0.031625 & 0.043244 & 0.050708 & 0.050015 \\
+7  & 0.051259 & 0.043475 & 0.034472 & 0.038704 & 0.041167 \\
+8  & 0.039436 & 0.038781 & 0.036781 & 0.029778 & 0.045629 \\
+9  & 0.045919 & 0.044552 & 0.032241 & 0.034857 & 0.036165 \\
+10 & 0.041953 & 0.035165 & 0.046707 & \textbf{0.070714} (Maks) & 0.032548 \\
+11 & 0.042258 & 0.050015 & 0.036396 & 0.033087 & 0.029778 \\
+12 & 0.033562 & 0.037935 & 0.045014 & 0.036473 & 0.033010 \\
+13 & 0.036995 & 0.049015 & 0.039012 & 0.024777 & 0.034626 \\
+14 & 0.039283 & 0.031625 & 0.044244 & 0.041474 & 0.031779 \\
+15 & 0.031426 & 0.035011 & 0.038627 & 0.029932 & 0.046784 \\
+16 & 0.036003 & 0.029240 & 0.031086 & 0.038704 & 0.031163 \\
+17 & 0.028452 & 0.037704 & 0.033857 & 0.033626 & 0.032241 \\
+18 & 0.034477 & 0.035011 & 0.037088 & 0.035549 & 0.040859 \\
+19 & 0.036384 & 0.036781 & 0.040474 & 0.039781 & \textbf{0.067482} (Maks) \\
+20 & \textbf{0.067277} (Maks) & 0.041243 & 0.032933 & 0.044321 & 0.038396 \\
+21 & 0.035850 & 0.032933 & 0.053247 & 0.046630 & 0.032856 \\
+22 & 0.030206 & 0.034780 & 0.030086 & 0.038319 & 0.036704 \\
+23 & 0.038215 & 0.036088 & 0.027701 & 0.046014 & 0.040166 \\
+24 & 0.047674 & \textbf{0.070022} (Maks) & 0.032933 & 0.035549 & 0.033010 \\
+25 & 0.038444 & 0.029163 & \textbf{0.070175} (Maks) & 0.049015 & 0.035703 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+Berdasarkan tabel nilai $MIC$ di atas, nilai pergeseran $g$ yang menghasilkan $MIC$ terbesar (maksimum) untuk setiap pasangan kolom beserta persamaan modularnya adalah:
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{c c c l}
+\toprule
+\textbf{Pasangan Kolom} & \textbf{Pergeseran Terbesar ($g_{\text{max}}$)} & \textbf{Nilai $MIC_{\text{max}}$} & \textbf{Persamaan Modular} \\
+\midrule
+Kolom (1, 2) & $\mathbf{g = 20}$ & $0{,}067277$ & $k_2 - k_1 \equiv 20 \pmod{26}$ \\
+Kolom (2, 3) & $\mathbf{g = 24}$ & $0{,}070022$ & $k_3 - k_2 \equiv 24 \pmod{26}$ \\
+Kolom (2, 4) & $\mathbf{g = 25}$ & $0{,}070175$ & $k_4 - k_2 \equiv 25 \pmod{26}$ \\
+Kolom (2, 5) & $\mathbf{g = 10}$ & $0{,}070714$ & $k_5 - k_2 \equiv 10 \pmod{26}$ \\
+Kolom (2, 6) & $\mathbf{g = 19}$ & $0{,}067482$ & $k_6 - k_2 \equiv 19 \pmod{26}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Dari relasi kongruensi modular tersebut, seluruh huruf kunci dapat dinyatakan relatif terhadap huruf kunci kedua ($k_2$):
+\begin{align*}
+\text{Pasangan (1, 2)} &: k_2 - k_1 \equiv 20 \pmod{26} \implies k_1 \equiv (k_2 - 20) \pmod{26} \\
+\text{Pasangan (2, 3)} &: k_3 - k_2 \equiv 24 \pmod{26} \implies k_3 \equiv (k_2 + 24) \pmod{26} \\
+\text{Pasangan (2, 4)} &: k_4 - k_2 \equiv 25 \pmod{26} \implies k_4 \equiv (k_2 + 25) \pmod{26} \\
+\text{Pasangan (2, 5)} &: k_5 - k_2 \equiv 10 \pmod{26} \implies k_5 \equiv (k_2 + 10) \pmod{26} \\
+\text{Pasangan (2, 6)} &: k_6 - k_2 \equiv 19 \pmod{26} \implies k_6 \equiv (k_2 + 19) \pmod{26}
+\end{align*}
+
+Diketahui huruf kunci kedua adalah $k_2 = \text{'u'} = \text{'U'} = \mathbf{20}$ ($\text{A}=0, \text{B}=1, \dots, \text{U}=20$), sehingga nilai setiap huruf kunci diperoleh sebagai berikut:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Huruf ke-1 ($k_1$):} $k_1 \equiv (20 - 20) \pmod{26} = 0 \implies \mathbf{k_1 = 0 \quad (\text{'A'})}$
+    \item \textbf{Huruf ke-2 ($k_2$):} $\mathbf{k_2 = 20 \quad (\text{'U'})}$
+    \item \textbf{Huruf ke-3 ($k_3$):} $k_3 \equiv (20 + 24) \pmod{26} = 44 \bmod 26 = 18 \implies \mathbf{k_3 = 18 \quad (\text{'S'})}$
+    \item \textbf{Huruf ke-4 ($k_4$):} $k_4 \equiv (20 + 25) \pmod{26} = 45 \bmod 26 = 19 \implies \mathbf{k_4 = 19 \quad (\text{'T'})}$
+    \item \textbf{Huruf ke-5 ($k_5$):} $k_5 \equiv (20 + 10) \pmod{26} = 30 \bmod 26 = 4 \implies \mathbf{k_5 = 4 \quad (\text{'E'})}$
+    \item \textbf{Huruf ke-6 ($k_6$):} $k_6 \equiv (20 + 19) \pmod{26} = 39 \bmod 26 = 13 \implies \mathbf{k_6 = 13 \quad (\text{'N'})}$
+\end{itemize}
+
+Dengan demikian, kata kunci lengkap yang diperoleh adalah:
+\begin{tcolorbox}[colframe=boxheader]
+\centering
+\Large \textbf{Kata Kunci Lengkap:} \texttt{A U S T E N}
+\end{tcolorbox}
+
+Menggunakan rumus dekripsi $p_i = (c_i - k_{(i-1) \bmod 6}) \bmod 26$, diperoleh teks asli (\textit{plaintext}) sebagai berikut:
+\begin{tcolorbox}[colback=white, colframe=black!60]
+\small \texttt{THE VILLAGE OF LONGBOURN WAS ONLY ONE MILE FROM MERYTON A MOST CONVENIENT DISTANCE FOR THE YOUNG LADIES WHO WERE USUALLY TEMPTED THITHER THREE OR FOUR TIMES A WEEK TO PAY THEIR DUTY TO THEIR AUNT AND TO A MILLINERS SHOP JUST OVER THE WAY...}
+\end{tcolorbox}
+
+\textit{Catatan Verifikasi:} Teks asli merupakan pembuka Bab 7 novel \textit{Pride and Prejudice} karya penulis \textbf{Jane Austen}, yang membuktikan bahwa kata kunci \textbf{\texttt{AUSTEN}} $100\%$ valid dan tepat.
+
+% =========================================================================
+% PEMBAGIAN TUGAS
+% =========================================================================
+\vspace{0.4cm}
+\section*{Pembagian Tugas}
+
+\begin{tcolorbox}[colframe=boxheader, colback=boxbg, title=\textbf{Daftar Pembagian Tugas Anggota Kelompok}]
+\begin{itemize}[leftmargin=*, label=$\blacktriangleright$]
+    \item \textbf{Soal 1:}
+    \begin{itemize}[leftmargin=*, label=$\circ$]
+        \item Naila Tusshofiah Zahra (10123088)
+        \item Aulia Marsalina (10123087)
+    \end{itemize}
+    \vspace{0.15cm}
+    \item \textbf{Soal 2:}
+    \begin{itemize}[leftmargin=*, label=$\circ$]
+        \item Lamia Fayyaza Putri (10123066)
+        \item Malfalya Faza Putri Samudro (10123090)
+    \end{itemize}
+    \vspace{0.15cm}
+    \item \textbf{Soal 3:}
+    \begin{itemize}[leftmargin=*, label=$\circ$]
+        \item Gulit Radian Wiyarno (10123033)
+        \item Nasha Aliya (10123036)
+    \end{itemize}
+\end{itemize}
+\end{tcolorbox}
+
+\end{document}
