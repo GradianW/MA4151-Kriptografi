@@ -19,14 +19,14 @@
     colorlinks=true,
     linkcolor=blue,
     urlcolor=blue,
-    pdftitle={Catatan Kuliah: Teori Shannon},
+    pdftitle={Catatan Kuliah: Teori Shannon (Matematika Rinci \& Latihan Soal)},
     pdfauthor={MA4151 Kriptografi}
 }
 
 \pagestyle{fancy}
 \fancyhf{}
 \rhead{\textbf{MA4151 Kriptografi}}
-\lhead{Catatan Kuliah: Teori Shannon}
+\lhead{Catatan Lengkap: Teori Shannon}
 \rfoot{Halaman \thepage}
 \setlength{\headheight}{14pt}
 
@@ -34,6 +34,7 @@
 \definecolor{boxbg}{RGB}{248, 249, 250}
 \definecolor{thmheader}{RGB}{20, 110, 120}
 \definecolor{exheader}{RGB}{46, 125, 50}
+\definecolor{soalheader}{RGB}{180, 40, 40}
 
 \tcbset{
     colback=boxbg,
@@ -67,8 +68,15 @@
     title={#1}
 }
 
-\title{\vspace{-1cm}\textbf{\Large CATATAN KULIAH MA4151 KRIPTOGRAFI}\\\large Topik 3: Teori Shannon (\textit{Shannon's Theory of Secrecy Systems})}
-\author{\textbf{Disarikan dari Bahan Kuliah Dr. Pritta Etriana Putri (ITB 2020)}}
+\newtcolorbox{exercisebox}[1]{
+    colback=white,
+    colframe=soalheader,
+    fonttitle=\bfseries,
+    title={#1}
+}
+
+\title{\vspace{-1cm}\textbf{\Large CATATAN KULIAH MA4151 KRIPTOGRAFI}\\\large Topik 3: Teori Shannon (\textit{Shannon's Theory of Secrecy Systems})\\\large\textbf{Edisi Lengkap: Rincian Matematika, Penurunan Rumus, \& Pembahasan Soal}}
+\author{\textbf{Disarikan dari Bahan Kuliah Dr. Pritta Etriana Putri \& Arsip Soal Ujian ITB}}
 \date{}
 
 \begin{document}
@@ -77,7 +85,7 @@
 \vspace{-0.6cm}
 
 \begin{abstract}
-Dokumen catatan ini merangkum secara utuh dan terstruktur seluruh isi materi slide \textit{3 Shannon.pdf} yang berakar dari publikasi monumental Claude Elwood Shannon (1949, \textit{``Communications Theory of Secrecy Systems''}). Pembahasan dibagi menjadi lima pilar utama: (1) Keamanan Sempurna (\textit{Perfect Secrecy}) dan Teorema Karakterisasi Shannon, (2) Entropi Shannon dan Teori Pengkodean Huffman, (3) Sifat-Sifat Matematis Entropi dan Ketaksamaan Jensen, (4) Kunci Palsu (\textit{Spurious Keys}) dan Jarak Unicity (\textit{Unicity Distance}), serta (5) Sistem Kripto Perkalian (\textit{Product Ciphers}) dan Prinsip Idempotensi.
+Dokumen catatan komprehensif ini merangkum secara matematis, utuh, dan terstruktur seluruh materi slide \textit{3 Shannon.pdf} (Claude Shannon, 1949, \textit{``Communications Theory of Secrecy Systems''}). Catatan ini diperkaya dengan \textbf{penjabaran rumus langkah-demi-langkah}, identifikasi eksplisit persamaan yang digunakan, pembuktian teorema secara formal (termasuk Ketaksamaan Jensen), serta \textbf{bank latihan soal ujian (UTS \& Diskusi Kelompok ITB)} yang dibahas tuntas dengan substitusi angka lengkap.
 \end{abstract}
 
 \vspace{0.2cm}
@@ -94,15 +102,15 @@ Dokumen catatan ini merangkum secara utuh dan terstruktur seluruh isi materi sli
 \section{Peta Konsep \& Struktur Logis Materi}
 % =========================================================================
 
-Slide perkuliahan Teori Shannon tersusun dalam benang merah yang sangat runtut:
+Slide perkuliahan Teori Shannon tersusun dalam enam tahapan logis matematis:
 
 \begin{enumerate}[leftmargin=*]
-    \item \textbf{Tingkat Keamanan Kripto}: Membedakan \textit{Computational Security} (keterbatasan waktu/komputasi) dengan \textit{Unconditional Security} (analisis peluang tanpa batas komputasi).
-    \item \textbf{Keamanan Sempurna (\textit{Perfect Secrecy})}: Kondisi ideal ketika ciphertext sama sekali tidak membocorkan plaintext ($p(x|y) = p(x)$). Syarat Shannon: $|\mathcal{K}| \ge |\mathcal{C}| \ge |\mathcal{P}|$ dan kunci seragam (Realisasi: \textit{One-Time Pad}).
-    \item \textbf{Entropi \& Teori Informasi}: Ketika satu kunci dipakai berulang kali, dibutuhkan ukuran ketidakpastian matematis yaitu Entropi $H(X) = -\sum p_i \log_2 p_i$. Entropi membatasi panjang pengkodean prefix-free (Huffman coding).
-    \item \textbf{Ketaksamaan Jensen \& Sifat Entropi}: Memanfaatkan kecekungan tegas fungsi $\log_2(x)$ untuk membuktikan bahwa entropi maksimum terjadi pada distribusi seragam ($H(X) \le \log_2 n$) serta sifat subaditivitas $H(X, Y) \le H(X) + H(Y)$.
-    \item \textbf{Kunci Palsu (\textit{Spurious Keys}) \& Jarak Unicity ($n_0$)}: Mengamati ciphertext panjang $n$, mencari ambang batas $n_0$ agar ekspektasi kunci palsu menjadi nol ($\bar{s}_n \approx 0$). Rumus: $n_0 \approx \frac{\log_2 |\mathcal{K}|}{R_L \log_2 |\mathcal{P}|}$.
-    \item \textbf{Sistem Kripto Perkalian (\textit{Product Ciphers})}: Mengombinasikan dua cipher endomorfik $S_1 \times S_2$. Jika cipher idempoten ($S^2 = S$, seperti substitusi/Vigen\`ere), iterasi sia-sia. Jika tidak idempoten, iterasi ronde memperkuat cipher (dasar DES \& cipher blok modern).
+    \item \textbf{Tingkat Keamanan Kripto}: Membedakan \textit{Computational Security} (keterbatasan daya komputasi penyerang) dengan \textit{Unconditional Security} (keamanan murni berbasis teori probabilitas tanpa batas waktu/komputasi).
+    \item \textbf{Keamanan Sempurna (\textit{Perfect Secrecy})}: Keadaan ideal ketika observasi teks sandi tidak memberikan informasi tambahan apa pun tentang teks asal ($p_{\mathcal{P}}(x|y) = p_{\mathcal{P}}(x)$). Teorema Shannon membuktikan bahwa syarat ini menuntut $|\mathcal{K}| \ge |\mathcal{C}| \ge |\mathcal{P}|$ dan probabilitas pemilihan kunci seragam.
+    \item \textbf{Entropi Shannon \& Kompresi Informasi}: Ketika kunci yang sama digunakan berulang kali untuk mengenkripsi deretan teks, penyerang memanfaatkan redundansi bahasa. Entropi $H(X) = -\sum p(x)\log_2 p(x)$ digunakan sebagai ukuran matematis ketidakpastian. Entropi membatasi efisiensi pengkodean bebas-prefiks (\textit{Huffman coding}).
+    \item \textbf{Sifat Aljabar Entropi \& Ketaksamaan Jensen}: Memanfaatkan sifat cekung tegas (\textit{strictly concave}) fungsi $\log_2(t)$ untuk menurunkan batas entropi seragam ($H(X) \le \log_2 n$) dan ketaksamaan subaditivitas entropi gabungan ($H(X, Y) \le H(X) + H(Y)$).
+    \item \textbf{Kunci Palsu (\textit{Spurious Keys}) \& Jarak Unicity ($n_0$)}: Penurunan rumus \textit{Key Equivocation} $H(K|C) = H(K) + H(P) - H(C)$, perumusan ekspektasi kunci palsu $\bar{s}_n$, dan penentuan panjang minimum ciphertext $n_0 \approx \frac{\log_2 |\mathcal{K}|}{R_L \log_2 |\mathcal{P}|}$ agar kunci dapat ditentukan secara unik.
+    \item \textbf{Sistem Kripto Perkalian (\textit{Product Ciphers})}: Operasi komposisi dua cipher endomorfik $S_1 \times S_2$. Analisis sifat komutatif (misal $M \times S = \text{Affine}$), asosiatif, dan idempotensi ($S^2 = S$). Sistem tidak idempoten menjadi dasar iterasi ronde cipher blok modern (DES \& AES).
 \end{enumerate}
 
 % =========================================================================
@@ -112,147 +120,232 @@ Slide perkuliahan Teori Shannon tersusun dalam benang merah yang sangat runtut:
 \subsection{Pendekatan Keamanan: Komputasi vs Tanpa Syarat}
 \begin{itemize}[leftmargin=*]
     \item \textbf{Keamanan Komputasi (\textit{Computational Security})}:
-    Mengukur usaha komputasi yang dibutuhkan musuh. Suatu sistem dikatakan aman secara komputasi jika algoritma terbaik membutuhkan sedikitnya $N$ langkah operasi, di mana $N$ bernilai teramat besar (\textit{unreasonably large amount of computer time}). Pendekatan umum adalah \textbf{mereduksi} keamanan ke masalah matematika yang sulit (misal kesulitan memfaktorkan integer besar pada RSA).
+    Ukuran yang berkaitan dengan usaha komputasi untuk memecahkan cipher. Didefinisikan aman secara komputasi jika algoritma terbaik yang ada membutuhkan sedikitnya $N$ langkah operasi, di mana $N$ bernilai teramat besar. Dalam praktik, keamanan sering dibuktikan melalui \textbf{reduksi polynomial-time} ke masalah matematika yang diyakini sulit (misal faktorisasi integer besar $n = pq$ pada RSA atau logaritma diskret).
     \item \textbf{Keamanan Tanpa Syarat (\textit{Unconditional Security})}:
-    Sistem tidak dapat dipecahkan walaupun musuh diberikan keleluasaan daya komputasi dan waktu tanpa batas. Kerangka kerja analisis ini bertumpu pada \textbf{Teori Peluang}.
-    \item \textbf{Model Serangan}: Ditinjau terutama pada model serangan \textit{ciphertext-only} (hanya teks sandi yang diketahui). Cipher klasik (geser, substitusi, Vigen\`ere) tidak aman secara komputasi terhadap serangan \textit{ciphertext-only} jika diberikan panjang teks sandi yang memadai.
+    Sistem tidak akan dapat dipecahkan meskipun penyerang diberikan sumber daya komputasi dan waktu yang tak terbatas. Kerangka kerja analisis ini tidak bergantung pada teori kompleksitas algoritma, melainkan sepenuhnya pada **Teori Peluang**.
+    \item \textbf{Model Serangan}: Ditinjau pada model serangan \textit{ciphertext-only} (penyerang hanya memiliki akses terhadap ciphertext). Cipher klasik (sandi geser, substitusi monoalfabetik, Vigen\`ere) terbukti tidak aman terhadap serangan ini jika panjang teks sandi mencukupi.
 \end{itemize}
 
-\subsection{Model Matematis Sistem Kriptografi}
-Misalkan $(\mathcal{P}, \mathcal{C}, \mathcal{K}, \mathcal{E}, \mathcal{D})$ adalah sistem kripto:
+\subsection{Model Matematis Probabilitas Sistem Kriptografi}
+Diberikan sistem kripto $(\mathcal{P}, \mathcal{C}, \mathcal{K}, \mathcal{E}, \mathcal{D})$:
 \begin{itemize}
-    \item $\mathcal{P}$: Ruang kata-asal (\textit{plaintext}), dengan distribusi peluang $p_{\mathcal{P}}(x)$.
-    \item $\mathcal{K}$: Ruang kunci (\textit{key}), dengan peluang $p_{\mathcal{K}}(K)$. Kunci dipilih sebelum teks asal diketahui, sehingga $K$ dan $x$ saling bebas.
-    \item $\mathcal{C}$: Ruang kata-sandi (\textit{ciphertext}). Untuk setiap kunci $K \in \mathcal{K}$, didefinisikan $C(K) = \{e_K(x) : x \in \mathcal{P}\}$.
+    \item $\mathcal{P}$: Ruang kata-asal (\textit{plaintext}), dengan distribusi peluang $p_{\mathcal{P}}(x) = P(X = x)$.
+    \item $\mathcal{K}$: Ruang kunci (\textit{key}), dengan peluang $p_{\mathcal{K}}(K) = P(K = K)$. Diasumsikan kunci dipilih independen terhadap plaintext: $P(X = x, K = K) = p_{\mathcal{P}}(x) \cdot p_{\mathcal{K}}(K)$.
+    \item $\mathcal{C}$: Ruang kata-sandi (\textit{ciphertext}). Himpunan sandi yang mungkin di bawah kunci $K$ adalah:
+    \begin{equation}
+    \label{eq:CK}
+    C(K) = \{e_K(x) : x \in \mathcal{P}\}
+    \end{equation}
 \end{itemize}
 
-Distribusi peluang pada ciphertext $y \in \mathcal{C}$:
+\noindent\textbf{Rumus 1 (Peluang Marginal Ciphertext $y$)}:
+Karena kejadian kunci $K$ saling lepas, menggunakan hukum probabilitas total:
 \begin{equation}
-p_{\mathcal{C}}(y) = \sum_{\{K \,:\, y \in C(K)\}} p_{\mathcal{K}}(K) \cdot p_{\mathcal{P}}(d_K(y))
+\label{eq:marginal_py}
+p_{\mathcal{C}}(y) = \sum_{\{K \in \mathcal{K} \,:\, y \in C(K)\}} p_{\mathcal{K}}(K) \cdot p_{\mathcal{P}}(d_K(y))
 \end{equation}
 
-Peluang bersyarat ciphertext $y$ bila plaintext $x$ dikirim:
+\noindent\textbf{Rumus 2 (Peluang Bersyarat Ciphertext bila Plaintext Diketahui)}:
 \begin{equation}
-p_{\mathcal{C}}(y|x) = \sum_{\{K \,:\, x = d_K(y)\}} p_{\mathcal{K}}(K)
+\label{eq:conditional_pyx}
+p_{\mathcal{C}}(y|x) = \sum_{\{K \in \mathcal{K} \,:\, x = d_K(y)\}} p_{\mathcal{K}}(K)
 \end{equation}
 
-Berdasarkan \textbf{Teorema Bayes}, peluang bahwa teks asal adalah $x$ bila diketahui teks sandi $y$:
+\noindent\textbf{Rumus 3 (Peluang A Posteriori Plaintext Menggunakan Aturan Bayes)}:
 \begin{equation}
-p(x|y) = \frac{p_{\mathcal{P}}(x) \cdot p_{\mathcal{C}}(y|x)}{p_{\mathcal{C}}(y)} = \frac{p_{\mathcal{P}}(x) \sum_{\{K \,:\, x = d_K(y)\}} p_{\mathcal{K}}(K)}{\sum_{\{K \,:\, y \in C(K)\}} p_{\mathcal{K}}(K) p_{\mathcal{P}}(d_K(y))}
+\label{eq:bayes_pxy}
+p(x|y) = \frac{p_{\mathcal{P}}(x) \cdot p_{\mathcal{C}}(y|x)}{p_{\mathcal{C}}(y)} = \frac{p_{\mathcal{P}}(x) \displaystyle\sum_{\{K \,:\, x = d_K(y)\}} p_{\mathcal{K}}(K)}{\displaystyle\sum_{\{K \,:\, y \in C(K)\}} p_{\mathcal{K}}(K) \cdot p_{\mathcal{P}}(d_K(y))}
 \end{equation}
 
-\subsection{Definisi Keamanan Sempurna}
+\subsection{Definisi \& Syarat Ekuivalen Keamanan Sempurna}
 
 \begin{conceptbox}{Definisi Keamanan Sempurna (\textit{Perfect Secrecy})}
-Suatu sistem kripto dikatakan mempunyai \textbf{keamanan sempurna} jika:
+Suatu sistem kripto dikatakan mempunyai \textbf{keamanan sempurna} jika untuk setiap $x \in \mathcal{P}$ dan setiap $y \in \mathcal{C}$:
 \begin{equation}
-p_{\mathcal{P}}(x|y) = p_{\mathcal{P}}(x) \quad \text{untuk semua } x \in \mathcal{P}, \, y \in \mathcal{C}
+\label{eq:perfect_secrecy}
+p_{\mathcal{P}}(x|y) = p_{\mathcal{P}}(x)
 \end{equation}
-Artinya, peluang teks asal adalah $x$ setelah mengamati ciphertext $y$ (\textit{a posteriori}) sama persis dengan peluang sebelum ciphertext diamati (\textit{a priori}). Mengetahui ciphertext sama sekali tidak memberi informasi apa pun tentang pesan asli.
+\textbf{Sifat Ekuivalen}:
+Menggunakan Teorema Bayes $p(x|y) = \frac{p(x)p(y|x)}{p(y)}$, maka persamaan di atas ekuivalen dengan:
+\begin{equation}
+\label{eq:perfect_secrecy_equiv}
+p_{\mathcal{C}}(y|x) = p_{\mathcal{C}}(y) \quad \text{untuk setiap } x \in \mathcal{P}, \, y \in \mathcal{C}
+\end{equation}
+Artinya, peluang munculnya sembarang teks sandi $y$ sama sekali independen terhadap teks asal $x$ yang dikirimkan.
 \end{conceptbox}
 
-Kondisi tersebut ekuivalen dengan $p_{\mathcal{C}}(y|x) = p_{\mathcal{C}}(y)$ untuk semua $x \in \mathcal{P}, y \in \mathcal{C}$.
+\begin{examplebox}{Contoh Matriks Enkripsi Kecil \& Pengujian Keamanan Sempurna (Slide 12--13)}
+\textbf{Diketahui}:
+\begin{itemize}
+    \item Ruang kata-asal: $\mathcal{P} = \{a, b\}$ dengan $p_{\mathcal{P}}(a) = \frac{1}{4}$ dan $p_{\mathcal{P}}(b) = \frac{3}{4}$.
+    \item Ruang kunci: $\mathcal{K} = \{K_1, K_2, K_3\}$ dengan $p_{\mathcal{K}}(K_1) = \frac{1}{2}$, $p_{\mathcal{K}}(K_2) = \frac{1}{4}$, $p_{\mathcal{K}}(K_3) = \frac{1}{4}$.
+    \item Ruang kata-sandi: $\mathcal{C} = \{1, 2, 3, 4\}$.
+    \item Matriks Enkripsi $e_K(x)$:
+    \begin{center}
+    \begin{tabular}{c|cc}
+    \toprule
+    Kunci & Plaintext $a$ & Plaintext $b$ \\
+    \midrule
+    $K_1$ & 1 & 2 \\
+    $K_2$ & 2 & 3 \\
+    $K_3$ & 3 & 4 \\
+    \bottomrule
+    \end{tabular}
+    \end{center}
+\end{itemize}
 
-\begin{examplebox}{Contoh Sistem Kripto Kecil (Slide 12--13)}
-Misalkan $\mathcal{P} = \{a, b\}$ dengan $p(a) = 1/4, p(b) = 3/4$. Ruang kunci $\mathcal{K} = \{K_1, K_2, K_3\}$ dengan $p(K_1) = 1/2, p(K_2) = p(K_3) = 1/4$. Ruang sandi $\mathcal{C} = \{1, 2, 3, 4\}$. Matriks enkripsi:
-\begin{center}
-\begin{tabular}{c|cc}
-\toprule
-Kunci & $a$ & $b$ \\
-\midrule
-$K_1$ & 1 & 2 \\
-$K_2$ & 2 & 3 \\
-$K_3$ & 3 & 4 \\
-\bottomrule
-\end{tabular}
-\end{center}
-Distribusi ciphertext:
+\noindent\textbf{Langkah 1: Hitung Distribusi Marginal Ciphertext $p_{\mathcal{C}}(y)$ menggunakan Rumus~\eqref{eq:marginal_py}}:
+\begin{align*}
+p_{\mathcal{C}}(1) \&= P(K=K_1, X=a) = p(K_1) \cdot p(a) = \frac{1}{2} \cdot \frac{1}{4} = \frac{1}{8} = \frac{2}{16} \\
+p_{\mathcal{C}}(2) \&= P(K=K_1, X=b) + P(K=K_2, X=a) = \left(\frac{1}{2} \cdot \frac{3}{4}\right) + \left(\frac{1}{4} \cdot \frac{1}{4}\right) = \frac{3}{8} + \frac{1}{16} = \frac{7}{16} \\
+p_{\mathcal{C}}(3) \&= P(K=K_2, X=b) + P(K=K_3, X=a) = \left(\frac{1}{4} \cdot \frac{3}{4}\right) + \left(\frac{1}{4} \cdot \frac{1}{4}\right) = \frac{3}{16} + \frac{1}{16} = \frac{4}{16} = \frac{1}{4} \\
+p_{\mathcal{C}}(4) \&= P(K=K_3, X=b) = p(K_3) \cdot p(b) = \frac{1}{4} \cdot \frac{3}{4} = \frac{3}{16}
+\end{align*}
+\textit{Pemeriksaan total probabilitas}: $\sum_{y=1}^4 p_{\mathcal{C}}(y) = \frac{2}{16} + \frac{7}{16} + \frac{4}{16} + \frac{3}{16} = \frac{16}{16} = 1$ (konsisten).
+
+\vspace{0.2em}
+\noindent\textbf{Langkah 2: Hitung Peluang Bersyarat $p(x|y)$ menggunakan Rumus Bayes~\eqref{eq:bayes_pxy}}:
 \begin{itemize}
-    \item $p_{\mathcal{C}}(1) = p(K_1)p(a) = \frac{1}{2} \cdot \frac{1}{4} = \frac{1}{8}$
-    \item $p_{\mathcal{C}}(2) = p(K_1)p(b) + p(K_2)p(a) = \frac{3}{8} + \frac{1}{16} = \frac{7}{16}$
-    \item $p_{\mathcal{C}}(3) = p(K_2)p(b) + p(K_3)p(a) = \frac{3}{16} + \frac{1}{16} = \frac{1}{4}$
-    \item $p_{\mathcal{C}}(4) = p(K_3)p(b) = \frac{3}{16}$
+    \item Jika $y = 1$: Karena $y=1$ hanya bisa dihasilkan oleh $(K_1, a)$:
+    \[
+    p(a|1) = \frac{p(a)p(K_1)}{p_{\mathcal{C}}(1)} = \frac{1/8}{1/8} = 1 \neq p(a) = \frac{1}{4}, \quad p(b|1) = 0.
+    \]
+    \item Jika $y = 2$:
+    \[
+    p(a|2) = \frac{p(K_2)p(a)}{p_{\mathcal{C}}(2)} = \frac{(1/4)(1/4)}{7/16} = \frac{1/16}{7/16} = \frac{1}{7} \neq \frac{1}{4}, \quad p(b|2) = \frac{6/16}{7/16} = \frac{6}{7}.
+    \]
+    \item Jika $y = 3$:
+    \[
+    p(a|3) = \frac{p(K_3)p(a)}{p_{\mathcal{C}}(3)} = \frac{(1/4)(1/4)}{1/4} = \frac{1}{4} = p(a), \quad p(b|3) = \frac{(1/4)(3/4)}{1/4} = \frac{3}{4} = p(b).
+    \]
+    \item Jika $y = 4$: Karena $y=4$ hanya bisa dihasilkan oleh $(K_3, b)$:
+    \[
+    p(a|4) = 0, \quad p(b|4) = \frac{(1/4)(3/4)}{3/16} = 1 \neq p(b) = \frac{3}{4}.
+    \]
 \end{itemize}
-Peluang bersyarat $p(x|y)$:
-\begin{itemize}
-    \item $p(a|1) = 1, \; p(b|1) = 0$
-    \item $p(a|2) = \frac{1/16}{7/16} = 1/7 \neq 1/4, \; p(b|2) = 6/7$
-    \item $p(a|3) = \frac{1/16}{1/4} = 1/4 = p(a), \; p(b|3) = 3/4 = p(b)$ (hanya sandi 3 yang memenuhi!)
-    \item $p(a|4) = 0, \; p(b|4) = 1$
-\end{itemize}
-Karena tidak dipenuhi oleh semua $y$, sistem kripto ini \textbf{tidak aman sempurna}.
+\textbf{Kesimpulan}: Syarat $p(x|y) = p(x)$ hanya terpenuhi secara kebetulan saat $y = 3$, tetapi gagal untuk $y \in \{1, 2, 4\}$. Karena syarat keamanan sempurna menuntut kesamaan berlaku untuk **seluruh** $y \in \mathcal{C}$, maka sistem ini **TIDAK memiliki keamanan sempurna**.
 \end{examplebox}
 
 \subsection{Teorema Shannon Mengenai Keamanan Sempurna}
 
 \begin{thmbox}{Teorema 2: Keamanan Sempurna Sandi Geser Satu Karakter}
-Misalkan 26 kunci dalam sandi geser digunakan dengan peluang yang sama, yakni $\frac{1}{26}$. Maka, untuk setiap distribusi kata-asal, sandi geser mempunyai \textbf{keamanan sempurna}.
+Misalkan sandi geser atas $\mathbb{Z}_{26}$ menggunakan 26 kunci dengan peluang sama $p_{\mathcal{K}}(K) = \frac{1}{26}$ untuk setiap $K \in \{0, 1, \dots, 25\}$. Maka untuk sembarang distribusi peluang plaintext $p_{\mathcal{P}}(x)$, sandi geser mempunyai \textbf{keamanan sempurna}.
 \end{thmbox}
+
+/* I dont understand this section bwhy does the p(y-K) = p(y) */
+
 \begin{proof}
-Ruang $\mathcal{P} = \mathcal{C} = \mathcal{K} = \mathbb{Z}_{26}$. Enkripsi $e_K(x) = x + K \bmod 26$.
-\[
-p_{\mathcal{C}}(y) = \sum_{K \in \mathbb{Z}_{26}} p_{\mathcal{K}}(K) p_{\mathcal{P}}(y - K) = \frac{1}{26} \sum_{K \in \mathbb{Z}_{26}} p_{\mathcal{P}}(y - K) = \frac{1}{26} (1) = \frac{1}{26}.
-\]
-Untuk setiap pasangan $(x, y)$, terdapat kunci tunggal $K = (y - x) \bmod 26$, sehingga $p_{\mathcal{C}}(y|x) = p_{\mathcal{K}}(y - x \bmod 26) = \frac{1}{26}$.
-Menggunakan Teorema Bayes:
-\[
-p(x|y) = \frac{p_{\mathcal{P}}(x) p_{\mathcal{C}}(y|x)}{p_{\mathcal{C}}(y)} = \frac{p_{\mathcal{P}}(x) \cdot (1/26)}{1/26} = p_{\mathcal{P}}(x).
-\]
+Ruang $\mathcal{P} = \mathcal{C} = \mathcal{K} = \mathbb{Z}_{26}$. Enkripsi $e_K(x) = (x + K) \bmod 26$, dan dekripsi $d_K(y) = (y - K) \bmod 26$.
+\begin{enumerate}
+    \item Hitung distribusi marginal $p_{\mathcal{C}}(y)$ menggunakan Rumus~\eqref{eq:marginal_py}:
+    \[
+    p_{\mathcal{C}}(y) = \sum_{K \in \mathbb{Z}_{26}} p_{\mathcal{K}}(K) \cdot p_{\mathcal{P}}((y - K) \bmod 26) = \frac{1}{26} \sum_{K=0}^{25} p_{\mathcal{P}}((y - K) \bmod 26).
+    \]
+    Ketika $K$ bergerak dari $0$ hingga $25$, nilai $(y - K) \bmod 26$ menjelajahi seluruh elemen $\mathbb{Z}_{26}$ tepat satu kali. Karena total peluang pada ruang sampel adalah 1:
+    \[
+    \sum_{K=0}^{25} p_{\mathcal{P}}((y - K) \bmod 26) = \sum_{x \in \mathbb{Z}_{26}} p_{\mathcal{P}}(x) = 1 \implies p_{\mathcal{C}}(y) = \frac{1}{26} \cdot 1 = \frac{1}{26}.
+    \]
+    \item Hitung peluang bersyarat $p_{\mathcal{C}}(y|x)$ menggunakan Rumus~\eqref{eq:conditional_pyx}:
+    Untuk setiap pasangan $x, y \in \mathbb{Z}_{26}$, terdapat tepat satu kunci $K$ yang memenuhi $(x + K) \equiv y \pmod{26}$, yaitu $K = (y - x) \bmod 26$. Maka:
+    \[
+    p_{\mathcal{C}}(y|x) = p_{\mathcal{K}}((y - x) \bmod 26) = \frac{1}{26}.
+    \]
+    \item Substitusikan ke Aturan Bayes (Rumus~\eqref{eq:bayes_pxy}):
+    \[
+    p(x|y) = \frac{p_{\mathcal{P}}(x) \cdot p_{\mathcal{C}}(y|x)}{p_{\mathcal{C}}(y)} = \frac{p_{\mathcal{P}}(x) \cdot \frac{1}{26}}{\frac{1}{26}} = p_{\mathcal{P}}(x).
+    \]
+\end{enumerate}
+Karena $p(x|y) = p(x)$ terbukti berlaku untuk semua $x \in \mathcal{P}$ dan $y \in \mathcal{C}$, sandi geser 1 karakter terbukti memenuhi keamanan sempurna.
 \end{proof}
 
 \begin{thmbox}{Teorema 3: Karakterisasi Shannon untuk Keamanan Sempurna}
 Misalkan $(\mathcal{P}, \mathcal{C}, \mathcal{K}, \mathcal{E}, \mathcal{D})$ adalah sistem kripto dengan $|\mathcal{K}| = |\mathcal{C}| = |\mathcal{P}|$. Maka sistem ini mempunyai keamanan sempurna jika dan hanya jika:
 \begin{enumerate}
-    \item Setiap kunci digunakan dengan peluang sama: $p_{\mathcal{K}}(K) = \frac{1}{|\mathcal{K}|}$.
-    \item Untuk setiap $x \in \mathcal{P}$ dan setiap $y \in \mathcal{C}$, terdapat kunci tunggal $K$ sehingga $e_K(x) = y$.
+    \item Setiap kunci digunakan dengan probabilitas seragam:
+    \begin{equation}
+    \label{eq:shannon_uniform}
+    p_{\mathcal{K}}(K) = \frac{1}{|\mathcal{K}|} \quad \text{untuk setiap } K \in \mathcal{K}
+    \end{equation}
+    \item Untuk setiap $x \in \mathcal{P}$ dan setiap $y \in \mathcal{C}$, terdapat tepat satu kunci tunggal $K \in \mathcal{K}$ sedemikian sehingga $e_K(x) = y$.
 \end{enumerate}
 \end{thmbox}
 
-\noindent\textbf{Catatan Penting}:
+\noindent\textbf{Syarat Fundamental \& Realisasi Fisik}:
 \begin{itemize}
-    \item Syarat perlu keamanan sempurna: $|\mathcal{K}| \ge |\mathcal{C}| \ge |\mathcal{P}|$ (ruang kunci harus minimal sebesar ruang pesan).
-    \item Realisasi praktis: **Vernam One-Time Pad (OTP)** (1917).
-    \item Keterbatasan OTP: Kunci harus benar-benar acak, panjang kunci sama dengan panjang pesan, dan kunci hanya boleh digunakan tepat satu kali (\textit{one-time}). Jika kunci dipakai berulang, keamanan sempurna hilang.
+    \item Syarat perlu keamanan sempurna: $|\mathcal{K}| \ge |\mathcal{C}| \ge |\mathcal{P}|$. Jika $|\mathcal{K}| < |\mathcal{P}|$, keamanan sempurna secara matematis mustahil dicapai.
+    \item **Vernam One-Time Pad (OTP)** (Gilbert Vernam, 1917; dibuktikan oleh Shannon 1949) merupakan realisasi sempurna pada string biner: $c_i = m_i \oplus k_i$.
+    \item **Kelemahan Praktis**: Kunci harus benar-benar acak (*true random*), panjang kunci harus sama persis dengan panjang pesan ($|K| = |M|$), dan setiap kunci hanya boleh digunakan sekali seumur hidup (*one-time*).
 \end{itemize}
 
 % =========================================================================
 \section{Entropi \& Teori Informasi}
 % =========================================================================
 
-\subsection{Definisi Entropi}
-Ketika kunci yang sama digunakan untuk mengenkripsi banyak pesan, penyerang dapat mengeksploitasi korelasi bahasa. Konsep kunci untuk mengukurnya adalah **Entropi** (Shannon, 1948).
+\subsection{Definisi Matematis Entropi}
+Jika suatu kunci rahasia dipakai berulang kali untuk mengenkripsi teks, musuh dapat memanfaatkan pola statistika bahasa untuk memecahkan sandi. Alat matematika yang diciptakan Shannon (1948) untuk mengukur ketidakpastian informasi adalah **Entropi**.
 
-\begin{conceptbox}{Definisi Entropi}
-Misalkan $X$ adalah variabel acak diskret dengan distribusi peluang $p(X)$. Entropi dari $X$, ditulis $H(X)$, didefinisikan sebagai:
+\begin{conceptbox}{Definisi Entropi Shannon}
+Misalkan $X$ adalah variabel acak diskret dengan distribusi peluang $p(X)$ pada nilai $\{x_1, x_2, \dots, x_n\}$. Entropi $H(X)$ didefinisikan oleh rumus:
 \begin{equation}
-H(X) = -\sum_{i=1}^n p_i \log_2 p_i
+\label{eq:entropy_def}
+H(X) = - \sum_{i=1}^n p(x_i) \log_2 p(x_i) = \sum_{i=1}^n p(x_i) \log_2 \left(\frac{1}{p(x_i)}\right)
 \end{equation}
-\textbf{Karakteristik Entropi}:
+dengan konvensi standar teori informasi: jika $p(x_i) = 0$, maka $0 \log_2 0 = \lim_{t \to 0^+} t \log_2 t = 0$.
+
+\vspace{0.3em}
+\noindent\textbf{Interpretasi Matematis}:
 \begin{itemize}
-    \item Entropi mengukur jumlah rata-rata ketidakpastian atau informasi yang terkandung dalam variabel acak $X$ (diukur dalam satuan \textbf{bit}).
-    \item Suatu kejadian dengan peluang $p$ membawa informasi sebesar $-\log_2 p$ bit.
-    \item $H(X) \ge 0$. Nilai $H(X) = 0$ terjadi j.h.j ada suatu kejadian pasti ($p_i = 1$ dan $p_j = 0$ untuk $j \neq i$).
-    \item Jika semua $n$ kemungkinan nilai berpeluang seragam ($p_i = 1/n$), maka $H(X) = \log_2 n$.
+    \item Entropi mengukur rata-rata informasi (dalam satuan \textbf{bit}) yang didapat saat mengamati kejadian $X$.
+    \item Suatu kejadian tunggal berpeluang $p$ membawa informasi sebesar $\log_2(1/p) = -\log_2 p$ bit.
+    \item $H(X) \ge 0$. Nilai minimum $H(X) = 0$ terjadi jika dan hanya jika tidak ada ketidakpastian sama sekali (yaitu terdapat $i$ sehingga $p(x_i) = 1$ dan $p(x_j) = 0$ untuk semua $j \neq i$).
 \end{itemize}
 \end{conceptbox}
 
-\begin{examplebox}{Contoh Perhitungan Entropi (Slide 25)}
-Untuk distribusi pada Contoh 1: $\mathcal{P} = \{a, b\}$ dengan $p(a) = 1/4, p(b) = 3/4$:
-\[
-H(P) = -\frac{1}{4} \log_2 \left(\frac{1}{4}\right) - \frac{3}{4} \log_2 \left(\frac{3}{4}\right) = -\frac{1}{4}(-2) - \frac{3}{4}(\log_2 3 - 2) = 2 - \frac{3}{4}\log_2 3 \approx 0.81 \text{ bit}.
-\]
-Dengan cara serupa: $H(K) = 1.5$ bit dan $H(C) \approx 1.85$ bit.
+\begin{examplebox}{Detail Perhitungan Entropi (Slide 25)}
+Gunakan kembali distribusi peluang pada Contoh Sistem Kripto Kecil sebelumnya:
+\begin{enumerate}
+    \item **Entropi Plaintext $H(P)$**:
+    $p(a) = \frac{1}{4} = 2^{-2}$, $p(b) = \frac{3}{4}$.
+    \begin{align*}
+    H(P) \&= - \left[ p(a)\log_2 p(a) + p(b)\log_2 p(b) \right] \\
+    \&= - \left[ \frac{1}{4}\log_2\left(\frac{1}{4}\right) + \frac{3}{4}\log_2\left(\frac{3}{4}\right) \right] \\
+    \&= - \left[ \frac{1}{4}(-2) + \frac{3}{4}(\log_2 3 - \log_2 4) \right] \\
+    \&= \frac{2}{4} - \frac{3}{4}(\log_2 3 - 2) = \frac{1}{2} - \frac{3}{4}\log_2 3 + \frac{6}{4} = 2 - \frac{3}{4}\log_2 3 \\
+    \&\approx 2 - 0.75(1.58496) = 2 - 1.18872 \approx 0.8113 \text{ bit}.
+    \end{align*}
+    \item **Entropi Kunci $H(K)$**:
+    $p(K_1) = \frac{1}{2} = 2^{-1}$, $p(K_2) = p(K_3) = \frac{1}{4} = 2^{-2}$.
+    \begin{align*}
+    H(K) \&= - \left[ \frac{1}{2}\log_2\left(\frac{1}{2}\right) + \frac{1}{4}\log_2\left(\frac{1}{4}\right) + \frac{1}{4}\log_2\left(\frac{1}{4}\right) \right] \\
+    \&= - \left[ \frac{1}{2}(-1) + \frac{1}{4}(-2) + \frac{1}{4}(-2) \right] = \frac{1}{2} + \frac{1}{2} + \frac{1}{2} = 1.5 \text{ bit}.
+    \end{align*}
+    \item **Entropi Ciphertext $H(C)$**:
+    $p(1) = \frac{1}{8}$, $p(2) = \frac{7}{16}$, $p(3) = \frac{4}{16} = \frac{1}{4}$, $p(4) = \frac{3}{16}$.
+    \begin{align*}
+    H(C) \&= - \left[ \frac{1}{8}\log_2\left(\frac{1}{8}\right) + \frac{7}{16}\log_2\left(\frac{7}{16}\right) + \frac{1}{4}\log_2\left(\frac{1}{4}\right) + \frac{3}{16}\log_2\left(\frac{3}{16}\right) \right] \\
+    \&= - \left[ \frac{1}{8}(-3) + \frac{7}{16}(\log_2 7 - 4) + \frac{1}{4}(-2) + \frac{3}{16}(\log_2 3 - 4) \right] \\
+    \&= \frac{3}{8} - \frac{7}{16}\log_2 7 + \frac{28}{16} + \frac{2}{4} - \frac{3}{16}\log_2 3 + \frac{12}{16} \\
+    \&= \frac{6 + 28 + 8 + 12}{16} - \frac{7\log_2 7 + 3\log_2 3}{16} = \frac{54}{16} - \frac{7(2.80735) + 3(1.58496)}{16} \\
+    \&= 3.375 - \frac{19.65145 + 4.75488}{16} = 3.375 - \frac{24.40633}{16} = 3.375 - 1.5254 \approx 1.8496 \text{ bit}.
+    \end{align*}
+\end{enumerate}
 \end{examplebox}
 
-\subsection{Pengkodean Huffman dan Batas Entropi}
-\begin{itemize}
-    \item Suatu encoding $f: X \to \{0, 1\}^*$ memiliki panjang rata-rata: $l(f) = \sum_{x \in X} p(x)|f(x)|$.
-    \item Sifat \textbf{prefix-free}: Tidak ada kata kode yang menjadi prefiks kata kode lain. Hal ini memungkinkan proses decoding dilakukan seketika (\textit{instantaneous}) dari depan ke belakang tanpa jeda pemisah.
-    \item **Batas Teorema Pengkodean Huffman**:
+\subsection{Pengkodean Huffman \& Hubungannya dengan Entropi}
+\begin{itemize}[leftmargin=*]
+    \item **Fungsi Encoding**: Pemetaan $f: X \to \{0,1\}^*$ yang mengaitkan setiap simbol $x \in X$ ke suatu untai biner (\textit{codeword}) dengan panjang $|f(x)|$.
+    \item **Panjang Rata-Rata Berbobot $l(f)$**:
     \begin{equation}
+    \label{eq:avg_codelength}
+    l(f) = \sum_{x \in X} p(x) \cdot |f(x)|
+    \end{equation}
+    \item **Sifat Bebas-Prefiks (\textit{Prefix-Free})**: Suatu kode disebut bebas-prefiks jika tidak ada kata kode yang menjadi awalan (\textit{prefix}) dari kata kode lainnya: $\forall x_1 \neq x_2, \; f(x_1) \neq f(x_2) \| z$. Kode bebas-prefiks dapat didekode secara instan dari kiri ke kanan tanpa jeda pemisah.
+    \item **Teorema Batas Pengkodean Sumber Bebas-Derau Shannon**:
+    Untuk sembarang kode bebas-prefiks instan yang dihasilkan algoritma Huffman optimal, panjang rata-rata kode dibatasi oleh entropi:
+    \begin{equation}
+    \label{eq:huffman_bounds}
     H(X) \le l(f) < H(X) + 1
     \end{equation}
-    Entropi menjadi batas bawah teoritis kompresi data tanpa kehilangan (\textit{lossless}).
 \end{itemize}
 
 % =========================================================================
@@ -260,214 +353,624 @@ Dengan cara serupa: $H(K) = 1.5$ bit dan $H(C) \approx 1.85$ bit.
 % =========================================================================
 
 \subsection{Ketaksamaan Jensen}
-Fondasi matematika utama teori entropi adalah kecekungan fungsi logaritma.
+Fondasi analitis seluruh pembuktian sifat entropi bertumpu pada teori kecekungan fungsi (*concavity*).
 
 \begin{thmbox}{Teorema 4: Ketaksamaan Jensen}
-Misalkan $f$ fungsi cekung tegas dan kontinu pada interval $I$, $\sum_{i=1}^n a_i = 1$, dan $a_i > 0$. Maka:
+Misalkan $f$ adalah fungsi cekung tegas (\textit{strictly concave}) pada interval terbuka $I$. Diberikan bobot real $a_i > 0$ dengan $\sum_{i=1}^n a_i = 1$. Maka untuk setiap $x_1, \dots, x_n \in I$:
 \begin{equation}
+\label{eq:jensen}
 \sum_{i=1}^n a_i f(x_i) \le f\left(\sum_{i=1}^n a_i x_i\right)
 \end{equation}
 Tanda kesamaan berlaku jika dan hanya jika $x_1 = x_2 = \dots = x_n$.
 \end{thmbox}
 
-Karena $f(t) = \log_2 t$ merupakan fungsi cekung tegas pada $(0, \infty)$, ketaksamaan Jensen langsung diterapkan untuk membuktikan teorema batas entropi.
-
-\subsection{Teorema Batas Entropi}
-
-\begin{thmbox}{Teorema 5: Batas Atas Entropi}
-Misalkan variabel acak $X$ memiliki $n$ kemungkinan nilai dengan $p_i > 0$. Maka:
+\noindent\textbf{Kecekungan Fungsi Logaritma}:
+Fungsi $f(t) = \log_2 t$ memiliki turunan pertama $f'(t) = \frac{1}{t \ln 2}$ dan turunan kedua:
 \begin{equation}
+f''(t) = -\frac{1}{t^2 \ln 2} < 0 \quad \text{untuk setiap } t \in (0, \infty).
+\end{equation}
+Karena turunan keduanya senantiasa negatif, maka $f(t) = \log_2 t$ adalah **fungsi cekung tegas** pada $(0, \infty)$.
+
+\subsection{Teorema Batas Atas Entropi}
+
+\begin{thmbox}{Teorema 5: Entropi Maksimum pada Distribusi Seragam}
+Misalkan variabel acak diskret $X$ memiliki $n$ kemungkinan nilai dengan peluang $p_1, \dots, p_n > 0$. Maka:
+\begin{equation}
+\label{eq:max_entropy}
 H(X) \le \log_2 n
 \end{equation}
-Kesamaan berlaku jika dan hanya jika distribusi seragam: $p_i = \frac{1}{n}$ untuk semua $1 \le i \le n$.
+dengan kesamaan berlaku jika dan hanya jika $p_i = \frac{1}{n}$ untuk seluruh $1 \le i \le n$.
 \end{thmbox}
 \begin{proof}
-Dengan ketaksamaan Jensen ($a_i = p_i$, $x_i = \frac{1}{p_i}$, $f(t) = \log_2 t$):
+Terapkan Ketaksamaan Jensen~\eqref{eq:jensen} dengan memilih:
 \[
-H(X) = \sum_{i=1}^n p_i \log_2 \left(\frac{1}{p_i}\right) \le \log_2 \left(\sum_{i=1}^n p_i \cdot \frac{1}{p_i}\right) = \log_2 \left(\sum_{i=1}^n 1\right) = \log_2 n.
+a_i = p_i, \quad x_i = \frac{1}{p_i}, \quad \text{dan } f(t) = \log_2 t.
 \]
-Kesamaan j.h.j $\frac{1}{p_1} = \dots = \frac{1}{p_n} \iff p_i = 1/n$.
+Perhatikan bahwa $\sum_{i=1}^n a_i = \sum_{i=1}^n p_i = 1$ dan $x_i \in (0, \infty)$. Maka:
+\begin{align*}
+H(X) \&= \sum_{i=1}^n p_i \log_2\left(\frac{1}{p_i}\right) = \sum_{i=1}^n a_i f(x_i) \\
+\&\le f\left(\sum_{i=1}^n a_i x_i\right) = \log_2\left(\sum_{i=1}^n p_i \cdot \frac{1}{p_i}\right) = \log_2\left(\sum_{i=1}^n 1\right) = \log_2 n.
+\end{align*}
+Berdasarkan kondisi kesamaan pada Teorema Jensen, tanda $=$ tercapai jika dan hanya jika:
+\[
+x_1 = x_2 = \dots = x_n \iff \frac{1}{p_1} = \frac{1}{p_2} = \dots = \frac{1}{p_n} \iff p_1 = p_2 = \dots = p_n = \frac{1}{n}. 
+\]
 \end{proof}
 
 \subsection{Entropi Gabungan \& Entropi Bersyarat}
-\begin{enumerate}[leftmargin=*]
-    \item \textbf{Entropi Gabungan (\textit{Joint Entropy})}:
-    $H(X, Y) = -\sum_x \sum_y p(x, y) \log_2 p(x, y)$.
-    \item \textbf{Entropi Bersyarat (\textit{Conditional Entropy})}:
+Diberikan dua variabel acak diskret $X$ dan $Y$ dengan distribusi peluang bersama $p(X=x, Y=y) = p(x,y)$:
+
+\begin{conceptbox}{Definisi Entropi Bersama \& Bersyarat}
+\begin{enumerate}
+    \item **Entropi Bersama (\textit{Joint Entropy})**:
     \begin{equation}
-    H(X|Y) = \sum_y p(y) H(X|y) = -\sum_y \sum_x p(x, y) \log_2 p(x|y)
+    \label{eq:joint_entropy}
+    H(X, Y) = - \sum_{x \in X} \sum_{y \in Y} p(x, y) \log_2 p(x, y)
     \end{equation}
-    Mengukur sisa ketidakpastian rata-rata tentang $X$ jika variabel $Y$ telah diketahui.
-    \item \textbf{Teorema 7 (Aturan Rantai)}:
+    \item **Entropi Bersyarat (\textit{Conditional Entropy})**:
+    Rata-rata berbobot dari entropi $X$ saat nilai $Y=y$ diketahui:
     \begin{equation}
-    H(X, Y) = H(Y) + H(X|Y) = H(X) + H(Y|X)
+    \label{eq:conditional_entropy}
+    H(X|Y) = \sum_{y \in Y} p(y) H(X|y) = - \sum_{y \in Y} \sum_{x \in X} p(x, y) \log_2 p(x|y)
     \end{equation}
-    \item \textbf{Teorema 6 (Subaditivitas)}:
-    \begin{equation}
-    H(X, Y) \le H(X) + H(Y) \iff H(X|Y) \le H(X)
-    \end{equation}
-    Kesamaan berlaku jika dan hanya jika $X$ dan $Y$ saling bebas (\textit{independen}).
 \end{enumerate}
+\end{conceptbox}
+
+\begin{thmbox}{Teorema 7: Aturan Rantai Entropi (\textit{Chain Rule})}
+Untuk sembarang variabel acak $X$ dan $Y$:
+\begin{equation}
+\label{eq:chain_rule}
+H(X, Y) = H(Y) + H(X|Y) = H(X) + H(Y|X)
+\end{equation}
+\end{thmbox}
+\begin{proof}
+Gunakan definisi probabilitas bersyarat $p(x, y) = p(y) \cdot p(x|y) \implies \log_2 p(x,y) = \log_2 p(y) + \log_2 p(x|y)$.
+\begin{align*}
+H(X, Y) \&= - \sum_{x} \sum_{y} p(x, y) \log_2 p(x, y) = - \sum_{x} \sum_{y} p(x, y) \left[ \log_2 p(y) + \log_2 p(x|y) \right] \\
+\&= - \sum_{y} \left( \sum_{x} p(x, y) \right) \log_2 p(y) - \sum_{x} \sum_{y} p(x, y) \log_2 p(x|y) \\
+\&= - \sum_{y} p(y) \log_2 p(y) + H(X|Y) = H(Y) + H(X|Y). 
+\end{align*}
+\end{proof}
+
+\begin{thmbox}{Teorema 6: Subaditivitas Entropi}
+Untuk sembarang variabel acak $X$ dan $Y$:
+\begin{equation}
+\label{eq:subadditivity}
+H(X, Y) \le H(X) + H(Y) \iff H(X|Y) \le H(X)
+\end{equation}
+dengan kesamaan berlaku jika dan hanya jika $X$ dan $Y$ saling bebas (\textit{independen}).
+\end{thmbox}
+\begin{proof}
+Tinjau selisih $H(X, Y) - H(X) - H(Y)$:
+Misalkan $p_i = p(x_i)$, $q_j = p(y_j)$, dan $r_{ij} = p(x_i, y_j)$.
+\[
+H(X, Y) - H(X) - H(Y) = \sum_{i} \sum_{j} r_{ij} \log_2\left(\frac{p_i q_j}{r_{ij}}\right).
+\]
+Menggunakan ketaksamaan Jensen untuk fungsi cekung $f(t) = \log_2 t$ dengan bobot $r_{ij}$:
+\[
+\sum_{i} \sum_{j} r_{ij} \log_2\left(\frac{p_i q_j}{r_{ij}}\right) \le \log_2\left( \sum_{i}\sum_{j} r_{ij} \cdot \frac{p_i q_j}{r_{ij}} \right) = \log_2\left(\sum_{i} p_i \sum_{j} q_j\right) = \log_2(1 \cdot 1) = 0.
+\]
+Maka $H(X, Y) - H(X) - H(Y) \le 0 \implies H(X, Y) \le H(X) + H(Y)$.
+Tanda sama dengan berlaku j.h.j $\frac{p_i q_j}{r_{ij}} = 1 \iff r_{ij} = p_i q_j$ (artinya $X$ dan $Y$ independen).
+\end{proof}
 
 % =========================================================================
 \section{Kunci Palsu (\textit{Spurious Keys}) \& Jarak Unicity}
 % =========================================================================
 
 \subsection{Key Equivocation}
-Dalam sistem kripto, ketidakpastian mengenai kunci setelah mengamati ciphertext disebut **Key Equivocation** $H(K|C)$.
+Dalam analisis kripto, ketidakpastian yang tersisa mengenai kunci rahasia setelah mengamati ciphertext disebut **Key Equivocation** $H(K|C)$.
 
-\begin{thmbox}{Teorema 8: Rumus Key Equivocation}
-Misalkan $(\mathcal{P}, \mathcal{C}, \mathcal{K}, \mathcal{E}, \mathcal{D})$ suatu sistem kripto. Maka:
+\begin{thmbox}{Teorema 8: Formula Key Equivocation Shannon}
+Untuk sembarang sistem kriptografi $(\mathcal{P}, \mathcal{C}, \mathcal{K}, \mathcal{E}, \mathcal{D})$:
 \begin{equation}
+\label{eq:key_equivocation}
 H(K|C) = H(K) + H(P) - H(C)
 \end{equation}
 \end{thmbox}
 \begin{proof}
-Gunakan aturan rantai untuk tiga variabel: $H(K, P, C) = H(C|K, P) + H(K, P)$.
-Karena enkripsi bersifat deterministik ($y = e_K(x)$), pasangan $(K, P)$ menentukan $C$ secara tunggal $\implies H(C|K, P) = 0$. Karena $K$ dan $P$ saling bebas, $H(K, P) = H(K) + H(P)$. Maka:
-\[
-H(K, P, C) = H(K) + H(P).
-\]
-Demikian pula, pasangan $(K, C)$ menentukan plaintext secara tunggal ($x = d_K(y)$), sehingga $H(P|K, C) = 0 \implies H(K, P, C) = H(K, C)$.
-Dari sifat entropi bersyarat:
-\[
-H(K|C) = H(K, C) - H(C) = H(K, P, C) - H(C) = H(K) + H(P) - H(C).
-\]
+Tinjau entropi gabungan dari tiga variabel acak: kunci $K$, plaintext $P$, dan ciphertext $C$:
+\begin{enumerate}
+    \item Melalui aturan rantai: $H(K, P, C) = H(C|K, P) + H(K, P)$.
+    Karena enkripsi bersifat fungsi deterministik tunggal $y = e_K(x)$, jika kunci $K$ dan plaintext $P$ diketahui, maka ciphertext $C$ dapat dipastikan dengan pasti tanpa keraguan:
+    \[
+    H(C|K, P) = 0.
+    \]
+    Karena kunci $K$ dipilih independen terhadap plaintext $P$, $H(K, P) = H(K) + H(P)$. Maka:
+    \begin{equation}
+    \label{eq:proof_hkpc_1}
+    H(K, P, C) = H(K) + H(P).
+    \end{equation}
+    \item Di sisi lain, dari aturan rantai: $H(K, P, C) = H(P|K, C) + H(K, C)$.
+    Karena fungsi dekripsi juga deterministik tunggal $x = d_K(y)$, jika kunci $K$ dan ciphertext $C$ diketahui, teks asal dapat ditentukan secara pasti:
+    \[
+    H(P|K, C) = 0 \implies H(K, P, C) = H(K, C).
+    \]
+    \item Gabungkan kedua hasil: $H(K, C) = H(K) + H(P)$.
+    Berdasarkan definisi aturan rantai $H(K, C) = H(C) + H(K|C)$, maka:
+    \[
+    H(K|C) = H(K, C) - H(C) = H(K) + H(P) - H(C). 
+    \]
+\end{enumerate}
 \end{proof}
 
-\subsection{Entropi Bahasa Alami dan Redundansi}
-Plaintext dalam kehidupan nyata berasal dari bahasa natural (misalnya bahasa Inggris atau Indonesia) yang memuat struktur ketergantungan antar-huruf ($n$-gram).
+\subsection{Entropi Bahasa Alami \& Redundansi}
+Teks nyata (misal bahasa Inggris atau Indonesia) bukanlah barisan huruf acak independen, melainkan memiliki korelasi kuat antar-huruf berurutan ($n$-gram).
 \begin{conceptbox}{Entropi Bahasa ($H_L$) dan Redundansi ($R_L$)}
 \begin{enumerate}
-    \item \textbf{Entropi Bahasa Natural ($H_L$)}:
+    \item **Entropi per Huruf Bahasa Natural ($H_L$)**:
     \begin{equation}
+    \label{eq:HL_def}
     H_L = \lim_{n \to \infty} \frac{H(P^n)}{n}
     \end{equation}
-    Untuk karakter acak: $\log_2 26 \approx 4.70$ bit/huruf. Untuk bahasa Inggris riil (memperhatikan digram, trigram, dll.): $H_L \approx 1.0 - 1.5$ bit/huruf (lazim diambil estimasi $H_L \approx 1.25$ bit/huruf).
-    \item \textbf{Redundansi Bahasa ($R_L$)}:
+    \textit{Nilai tipikal}: Untuk alfabet 26 huruf acak murni: $\log_2 26 \approx 4.70$ bit/huruf. Melalui eksperimen empiris statistik $n$-gram, bahasa Inggris memiliki $H_L \approx 1.0 - 1.5$ bit/huruf (lazim diambil taksiran rata-rata $H_L \approx 1.25$ bit/huruf).
+    \item **Redundansi Bahasa ($R_L$)**:
+    Fraksi struktur bahasa yang mubazir (dapat diprediksi):
     \begin{equation}
+    \label{eq:RL_def}
     R_L = 1 - \frac{H_L}{\log_2 |\mathcal{P}|}
     \end{equation}
-    Untuk bahasa Inggris: $R_L \approx 1 - \frac{1.25}{4.70} \approx 0.75$ (sekitar 75\% teks bahasa Inggris bersifat redundan).
+    Untuk bahasa Inggris: $R_L \approx 1 - \frac{1.25}{\log_2 26} \approx 1 - \frac{1.25}{4.70} \approx 0.734 \approx 0.75$ ($75\%$ redundan).
 \end{enumerate}
 \end{conceptbox}
 
-\subsection{Batas Kunci Palsu ($\bar{s}_n$)}
-Jika penyerang memiliki komputasi tak terbatas dan mengamati ciphertext panjang $n$ ($y \in \mathcal{C}^n$):
+\subsection{Penurunan Batas Kunci Palsu ($\bar{s}_n$)}
+Misalkan ciphertext sepanjang $n$ karakter diamati: $y \in \mathcal{C}^n$.
 \begin{itemize}
-    \item Kunci yang menghasilkan teks terbaca yang bermakna (\textit{meaningful}) adalah kandidat kunci.
-    \item Karena hanya ada satu kunci asli yang benar, sisa kunci yang salah disebut \textbf{kunci palsu (\textit{spurious keys})}.
-    \item Untuk setiap ciphertext $y$, banyaknya kunci palsu adalah $|K(y)| - 1$.
+    \item Penyerang mencoba seluruh kunci $K \in \mathcal{K}$. Kunci yang menghasilkan teks asal terbaca (*meaningful plaintext*) disebut kandidat kunci konsisten:
+    \begin{equation}
+    K(y) = \{K \in \mathcal{K} : \exists x \in \mathcal{P}^n, p(x) > 0, e_K(x) = y\}
+    \end{equation}
+    \item Karena hanya ada tepat satu kunci asli yang digunakan, jumlah **kunci palsu (*spurious keys*)** adalah $|K(y)| - 1$.
+    \item **Ekspektasi Rata-Rata Kunci Palsu ($\bar{s}_n$)**:
+    \begin{equation}
+    \bar{s}_n = \sum_{y \in \mathcal{C}^n} p(y)(|K(y)| - 1) = \sum_{y \in \mathcal{C}^n} p(y)|K(y)| - 1
+    \end{equation}
 \end{itemize}
 
-\begin{thmbox}{Teorema 9: Batas Bawah Rata-Rata Kunci Palsu}
-Jika kunci dipilih secara acak dengan distribusi seragam, maka jumlah rata-rata kunci palsu $\bar{s}_n$ memenuhi:
+\begin{thmbox}{Teorema 9: Batas Bawah Ekspektasi Kunci Palsu}
+Untuk ciphertext panjang $n$ pada sistem dengan $|\mathcal{C}| = |\mathcal{P}|$ dan kunci seragam:
 \begin{equation}
+\label{eq:spurious_keys}
 \bar{s}_n \ge \frac{|\mathcal{K}|}{|\mathcal{P}|^{n \cdot R_L}} - 1
 \end{equation}
 \end{thmbox}
-Nilai $\frac{|\mathcal{K}|}{|\mathcal{P}|^{n R_L}} - 1$ akan meluruh mendekati 0 dengan sangat cepat seiring pertambahan panjang teks sandi $n$.
+\begin{proof}
+\begin{enumerate}
+    \item Dari Teorema 8 untuk urutan $n$ karakter:
+    \[
+    H(K|C^n) = H(K) + H(P^n) - H(C^n).
+    \]
+    Untuk $n$ cukup besar: $H(P^n) \approx n H_L = n(1 - R_L)\log_2 |\mathcal{P}|$.
+    Karena $|\mathcal{C}| = |\mathcal{P}|$, nilai maksimum $H(C^n) \le n \log_2 |\mathcal{C}| = n \log_2 |\mathcal{P}|$.
+    Maka:
+    \begin{equation}
+    \label{eq:proof_hkcn_ge}
+    H(K|C^n) \ge H(K) + n(1 - R_L)\log_2 |\mathcal{P}| - n \log_2 |\mathcal{P}| = H(K) - n R_L \log_2 |\mathcal{P}|.
+    \end{equation}
+    \item Di sisi lain, dari definisi entropi bersyarat dan ketaksamaan Jensen:
+    \begin{align*}
+    H(K|C^n) \&= \sum_{y \in \mathcal{C}^n} p(y) H(K|y) \le \sum_{y \in \mathcal{C}^n} p(y) \log_2 |K(y)| \\
+    \&\le \log_2\left( \sum_{y \in \mathcal{C}^n} p(y) |K(y)| \right) = \log_2(\bar{s}_n + 1).
+    \end{align*}
+    \item Gabungkan kedua pertidaksamaan:
+    \[
+    \log_2(\bar{s}_n + 1) \ge H(K|C^n) \ge H(K) - n R_L \log_2 |\mathcal{P}|.
+    \]
+    Karena kunci dipilih secara seragam, $H(K) = \log_2 |\mathcal{K}|$:
+    \[
+    \log_2(\bar{s}_n + 1) \ge \log_2 |\mathcal{K}| - \log_2\left( |\mathcal{P}|^{n R_L} \right) = \log_2\left( \frac{|\mathcal{K}|}{|\mathcal{P}|^{n R_L}} \right).
+    \]
+    Ambil antilogaritma:
+    \[
+    \bar{s}_n + 1 \ge \frac{|\mathcal{K}|}{|\mathcal{P}|^{n R_L}} \implies \bar{s}_n \ge \frac{|\mathcal{K}|}{|\mathcal{P}|^{n R_L}} - 1. 
+    \]
+\end{enumerate}
+\end{proof}
 
 \subsection{Jarak Unicity (\textit{Unicity Distance})}
 
-\begin{conceptbox}{Definisi dan Rumus Jarak Unicity ($n_0$)}
-\textbf{Jarak Unicity ($n_0$)} adalah panjang rata-rata ciphertext minimum yang dibutuhkan agar rata-rata jumlah kunci palsu menjadi nol ($\bar{s}_n = 0$). Pada titik ini, kunci dekripsi dapat ditentukan secara tunggal (unik).
+\begin{conceptbox}{Definisi \& Rumus Jarak Unicity ($n_0$)}
+\textbf{Jarak Unicity ($n_0$)} adalah panjang minimum teks sandi yang dibutuhkan oleh penyerang agar rata-rata jumlah kunci palsu menjadi nol ($\bar{s}_n = 0$). Pada kondisi ini, hanya ada satu kunci tunggal yang konsisten dengan teks sandi.
+
+\vspace{0.2em}
+\noindent\textbf{Penurunan Rumus}:
+Samakan batas bawah pada Teorema~\eqref{eq:spurious_keys} dengan nol:
+\[
+\frac{|\mathcal{K}|}{|\mathcal{P}|^{n_0 R_L}} - 1 \approx 0 \implies |\mathcal{P}|^{n_0 R_L} \approx |\mathcal{K}|.
+\]
+Ambil logaritma basis 2 pada kedua ruas:
+\[
+n_0 R_L \log_2 |\mathcal{P}| \approx \log_2 |\mathcal{K}|.
+\]
+Diperoleh **Rumus Jarak Unicity**:
 \begin{equation}
-n_0 \approx \frac{\log_2 |\mathcal{K}|}{R_L \log_2 |\mathcal{P}|}
+\label{eq:unicity_distance}
+n_0 \approx \frac{\log_2 |\mathcal{K}|}{R_L \log_2 |\mathcal{P}|} = \frac{H(K)}{R_L \log_2 |\mathcal{P}|}
 \end{equation}
 \end{conceptbox}
 
-\begin{examplebox}{Contoh Jarak Unicity Sandi Substitusi (Slide 57)}
-Pandang Sandi Substitusi Monoalfabetik bahasa Inggris:
+\begin{examplebox}{Contoh Substitusi Angka: Sandi Substitusi Monoalfabetik (Slide 57)}
+\textbf{Identifikasi Parameter}:
 \begin{itemize}
-    \item Alfabet: $|\mathcal{P}| = 26 \implies \log_2 |\mathcal{P}| \approx 4.70$ bit.
-    \item Ruang kunci: $|\mathcal{K}| = 26! \implies \log_2(26!) \approx 88.4$ bit.
-    \item Redundansi bahasa Inggris: $R_L \approx 0.75$.
+    \item Ukuran alfabet: $|\mathcal{P}| = 26 \implies \log_2 |\mathcal{P}| = \log_2 26 \approx 4.7004$ bit.
+    \item Ukuran ruang kunci: Permutasi 26 huruf alfabet $\implies |\mathcal{K}| = 26!$.
+    \[
+    \log_2 |\mathcal{K}| = \log_2(26!) = \sum_{k=1}^{26} \log_2 k \approx 88.382 \approx 88.4 \text{ bit}.
+    \]
+    \item Redundansi teks bahasa Inggris: $R_L \approx 0.75$.
 \end{itemize}
-Perhitungan:
+\noindent\textbf{Substitusi ke Rumus Jarak Unicity~\eqref{eq:unicity_distance}}:
 \[
-n_0 \approx \frac{88.4}{0.75 \times 4.70} \approx \frac{88.4}{3.525} \approx 25.07 \approx 25 \text{ karakter}.
+n_0 \approx \frac{\log_2 |\mathcal{K}|}{R_L \cdot \log_2 |\mathcal{P}|} \approx \frac{88.382}{0.75 \times 4.7004} = \frac{88.382}{3.5253} \approx 25.07 \approx 25 \text{ karakter}.
 \]
-\textbf{Kesimpulan}: Meskipun ruang kuncinya masif ($26! \approx 4 \times 10^{26}$ kemungkinan), dengan mengamati ciphertext sepanjang \textbf{25 karakter atau lebih}, kriptanalis secara matematis dipastikan dapat mengeliminasi seluruh kunci palsu dan menemukan kunci yang benar secara unik.
+\textbf{Kesimpulan Analisis}: Walaupun ruang kunci sandi substitusi sangat besar ($26! \approx 4.03 \times 10^{26}$ kemungkinan kunci), dengan hanya mencegat ciphertext sepanjang **25 huruf atau lebih**, penyerang secara teoritis dijamin dapat mengeliminasi seluruh kunci palsu dan mengidentifikasi kunci asli secara unik!
 \end{examplebox}
 
 % =========================================================================
 \section{Sistem Kripto Perkalian (\textit{Product Ciphers})}
 % =========================================================================
 
-\subsection{Cipher Endomorfik \& Komposisi}
-Suatu sistem kripto disebut **endomorfik** jika ruang teks asal sama dengan ruang teks sandi ($\mathcal{C} = \mathcal{P}$).
-
-Diberikan dua sistem kripto endomorfik $S_1 = (\mathcal{P}, \mathcal{P}, \mathcal{K}_1, \mathcal{E}_1, \mathcal{D}_1)$ dan $S_2 = (\mathcal{P}, \mathcal{P}, \mathcal{K}_2, \mathcal{E}_2, \mathcal{D}_2)$:
-\begin{itemize}
-    \item **Sistem Perkalian ($S_1 \times S_2$)**:
-    \begin{align*}
-    \text{Ruang Kunci}&: \mathcal{K} = \mathcal{K}_1 \times \mathcal{K}_2, \quad p(K_1, K_2) = p(K_1) \cdot p(K_2) \\
-    \text{Enkripsi}&: e_{(K_1, K_2)}(x) = e_{K_2}(e_{K_1}(x)) \\
-    \text{Dekripsi}&: d_{(K_1, K_2)}(y) = d_{K_1}(d_{K_2}(y))
-    \end{align*}
-    \item **Sifat Aljabar**:
-    \begin{itemize}
-        \item **Asosiatif**: Selalu berlaku untuk setiap sistem kripto: $(S_1 \times S_2) \times S_3 = S_1 \times (S_2 \times S_3)$.
-        \item **Komutatif**: Umumnya tidak komutatif ($S_1 \times S_2 \neq S_2 \times S_1$). Namun ada pasangan khusus yang komutatif.
-    \end{itemize}
-\end{itemize}
-
-\begin{examplebox}{Contoh Komutatif: Sandi Affine (Slide 59--61)}
-Misalkan $M$ adalah sandi multiplikatif ($e_a(x) = ax \bmod 26$) dan $S$ adalah sandi geser ($e_K(x) = x + K \bmod 26$).
-\begin{itemize}
-    \item $M \times S$: $e_{(a, K)}(x) = ax + K \bmod 26$ (definisi sandi Affine).
-    \item $S \times M$: $e_{(K, a)}(x) = a(x + K) = ax + aK \bmod 26$.
-\end{itemize}
-Karena $\gcd(a, 26) = 1$, pemetaan $K \mapsto aK \bmod 26$ adalah bijeksi satu-satu pada $\mathbb{Z}_{26}$. Akibatnya, setiap kunci sandi Affine muncul dengan peluang yang persis sama ($1/312$).
-\[
-M \times S = S \times M = \text{Sandi Affine}.
-\]
-Kedua sistem ini bersifat **komutatif**.
-\end{examplebox}
-
-\subsection{Idempotensi dan Fondasi Kriptografi Modern}
-
-\begin{conceptbox}{Definisi Idempotensi Sistem Kripto}
-Sistem kripto $S$ dikatakan \textbf{idempoten} jika:
+\subsection{Cipher Endomorfik \& Definisi Perkalian}
+Sistem kripto $(\mathcal{P}, \mathcal{C}, \mathcal{K}, \mathcal{E}, \mathcal{D})$ disebut **endomorfik** jika ruang teks sandi sama dengan ruang teks asal:
 \begin{equation}
+\mathcal{C} = \mathcal{P}
+\end{equation}
+
+\noindent\textbf{Operasi Perkalian (Komposisi Berantai)}:
+Diberikan dua cipher endomorfik $S_1 = (\mathcal{P}, \mathcal{P}, \mathcal{K}_1, \mathcal{E}_1, \mathcal{D}_1)$ dan $S_2 = (\mathcal{P}, \mathcal{P}, \mathcal{K}_2, \mathcal{E}_2, \mathcal{D}_2)$. Perkalian $S_1 \times S_2$ didefinisikan sebagai sistem $(\mathcal{P}, \mathcal{P}, \mathcal{K}_1 \times \mathcal{K}_2, \mathcal{E}, \mathcal{D})$:
+\begin{align}
+\label{eq:product_enc}
+\text{Enkripsi}\&: e_{(K_1, K_2)}(x) = e_{K_2}(e_{K_1}(x)) \\
+\label{eq:product_dec}
+\text{Dekripsi}\&: d_{(K_1, K_2)}(y) = d_{K_1}(d_{K_2}(y)) \\
+\label{eq:product_prob}
+\text{Peluang Kunci}\&: p_{\mathcal{K}}(K_1, K_2) = p_{\mathcal{K}_1}(K_1) \cdot p_{\mathcal{K}_2}(K_2)
+\end{align}
+
+\subsection{Sifat Aljabar Sistem Perkalian}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Asosiatif}: Selalu berlaku untuk setiap sistem kripto:
+    \begin{equation}
+    (S_1 \times S_2) \times S_3 = S_1 \times (S_2 \times S_3)
+    \end{equation}
+    \item \textbf{Komutatif}: Secara umum $S_1 \times S_2 \neq S_2 \times S_1$. Namun terdapat pasangan khusus yang komutatif:
+    \begin{quote}
+    \textbf{Contoh (Slide 59--61)}: Misalkan $M$ sandi multiplikatif ($e_a(x) = ax \bmod 26$, $\gcd(a,26)=1$) dan $S$ sandi geser ($e_K(x) = x + K \bmod 26$).
+    \begin{itemize}
+        \item $M \times S$: $e_{(a, K)}(x) = ax + K \bmod 26$ (definisi Sandi Affine).
+        \item $S \times M$: $e_{(K, a)}(x) = a(x + K) = ax + aK \bmod 26$.
+    \end{itemize}
+    Karena $\gcd(a, 26) = 1$, pemetaan $K \mapsto aK \bmod 26$ adalah bijeksi satu-satu pada $\mathbb{Z}_{26}$. Akibatnya kedua urutan komposisi menghasilkan distribusi probabilitas kunci sandi Affine yang identik ($p = \frac{1}{12 \times 26} = \frac{1}{312}$). Maka:
+    \begin{equation}
+    M \times S = S \times M = \text{Sandi Affine}.
+    \end{equation}
+    \end{quote}
+\end{enumerate}
+
+\subsection{Idempotensi \& Relevansinya dengan Kriptografi Modern}
+
+\begin{conceptbox}{Definisi Cipher Idempoten}
+Suatu sistem kripto $S$ dikatakan **idempoten** jika:
+\begin{equation}
+\label{eq:idempotent}
 S^2 = S \times S = S
 \end{equation}
 \end{conceptbox}
 
+\noindent\textbf{Dampak Kriptografis Idempotensi}:
 \begin{itemize}[leftmargin=*]
-    \item **Dampak Sistem Idempoten**:
-    Jika $S$ idempoten, mengenkripsi pesan berulang kali ($S^k$) dengan kunci acak yang berbeda **tidak meningkatkan keamanan sedikit pun**, karena selalu ada satu kunci tunggal pada sistem $S$ asal yang menghasilkan pemetaan yang identik.
-    \item **Contoh Cipher Idempoten**:
-    Sandi Geser, Substitusi Monoalfabetik, Sandi Affine, Sandi Hill, Sandi Vigen\`ere, dan Sandi Permutasi semuanya bersifat idempoten!
+    \item Jika sistem $S$ idempoten, mengenkripsi ciphertext berkali-kali menggunakan kunci berbeda ($S^k$) **sama sekali tidak menambah keamanan**, karena terdapat kunci tunggal lain di dalam sistem $S$ yang memetakan plaintext ke ciphertext yang sama.
+    \item **Seluruh cipher klasik bersifat idempoten**:
+    \begin{itemize}
+        \item Sandi Geser: $(x + K_1) + K_2 \equiv x + (K_1 + K_2) \pmod{26}$.
+        \item Sandi Substitusi: Komposisi dua permutasi tetap merupakan permutasi ($\pi_2 \circ \pi_1 \in S_{26}$).
+        \item Sandi Affine: $a_2(a_1 x + b_1) + b_2 \equiv (a_2 a_1)x + (a_2 b_1 + b_2) \pmod{26}$.
+        \item Sandi Hill, Vigen\`ere, dan Sandi Permutasi semuanya idempoten.
+    \end{itemize}
     \item **Cipher Tidak Idempoten ($S^2 \neq S$)**:
-    Jika sistem tidak idempoten, maka iterasi berulang $S^k$ ($k \ge 2$) memiliki potensi **meningkatkan kekuatan keamanan secara drastis**.
-    \item **Hubungan dengan Cipher Modern (DES \& AES)**:
-    Prinsip perkalian tak-idempoten inilah yang mendasari cipher blok modern. Algoritma seperti \textbf{Data Encryption Standard (DES)} melakukan iterasi ronde hingga 16 kali, dan \textbf{AES} melakukan 10--14 ronde, dengan mengombinasikan substitusi non-linear (\textit{confusion}) dan permutasi linear (\textit{diffusion}) dalam struktur berulang.
+    Jika sistem tidak idempoten, maka iterasi berulang $S^k$ ($k \ge 2$) akan **meningkatkan kekuatan keamanan secara drastis**.
+    \item **Fondasi Arsitektur Cipher Modern (DES \& AES)**:
+    Prinsip perkalian tak-idempoten ini diadopsi secara langsung dalam struktur \textit{Substitution-Permutation Network} (SPN) dan \textit{Feistel Network}. Penggabungan komponen non-linear (S-Box / *confusion*) dan transposisi linear (P-Box / *diffusion*) yang diulang dalam banyak ronde (16 ronde pada DES, 10--14 ronde pada AES) mencegah penyederhanaan matematis dan memperbesar batas keamanan secara komputasi.
 \end{itemize}
 
 % =========================================================================
-\section{Tabel Rangkuman Rumus Cepat}
+\section{Bank Soal Latihan \& Pembahasan Matematis Lengkap}
+% =========================================================================
+
+\begin{exercisebox}{Latihan 1 (Soal UTS 2024): Huffman Coding \& Perbandingan Entropi}
+\textbf{Soal}:
+Misalkan variabel acak $X = \{a, b, c, d, e\}$ mempunyai distribusi peluang:
+\[
+p(a) = 0.20, \quad p(b) = 0.35, \quad p(c) = 0.17, \quad p(d) = 0.03, \quad p(e) = 0.25.
+\]
+Gunakan algoritma Huffman untuk mencari encoding prefix-free optimal dari $X$. Bandingkan panjang encoding rata-rata tersebut dengan entropi $H(X)$.
+\end{exercisebox}
+
+\noindent\textbf{Pembahasan Lengkap}:
+
+\noindent\textbf{Langkah 1: Tuliskan Rumus yang Digunakan}
+\begin{enumerate}
+    \item Rumus Entropi Shannon (Rumus~\eqref{eq:entropy_def}):
+    \[
+    H(X) = - \sum_{i=1}^n p_i \log_2 p_i.
+    \]
+    \item Rumus Panjang Rata-Rata Encoding (Rumus~\eqref{eq:avg_codelength}):
+    \[
+    l(f) = \sum_{i=1}^n p(x_i) \cdot |f(x_i)|.
+    \]
+    \item Teorema Batas Huffman (Rumus~\eqref{eq:huffman_bounds}):
+    \[
+    H(X) \le l(f) < H(X) + 1.
+    \]
+\end{enumerate}
+
+\noindent\textbf{Langkah 2: Konstruksi Pohon Huffman Iteratif}
+Urutkan simbol berdasarkan peluang dari besar ke kecil:
+\[
+b: 0.35, \quad e: 0.25, \quad a: 0.20, \quad c: 0.17, \quad d: 0.03.
+\]
+\begin{itemize}
+    \item \textit{Iterasi 1}: Gabungkan dua peluang terkecil: $d(0.03)$ dan $c(0.17) \implies \{c,d\}$ dengan peluang $0.03 + 0.17 = 0.20$.
+    Beri label cabang: $d \to 0$, $c \to 1$.
+    Daftar elemen sekarang: $b(0.35), \, e(0.25), \, a(0.20), \, \{c,d\}(0.20)$.
+    \item \textit{Iterasi 2}: Gabungkan dua terkecil berikutnya: $a(0.20)$ dan $\{c,d\}(0.20) \implies \{a,c,d\}$ dengan peluang $0.20 + 0.20 = 0.40$.
+    Beri label cabang: $a \to 0$, $\{c,d\} \to 1$.
+    Daftar elemen sekarang: $\{a,c,d\}(0.40), \, b(0.35), \, e(0.25)$.
+    \item \textit{Iterasi 3}: Gabungkan dua terkecil: $e(0.25)$ dan $b(0.35) \implies \{e,b\}$ dengan peluang $0.25 + 0.35 = 0.60$.
+    Beri label cabang: $e \to 0$, $b \to 1$.
+    Daftar elemen sekarang: $\{e,b\}(0.60), \, \{a,c,d\}(0.40)$.
+    \item \textit{Iterasi 4}: Gabungkan $\{a,c,d\}(0.40)$ dan $\{e,b\}(0.60) \implies \text{Akar}(1.00)$.
+    Beri label cabang: $\{a,c,d\} \to 0$, $\{e,b\} \to 1$.
+\end{itemize}
+
+\noindent\textbf{Tabel Hasil Pengkodean Huffman}:
+\begin{center}
+\begin{tabular}{ccccc}
+\toprule
+\textbf{Simbol} & \textbf{Peluang $p(x)$} & \textbf{Kata Sandi (Codeword) $f(x)$} & \textbf{Panjang $|f(x)|$} & $p(x) \cdot |f(x)|$ \\
+\midrule
+$a$ & $0.20$ & \texttt{00} & 2 bit & $0.20 \times 2 = 0.40$ \\
+$b$ & $0.35$ & \texttt{11} & 2 bit & $0.35 \times 2 = 0.70$ \\
+$c$ & $0.17$ & \texttt{011} & 3 bit & $0.17 \times 3 = 0.51$ \\
+$d$ & $0.03$ & \texttt{010} & 3 bit & $0.03 \times 3 = 0.09$ \\
+$e$ & $0.25$ & \texttt{10} & 2 bit & $0.25 \times 2 = 0.50$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent\textbf{Langkah 3: Hitung Panjang Rata-Rata Encoding $l(f)$}:
+\[
+l(f) = 0.40 + 0.70 + 0.51 + 0.09 + 0.50 = 2.20 \text{ bit}.
+\]
+
+\noindent\textbf{Langkah 4: Hitung Nilai Entropi $H(X)$ secara Detail}:
+\begin{align*}
+H(X) \&= - \left[ 0.20\log_2(0.20) + 0.35\log_2(0.35) + 0.17\log_2(0.17) + 0.03\log_2(0.03) + 0.25\log_2(0.25) \right] \\
+\&= - \Big[ 0.20(-2.3219) + 0.35(-1.5146) + 0.17(-2.5564) + 0.03(-5.0589) + 0.25(-2.0000) \Big] \\
+\&= - \Big[ -0.46438 - 0.53011 - 0.43459 - 0.15177 - 0.50000 \Big] \\
+\&= 2.08085 \approx 2.081 \text{ bit}.
+\end{align*}
+
+\noindent\textbf{Langkah 5: Analisis Perbandingan}:
+Substitusikan $l(f) = 2.20$ dan $H(X) \approx 2.081$ ke Teorema Batas Huffman~\eqref{eq:huffman_bounds}:
+\[
+2.081 \le 2.20 < 2.081 + 1 = 3.081 \quad (\text{Terpenuhi!})
+\]
+\textbf{Kesimpulan}: Pengkodean Huffman terbukti bebas-prefiks dan optimal, menghasilkan panjang rata-rata sebesar $2.20$ bit yang sangat mendekati batas teoretis bawah entropi $2.081$ bit (efisiensi kompresi $\eta = \frac{H(X)}{l(f)} = \frac{2.081}{2.20} \approx 94.6\%$).
+
+\vspace{0.6cm}
+
+\begin{exercisebox}{Latihan 2 (Soal Diskusi Kelompok 2023): Key Equivocation \& Entropi Bersyarat}
+\textbf{Soal}:
+Pandang sistem kripto dengan:
+\begin{itemize}
+    \item Ruang teks asal: $\mathcal{P} = \{a, b, c\}$ dengan distribusi $p_{\mathcal{P}}(a) = \frac{1}{2}, \; p_{\mathcal{P}}(b) = \frac{1}{3}, \; p_{\mathcal{P}}(c) = \frac{1}{6}$.
+    \item Ruang kunci: $\mathcal{K} = \{K_1, K_2, K_3\}$ dipilih dengan peluang seragam sama: $p_{\mathcal{K}}(K_i) = \frac{1}{3}$.
+    \item Ruang teks sandi: $\mathcal{C} = \{1, 2, 3, 4\}$.
+    \item Matriks Enkripsi $e_K(x)$:
+    \begin{center}
+    \begin{tabular}{c|ccc}
+    \toprule
+    Kunci & $a$ & $b$ & $c$ \\
+    \midrule
+    $K_1$ & 1 & 2 & 3 \\
+    $K_2$ & 2 & 3 & 4 \\
+    $K_3$ & 3 & 4 & 1 \\
+    \bottomrule
+    \end{tabular}
+    \end{center}
+\end{itemize}
+Hitung nilai $H(P), \; H(C), \; H(K), \; H(K|C)$, dan $H(P|C)$.
+\end{exercisebox}
+
+\noindent\textbf{Pembahasan Lengkap}:
+
+\noindent\textbf{Langkah 1: Rumus yang Digunakan}
+\begin{enumerate}
+    \item Entropi Variabel Tunggal (Rumus~\eqref{eq:entropy_def}): $H(X) = -\sum p_i \log_2 p_i$.
+    \item Key Equivocation (Teorema 8, Rumus~\eqref{eq:key_equivocation}):
+    \[
+    H(K|C) = H(K) + H(P) - H(C).
+    \]
+    \item Entropi Bersyarat Plaintext terhadap Ciphertext:
+    Karena pasangan $(K, C)$ menentukan plaintext secara deterministik tunggal ($H(P|K, C) = 0$), berlaku hubungan matematis:
+    \[
+    H(P|C) = H(P, C) - H(C).
+    \]
+\end{enumerate}
+
+\noindent\textbf{Langkah 2: Hitung $H(P)$ dan $H(K)$}
+\begin{align*}
+H(P) \&= - \left[ \frac{1}{2}\log_2\left(\frac{1}{2}\right) + \frac{1}{3}\log_2\left(\frac{1}{3}\right) + \frac{1}{6}\log_2\left(\frac{1}{6}\right) \right] \\
+\&= - \left[ \frac{1}{2}(-1) + \frac{1}{3}(-\log_2 3) + \frac{1}{6}(-\log_2 2 - \log_2 3) \right] \\
+\&= \frac{1}{2} + \frac{1}{3}\log_2 3 + \frac{1}{6}(1 + \log_2 3) = \frac{1}{2} + \frac{1}{6} + \left(\frac{1}{3} + \frac{1}{6}\right)\log_2 3 \\
+\&= \frac{4}{6} + \frac{3}{6}\log_2 3 = \frac{2}{3} + \frac{1}{2}\log_2 3 \approx 0.6667 + 0.5(1.5850) \approx 1.4591 \text{ bit}.
+\end{align*}
+Karena distribusi kunci seragam dengan $|\mathcal{K}| = 3$:
+\[
+H(K) = \log_2 3 \approx 1.5850 \text{ bit}.
+\]
+
+\noindent\textbf{Langkah 3: Hitung Distribusi Marginal Ciphertext $p_{\mathcal{C}}(y)$}
+Gunakan Rumus Probabilitas Total~\eqref{eq:marginal_py} dengan $p(K_i, x) = \frac{1}{3} \cdot p(x)$:
+\begin{align*}
+p_{\mathcal{C}}(1) \&= P(K_1, a) + P(K_3, c) = \frac{1}{3}\left(\frac{1}{2}\right) + \frac{1}{3}\left(\frac{1}{6}\right) = \frac{1}{6} + \frac{1}{18} = \frac{4}{18} = \frac{2}{9} \\
+p_{\mathcal{C}}(2) \&= P(K_1, b) + P(K_2, a) = \frac{1}{3}\left(\frac{1}{3}\right) + \frac{1}{3}\left(\frac{1}{2}\right) = \frac{1}{9} + \frac{1}{6} = \frac{5}{18} \\
+p_{\mathcal{C}}(3) \&= P(K_1, c) + P(K_2, b) + P(K_3, a) = \frac{1}{3}\left(\frac{1}{6}\right) + \frac{1}{3}\left(\frac{1}{3}\right) + \frac{1}{3}\left(\frac{1}{2}\right) = \frac{1}{18} + \frac{2}{18} + \frac{3}{18} = \frac{6}{18} = \frac{1}{3} \\
+p_{\mathcal{C}}(4) \&= P(K_2, c) + P(K_3, b) = \frac{1}{3}\left(\frac{1}{6}\right) + \frac{1}{3}\left(\frac{1}{3}\right) = \frac{1}{18} + \frac{2}{18} = \frac{3}{18} = \frac{1}{6}
+\end{align*}
+\textit{Cek total}: $\frac{4}{18} + \frac{5}{18} + \frac{6}{18} + \frac{3}{18} = 1$.
+
+\noindent\textbf{Langkah 4: Hitung Entropi Ciphertext $H(C)$}
+\begin{align*}
+H(C) \&= - \left[ \frac{2}{9}\log_2\left(\frac{2}{9}\right) + \frac{5}{18}\log_2\left(\frac{5}{18}\right) + \frac{1}{3}\log_2\left(\frac{1}{3}\right) + \frac{1}{6}\log_2\left(\frac{1}{6}\right) \right] \\
+\&= - \left[ \frac{2}{9}(1 - 2\log_2 3) + \frac{5}{18}(\log_2 5 - 1 - 2\log_2 3) + \frac{1}{3}(-\log_2 3) + \frac{1}{6}(-1 - \log_2 3) \right] \\
+\&\approx - \Big[ 0.2222(-2.1699) + 0.2778(-1.8480) + 0.3333(-1.5850) + 0.1667(-2.5850) \Big] \\
+\&= 0.4822 + 0.5133 + 0.5283 + 0.4308 \approx 1.9547 \text{ bit}.
+\end{align*}
+
+\noindent\textbf{Langkah 5: Hitung Key Equivocation $H(K|C)$ Menggunakan Teorema 8}
+Gunakan Rumus~\eqref{eq:key_equivocation}:
+\[
+H(K|C) = H(K) + H(P) - H(C) = 1.5850 + 1.4591 - 1.9547 = 1.0894 \text{ bit}.
+\]
+
+\noindent\textbf{Langkah 6: Hitung $H(P|C)$}
+Perhatikan bahwa untuk setiap pasangan $(K, x)$, dihasilkan ciphertext unik $y = e_K(x)$, dan matriks enkripsinya invertible jika kunci diberikan. Pasangan $(x, y)$ yang memiliki peluang positif adalah tepat 9 pasangan dengan probabilitas $p(x, y) = p(x) \cdot p(K) = \frac{1}{3}p(x)$:
+\begin{itemize}
+    \item 3 pasangan dengan nilai $x=a$: masing-masing berpeluang $\frac{1}{3} \cdot \frac{1}{2} = \frac{1}{6}$.
+    \item 3 pasangan dengan nilai $x=b$: masing-masing berpeluang $\frac{1}{3} \cdot \frac{1}{3} = \frac{1}{9}$.
+    \item 3 pasangan dengan nilai $x=c$: masing-masing berpeluang $\frac{1}{3} \cdot \frac{1}{6} = \frac{1}{18}$.
+\end{itemize}
+Entropi bersama $H(P, C)$ dihitung langsung:
+\begin{align*}
+H(P, C) \&= - \left[ 3 \times \frac{1}{6}\log_2\left(\frac{1}{6}\right) + 3 \times \frac{1}{9}\log_2\left(\frac{1}{9}\right) + 3 \times \frac{1}{18}\log_2\left(\frac{1}{18}\right) \right] \\
+\&= - \left[ \frac{1}{2}\log_2\left(\frac{1}{6}\right) + \frac{1}{3}\log_2\left(\frac{1}{9}\right) + \frac{1}{6}\log_2\left(\frac{1}{18}\right) \right] \\
+\&= \frac{1}{2}(2.5850) + \frac{1}{3}(3.1699) + \frac{1}{6}(4.1699) = 1.2925 + 1.0566 + 0.6950 = 3.0441 \text{ bit}.
+\end{align*}
+Maka nilai $H(P|C)$ adalah:
+\[
+H(P|C) = H(P, C) - H(C) = 3.0441 - 1.9547 = 1.0894 \text{ bit}.
+\]
+\textit{Catatan Teoretis Menarik}: Nilai $H(P|C) = H(K|C) = 1.0894$ bit karena setiap pasangan $(x, y)$ menentukan kunci $K$ secara unik tunggal pada matriks enkripsi tersebut.
+
+\vspace{0.3em}
+\noindent\textbf{Rangkuman Jawaban Latihan 2}:
+\[
+\mathbf{H(P) \approx 1.4591 \text{ bit}}, \quad \mathbf{H(K) \approx 1.5850 \text{ bit}}, \quad \mathbf{H(C) \approx 1.9547 \text{ bit}},
+\]
+\[
+\mathbf{H(K|C) \approx 1.0894 \text{ bit}}, \quad \mathbf{H(P|C) \approx 1.0894 \text{ bit}}.
+\]
+
+\vspace{0.6cm}
+
+\begin{exercisebox}{Latihan 3: Perhitungan Jarak Unicity Berbagai Macam Cipher Klasik}
+\textbf{Soal}:
+Asumsikan bahasa yang digunakan adalah bahasa Inggris dengan $H_L = 1.25$ bit/huruf dan alfabet $|\mathcal{P}| = 26$ sehingga $R_L \approx 0.75$. Tentukan Jarak Unicity ($n_0$) dari:
+\begin{enumerate}
+    \item Sandi Geser (\textit{Shift Cipher}).
+    \item Sandi Affine atas $\mathbb{Z}_{26}$.
+    \item Sandi Vigen\`ere dengan panjang kunci $m = 5$.
+    \item Sandi Hill dengan ukuran matriks $2 \times 2$ ($m = 2$).
+\end{enumerate}
+\end{exercisebox}
+
+\noindent\textbf{Pembahasan Lengkap}:
+
+\noindent\textbf{Rumus yang Digunakan (Rumus~\eqref{eq:unicity_distance})}:
+\[
+n_0 \approx \frac{\log_2 |\mathcal{K}|}{R_L \log_2 |\mathcal{P}|}
+\]
+dengan penyebut konstan:
+\[
+R_L \log_2 |\mathcal{P}| \approx 0.75 \times \log_2 26 \approx 0.75 \times 4.7004 \approx 3.5253 \text{ bit/karakter}.
+\]
+
+\begin{enumerate}[leftmargin=*]
+    \item **Sandi Geser (\textit{Shift Cipher})**:
+    \begin{itemize}
+        \item Ruang kunci: $|\mathcal{K}| = 26$.
+        \item Pembilang: $\log_2 |\mathcal{K}| = \log_2 26 \approx 4.7004$ bit.
+        \item Perhitungan:
+        \[
+        n_0 \approx \frac{4.7004}{3.5253} = \frac{4.7004}{0.75 \times 4.7004} = \frac{1}{0.75} = \frac{4}{3} \approx 1.33 \approx 2 \text{ karakter}.
+        \]
+        \textbf{Makna}: Ciphertext sepanjang 2 karakter sudah cukup untuk memecahkan sandi geser secara unik.
+    \end{itemize}
+
+    \item **Sandi Affine atas $\mathbb{Z}_{26}$**:
+    \begin{itemize}
+        \item Kunci berbentuk $(a, b)$ dengan $\gcd(a, 26) = 1$ dan $b \in \mathbb{Z}_{26}$.
+        \item Nilai $a$ yang relatif prima dengan 26 adalah $\phi(26) = \phi(2)\phi(13) = 1 \times 12 = 12$ nilai.
+        \item Nilai $b$ memiliki 26 kemungkinan.
+        \item Total ruang kunci: $|\mathcal{K}| = 12 \times 26 = 312$.
+        \item Pembilang: $\log_2 |\mathcal{K}| = \log_2 312 \approx 8.2854$ bit.
+        \item Perhitungan:
+        \[
+        n_0 \approx \frac{8.2854}{3.5253} \approx 2.35 \approx 3 \text{ karakter}.
+        \]
+        \textbf{Makna}: Dibutuhkan sekitar 3 karakter ciphertext bahasa Inggris untuk menentukan kunci sandi Affine secara tunggal.
+    \end{itemize}
+
+    \item **Sandi Vigen\`ere dengan Panjang Kunci $m = 5$**:
+    \begin{itemize}
+        \item Ruang kunci terdiri atas seluruh untai huruf panjang 5: $|\mathcal{K}| = 26^5$.
+        \item Pembilang: $\log_2 |\mathcal{K}| = \log_2(26^5) = 5 \log_2 26 \approx 5 \times 4.7004 = 23.502$ bit.
+        \item Perhitungan:
+        \[
+        n_0 \approx \frac{5 \log_2 26}{0.75 \log_2 26} = \frac{5}{0.75} = \frac{20}{3} \approx 6.67 \approx 7 \text{ karakter}.
+        \]
+        \textbf{Rumus Umum Vigen\`ere}: $n_0 \approx \frac{m}{R_L}$. Untuk $m = 5$, $n_0 \approx \frac{5}{0.75} \approx 7$ karakter.
+    \end{itemize}
+
+    \item **Sandi Hill Berukuran $2 \times 2$**:
+    \begin{itemize}
+        \item Ruang kunci adalah grup matriks terbalikkan $\mathrm{GL}(2, \mathbb{Z}_{26})$.
+        \item Berdasarkan Teorema Sisa Cina: $|\mathrm{GL}(2, \mathbb{Z}_{26})| = |\mathrm{GL}(2, \mathbb{Z}_{2})| \times |\mathrm{GL}(2, \mathbb{Z}_{13})|$.
+        \[
+        |\mathrm{GL}(2, \mathbb{Z}_{2})| = (2^2 - 1)(2^2 - 2) = 3 \times 2 = 6.
+        \]
+        \[
+        |\mathrm{GL}(2, \mathbb{Z}_{13})| = (13^2 - 1)(13^2 - 13) = (168)(156) = 26.208.
+        \]
+        \[
+        |\mathcal{K}| = 6 \times 26.208 = 157.248.
+        \]
+        \item Pembilang: $\log_2 |\mathcal{K}| = \log_2(157.248) \approx 17.2626$ bit.
+        \item Perhitungan:
+        \[
+        n_0 \approx \frac{17.2626}{3.5253} \approx 4.89 \approx 5 \text{ karakter}.
+        \]
+        \textbf{Makna}: Sekitar 5 karakter ciphertext (atau 3 blok digram) sudah cukup untuk membatasi kunci sandi Hill $2 \times 2$ secara unik.
+    \end{itemize}
+\end{enumerate}
+
+% =========================================================================
+\section{Tabel Rangkuman Rumus Cepat \& Panduan Penggunaan}
 % =========================================================================
 
 \begin{table}[H]
 \centering
-\renewcommand{\arraystretch}{1.5}
-\begin{tabular}{p{4.2cm} p{5.5cm} p{6.2cm}}
+\renewcommand{\arraystretch}{1.55}
+\begin{tabular}{p{3.8cm} p{5.8cm} p{6.2cm}}
 \toprule
-\textbf{Konsep} & \textbf{Formula Matematis} & \textbf{Keterangan} \\
+\textbf{Nama Konsep / Teorema} & \textbf{Persamaan Lengkap} & \textbf{Kapan dan Cara Menggunakannya} \\
 \midrule
-\textbf{Keamanan Sempurna} & $p_{\mathcal{P}}(x|y) = p_{\mathcal{P}}(x)$ & Ciphertext tidak membocorkan plaintext \\
-\textbf{Teorema Shannon} & $|\mathcal{K}| \ge |\mathcal{C}| \ge |\mathcal{P}|, \; p(K) = \frac{1}{|\mathcal{K}|}$ & Syarat perlu \& cukup untuk $|\mathcal{K}| = |\mathcal{C}| = |\mathcal{P}|$ \\
-\textbf{Entropi Shannon} & $H(X) = -\sum p_i \log_2 p_i$ & Ketidakpastian/informasi dalam bit \\
-\textbf{Entropi Maksimum} & $H(X) \le \log_2 n$ & Maksimal j.h.j distribusi seragam \\
-\textbf{Aturan Rantai} & $H(X, Y) = H(Y) + H(X|Y)$ & Mengaitkan entropi bersama dan bersyarat \\
-\textbf{Subaditivitas} & $H(X, Y) \le H(X) + H(Y)$ & Kesamaan j.h.j $X$ dan $Y$ independen \\
-\textbf{Key Equivocation} & $H(K|C) = H(K) + H(P) - H(C)$ & Sisa ketidakpastian kunci pasca-ciphertext \\
-\textbf{Redundansi Bahasa} & $R_L = 1 - \frac{H_L}{\log_2 |\mathcal{P}|}$ & Fraksi struktur bahasa ($R_{\text{Inggris}} \approx 0.75$) \\
-\textbf{Batas Kunci Palsu} & $\bar{s}_n \ge \frac{|\mathcal{K}|}{|\mathcal{P}|^{n R_L}} - 1$ & Menuju 0 eksponensial seiring bertambahnya $n$ \\
-\textbf{Jarak Unicity} & $n_0 \approx \frac{\log_2 |\mathcal{K}|}{R_L \log_2 |\mathcal{P}|}$ & Panjang teks sandi agar kunci unik ($n_0 \approx 25$) \\
-\textbf{Cipher Idempoten} & $S^2 = S$ & Enkripsi bertingkat tidak menambah keamanan \\
+\textbf{Peluang Marginal Ciphertext} & $p(y) = \sum_{\{K : y \in C(K)\}} p(K) p(d_K(y))$ & Mencari distribusi probabilitas $p_{\mathcal{C}}(y)$ dari matriks enkripsi. \\
+\textbf{Aturan Bayes Plaintext} & $p(x|y) = \frac{p(x) \sum_{\{K : x = d_K(y)\}} p(K)}{p(y)}$ & Menghitung probabilitas a posteriori pesan setelah ciphertext diamati. \\
+\textbf{Keamanan Sempurna} & $p(x|y) = p(x) \iff p(y|x) = p(y)$ & Membuktikan kesempurnaan cipher (seperti sandi geser 1 karakter). \\
+\textbf{Karakterisasi Shannon} & $|\mathcal{K}| \ge |\mathcal{C}| \ge |\mathcal{P}|, \; p(K) = \frac{1}{|\mathcal{K}|}$ & Syarat perlu dan cukup saat ukuran ketiga ruang sama. \\
+\textbf{Entropi Shannon} & $H(X) = -\sum_{i=1}^n p_i \log_2 p_i$ & Menghitung ketidakpastian / ukuran informasi dari distribusi apa pun. \\
+\textbf{Entropi Maksimum} & $H(X) \le \log_2 n$ & Bernilai tepat $\log_2 n$ jika dan hanya jika berdistribusi seragam. \\
+\textbf{Aturan Rantai Entropi} & $H(X, Y) = H(Y) + H(X|Y)$ & Mengurai entropi gabungan menjadi marginal dan bersyarat. \\
+\textbf{Ketaksamaan Subaditivitas} & $H(X, Y) \le H(X) + H(Y)$ & Bernilai sama j.h.j variabel $X$ dan $Y$ saling bebas (independen). \\
+\textbf{Key Equivocation} & $H(K|C) = H(K) + H(P) - H(C)$ & Menghitung sisa ketidakpastian kunci setelah observasi ciphertext. \\
+\textbf{Redundansi Bahasa} & $R_L = 1 - \frac{H_L}{\log_2 |\mathcal{P}|}$ & Menghitung fraksi struktur bahasa alami ($R_{\text{Inggris}} \approx 0.75$). \\
+\textbf{Ekspektasi Kunci Palsu} & $\bar{s}_n \ge \frac{|\mathcal{K}|}{|\mathcal{P}|^{n R_L}} - 1$ & Mengestimasi sisa kunci salah yang menghasilkan teks bermakna. \\
+\textbf{Jarak Unicity} & $n_0 \approx \frac{\log_2 |\mathcal{K}|}{R_L \log_2 |\mathcal{P}|}$ & Menentukan panjang minimal teks sandi agar kunci unik tunggal. \\
+\textbf{Idempotensi Cipher} & $S^2 = S \times S = S$ & Menguji apakah enkripsi ganda menambah tingkat keamanan. \\
 \bottomrule
 \end{tabular}
 \end{table}
