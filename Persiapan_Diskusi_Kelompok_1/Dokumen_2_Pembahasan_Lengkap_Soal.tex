@@ -1,0 +1,1061 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    pdftitle={Pembahasan Lengkap 20 Soal Latihan Persiapan Diskusi 1},
+    pdfauthor={MA4151 Kriptografi}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\textbf{MA4151 Kriptografi}}
+\lhead{Solusi Lengkap 20 Soal Latihan Diskusi 1}
+\rfoot{Halaman \thepage}
+\setlength{\headheight}{14pt}
+
+% Color Definitions
+\definecolor{primary}{RGB}{30, 55, 153}
+\definecolor{boxheader}{RGB}{30, 55, 153}
+\definecolor{boxbg}{RGB}{248, 249, 250}
+
+\definecolor{colklasik}{RGB}{25, 85, 155}
+\definecolor{colbgklasik}{RGB}{242, 247, 253}
+
+\definecolor{colanalisis}{RGB}{140, 40, 110}
+\definecolor{colbganalisis}{RGB}{252, 244, 250}
+
+\definecolor{colshannon}{RGB}{38, 130, 70}
+\definecolor{colbgshannon}{RGB}{243, 250, 245}
+
+\tcbset{
+    arc=1.5mm,
+    left=3.5mm,
+    right=3.5mm,
+    top=3mm,
+    bottom=3mm,
+    fonttitle=\bfseries
+}
+
+% Problem Boxes
+\newtcolorbox{soalklasik}[1]{
+    colback=colbgklasik,
+    colframe=colklasik,
+    title={#1}
+}
+
+\newtcolorbox{soalanalisis}[1]{
+    colback=colbganalisis,
+    colframe=colanalisis,
+    title={#1}
+}
+
+\newtcolorbox{soalshannon}[1]{
+    colback=colbgshannon,
+    colframe=colshannon,
+    title={#1}
+}
+
+\newenvironment{solusi}{\noindent\textbf{\textsf{Penyelesaian:}}\par\vspace{0.2em}}{\hfill$\blacksquare$\vspace{1em}\par\hrule\vspace{1em}}
+
+\title{\vspace{-1.2cm}\textbf{\Large SOLUSI \& PEMBAHASAN MATEMATIS LENGKAP}\\\large 20 Soal Latihan Persiapan Diskusi Kelompok 1 (Kriptografi Klasik, Kriptoanalisis, \& Teori Shannon Inti)\\\large\textbf{Mata Kuliah MA4151 Kriptografi}}
+\author{\textbf{Disusun dengan Notasi \& Simbol Matematika Formal}}
+\date{Semester I -- Menjelang Diskusi Kelompok 1 Oktober}
+
+\begin{document}
+
+\maketitle
+\vspace{-0.5cm}
+
+\begin{abstract}
+Dokumen ini memuat \textbf{pembahasan matematis lengkap} untuk ke-20 butir soal latihan persiapan Diskusi Kelompok 1 MA4151 Kriptografi. Setiap soal dituliskan kembali secara utuh, diikuti langkah penurunan simbolik formal, persamaan aljabar terstruktur, serta pembuktian deduktif langkah demi langkah sesuai standar penulisan tugas matematika ITB.
+\end{abstract}
+
+\vspace{0.2cm}
+\hrule
+\vspace{0.3cm}
+
+\tableofcontents
+\newpage
+
+% =========================================================================
+\section{Solusi Bagian I: Kriptografi Klasik (Soal 1--8)}
+% =========================================================================
+
+\begin{soalklasik}{Soal 1 [Klasik - Shift]}
+Pandang sandi geser atas alfabet $\mathbb{Z}_{26}$ dengan fungsi enkripsi $e_k(x) \equiv x + k \pmod{26}$ dan dekripsi $d_k(y) \equiv y - k \pmod{26}$.
+\begin{enumerate}[label=(\alph*)]
+    \item Buktikan secara formal bahwa himpunan fungsi enkripsi $\mathcal{E} = \{e_k : k \in \mathbb{Z}_{26}\}$ terhadap operasi komposisi fungsi $(\circ)$ membentuk grup Abelian berorde 26 yang isomorfik terhadap grup aditif $(\mathbb{Z}_{26}, +)$.
+    \item Berdasarkan sifat grup pada bagian (a), buktikan bahwa penerapan enkripsi berulang menggunakan dua kunci berturut-turut $k_1, k_2 \in \mathbb{Z}_{26}$ tidak meningkatkan tingkat keamanan sistem kripto.
+\end{enumerate}
+\end{soalklasik}
+
+\begin{solusi}
+\textbf{(a)} Tinjau himpunan $\mathcal{E} = \{e_k : k \in \mathbb{Z}_{26}\}$ dengan operasi komposisi fungsi $(\circ)$:
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Sifat Tertutup:} Untuk sebarang $e_{k_1}, e_{k_2} \in \mathcal{E}$ dan untuk setiap $x \in \mathbb{Z}_{26}$:
+    \begin{align*}
+    (e_{k_2} \circ e_{k_1})(x) &= e_{k_2}(e_{k_1}(x)) \\
+    &\equiv (x + k_1) + k_2 \pmod{26} \\
+    &\equiv x + (k_1 + k_2 \bmod 26) \pmod{26} \\
+    &= e_{(k_1 + k_2 \bmod 26)}(x).
+    \end{align*}
+    Karena $(k_1 + k_2 \bmod 26) \in \mathbb{Z}_{26}$, maka $(e_{k_2} \circ e_{k_1}) \in \mathcal{E}$.
+    
+    \item \textbf{Sifat Asosiatif:} Berlaku secara umum untuk komposisi pemetaan fungsi:
+    \[
+    \forall e_{k_1}, e_{k_2}, e_{k_3} \in \mathcal{E}, \quad (e_{k_3} \circ e_{k_2}) \circ e_{k_1} = e_{k_3} \circ (e_{k_2} \circ e_{k_1}).
+    \]
+    
+    \item \textbf{Elemen Identitas:} Terdapat $e_0 \in \mathcal{E}$ sedemikian hingga $\forall x \in \mathbb{Z}_{26}$:
+    \[
+    e_0(x) \equiv x + 0 \equiv x \pmod{26}.
+    \]
+    Maka $\forall e_k \in \mathcal{E}$, $e_k \circ e_0 = e_0 \circ e_k = e_k$.
+    
+    \item \textbf{Elemen Invers:} Untuk setiap $e_k \in \mathcal{E}$, pilih $e_{26-k} \in \mathcal{E}$ (untuk $k=0$, inversnya $e_0$). Maka:
+    \[
+    (e_{26-k} \circ e_k)(x) \equiv x + k + (26 - k) \equiv x + 26 \equiv x \pmod{26} = e_0(x).
+    \]
+    
+    \item \textbf{Sifat Komutatif (Abelian):}
+    \[
+    (e_{k_1} \circ e_{k_2})(x) \equiv x + k_2 + k_1 \equiv x + k_1 + k_2 \equiv (e_{k_2} \circ e_{k_1})(x) \pmod{26}.
+    \]
+    
+    \item \textbf{Isomorfisma $(\mathcal{E}, \circ) \cong (\mathbb{Z}_{26}, +)$:} Definisikan pemetaan $\Phi: (\mathbb{Z}_{26}, +) \to (\mathcal{E}, \circ)$ dengan $\Phi(k) = e_k$.
+    \begin{itemize}
+        \item Homomorfisma: $\Phi(k_1 + k_2) = e_{(k_1 + k_2 \bmod 26)} = e_{k_2} \circ e_{k_1} = \Phi(k_1) \circ \Phi(k_2)$.
+        \item Bijektif: $\ker(\Phi) = \{k \in \mathbb{Z}_{26} : e_k = e_0\} = \{0\}$, sehingga $\Phi$ injektif. Karena $|\mathbb{Z}_{26}| = |\mathcal{E}| = 26$, maka $\Phi$ surjektif.
+    \end{itemize}
+\end{enumerate}
+$\therefore (\mathcal{E}, \circ)$ adalah grup Abelian berorde 26 dan $(\mathcal{E}, \circ) \cong (\mathbb{Z}_{26}, +)$.
+
+\textbf{(b)} Misalkan pesan $p \in \mathbb{Z}_{26}$ dienkripsi dengan kunci $k_1$, lalu dienkripsi kembali dengan kunci $k_2$:
+\[
+c = (e_{k_2} \circ e_{k_1})(p) = e_{k_3}(p), \quad \text{di mana } k_3 \equiv k_1 + k_2 \pmod{26}.
+\]
+Karena $(\mathcal{E}, \circ)$ tertutup, pemetaan komposit tersebut ekuivalen dengan enkripsi sandi geser tunggal menggunakan kunci $k_3 \in \mathbb{Z}_{26}$. Ukuran ruang kunci efektif penyerang tetap:
+\[
+|\mathcal{K}_{\text{efektif}}| = |\mathbb{Z}_{26}| = 26.
+\]
+$\therefore$ Enkripsi berganda tidak memperluas ruang kunci dan tidak meningkatkan keamanan.
+\end{solusi}
+
+\begin{soalklasik}{Soal 2 [Klasik - Affine]}
+Diberikan sandi Affine atas $\mathbb{Z}_{26}$ dengan fungsi enkripsi $e_K(x) \equiv ax + b \pmod{26}$ untuk suatu kunci $K = (a, b) \in \mathbb{Z}_{26} \times \mathbb{Z}_{26}$.
+\begin{enumerate}[label=(\alph*)]
+    \item Buktikan bahwa fungsi enkripsi $e_K$ merupakan pemetaan bijektif jika dan hanya jika $\gcd(a, 26) = 1$.
+    \item Turunkan bentuk eksplisit dari fungsi dekripsi $d_K(y)$ dan buktikan secara aljabar bahwa $d_K(e_K(x)) \equiv x \pmod{26}$ untuk setiap $x \in \mathbb{Z}_{26}$.
+\end{enumerate}
+\end{soalklasik}
+
+\begin{solusi}
+\textbf{(a)} 
+\begin{itemize}[leftmargin=*]
+    \item $(\implies)$ Misalkan $e_K$ bijektif (khususnya injektif). Andaikan $\gcd(a, 26) = d > 1$.
+    Pilih $x_1 = 0$ dan $x_2 = \frac{26}{d}$. Karena $1 < d \le 26$, maka $0 < x_2 < 26$, sehingga $x_1 \not\equiv x_2 \pmod{26}$.
+    Tinjau selisih nilai fungsi:
+    \[
+    e_K(x_2) - e_K(x_1) \equiv \left(a \cdot \frac{26}{d} + b\right) - (a \cdot 0 + b) = \frac{a}{d} \cdot 26 \equiv 0 \pmod{26},
+    \]
+    karena $d \mid a \implies \frac{a}{d} \in \mathbb{Z}$.
+    Hal ini menghasilkan $e_K(x_2) \equiv e_K(x_1) \pmod{26}$ untuk $x_1 \not\equiv x_2$, kontradiksi dengan sifat injektif $e_K$.
+    $\therefore \gcd(a, 26) = 1$.
+    
+    \item $(\impliedby)$ Misalkan $\gcd(a, 26) = 1$. Menurut Teorema Bézout, terdapat $a^{-1} \in \mathbb{Z}_{26}$ sedemikian hingga $a \cdot a^{-1} \equiv 1 \pmod{26}$.
+    Tinjau persamaan $e_K(x_1) \equiv e_K(x_2) \pmod{26}$:
+    \begin{align*}
+    ax_1 + b &\equiv ax_2 + b \pmod{26} \\
+    \implies ax_1 &\equiv ax_2 \pmod{26} \\
+    \implies a^{-1}(ax_1) &\equiv a^{-1}(ax_2) \pmod{26} \\
+    \implies 1 \cdot x_1 &\equiv 1 \cdot x_2 \pmod{26} \implies x_1 \equiv x_2 \pmod{26}.
+    \end{align*}
+    Maka $e_K$ injektif. Karena domain dan kodomain berhingga dan sama kardinalitasnya ($|\mathbb{Z}_{26}| = 26$), pemetaan injektif mengakibatkan surjektif, sehingga $e_K$ bijektif.
+\end{itemize}
+
+\textbf{(b)} Diberikan $y \equiv ax + b \pmod{26}$. Selesaikan untuk $x$:
+\begin{align*}
+y - b &\equiv ax \pmod{26} \\
+\iff a^{-1}(y - b) &\equiv a^{-1}(ax) \pmod{26} \\
+\iff x &\equiv a^{-1}(y - b) \pmod{26}.
+\end{align*}
+$\therefore d_K(y) \equiv a^{-1}(y - b) \pmod{26}$.
+
+Buktikan komposisi fungsi:
+\begin{align*}
+d_K(e_K(x)) &\equiv a^{-1}\big((ax + b) - b\big) \pmod{26} \\
+&\equiv a^{-1}(ax) \pmod{26} \\
+&\equiv (a^{-1}a)x \pmod{26} \\
+&\equiv 1 \cdot x \equiv x \pmod{26}.
+\end{align*}
+\end{solusi}
+
+\begin{soalklasik}{Soal 3 [Klasik - Affine Modulo Prima]}
+Diberikan sandi Affine atas ruang residu prima $\mathbb{Z}_{29}$ dengan kunci $K = (a, b) = (5, 21)$.
+\begin{enumerate}[label=(\alph*)]
+    \item Tentukan invers perkalian dari $a = 5$ dalam $\mathbb{Z}_{29}$, lalu nyatakan fungsi dekripsi dalam bentuk $d_K(y) \equiv cy + d \pmod{29}$ dengan $c, d \in \mathbb{Z}_{29}$.
+    \item Dekripsi simbol ciphertext $y = 10 \in \mathbb{Z}_{29}$ menggunakan formula yang Anda peroleh.
+\end{enumerate}
+\end{soalklasik}
+
+\begin{solusi}
+\textbf{(a)} Menentukan $5^{-1} \pmod{29}$:
+\[
+5 \times 6 = 30 = 1 \times 29 + 1 \equiv 1 \pmod{29} \implies 5^{-1} \equiv 6 \pmod{29}.
+\]
+Fungsi dekripsi:
+\begin{align*}
+d_K(y) &\equiv 5^{-1}(y - 21) \pmod{29} \\
+&\equiv 6(y - 21) \pmod{29} \\
+&\equiv 6y - 126 \pmod{29}.
+\end{align*}
+Reduksi konstanta modulo 29:
+\[
+-126 \equiv -126 + 5 \times 29 = -126 + 145 = 19 \pmod{29}.
+\]
+$\therefore d_K(y) \equiv 6y + 19 \pmod{29}$, sehingga $c = 6$ dan $d = 19$.
+
+\textbf{(b)} Untuk $y = 10$:
+\begin{align*}
+d_K(10) &\equiv 6(10) + 19 \pmod{29} \\
+&\equiv 60 + 19 = 79 \pmod{29} \\
+&\equiv 79 - 2 \times 29 = 79 - 58 = 21 \pmod{29}.
+\end{align*}
+$\therefore x = 21$.
+\end{solusi}
+
+\begin{soalklasik}{Soal 4 [Klasik - Hill Inversibilitas]}
+Diberikan matriks kunci ukuran $2 \times 2$ untuk Sandi Hill:
+\[
+M = \begin{pmatrix} a & b \\ 2 & a \end{pmatrix} \in \mathcal{M}_{2 \times 2}(\mathbb{Z}_{26}).
+\]
+\begin{enumerate}[label=(\alph*)]
+    \item Tentukan determinan $\det(M)$ sebagai fungsi dari $a$ dan $b$.
+    \item Tentukan syarat perlu dan cukup pada pasangan $(a, b)$ agar matriks $M$ memiliki invers perkalian atas $\mathbb{Z}_{26}$.
+    \item Buktikan bahwa nilai $a$ harus merupakan bilangan bulat ganjil dan $b \not\equiv 7a^2 \pmod{13}$.
+\end{enumerate}
+\end{soalklasik}
+
+\begin{solusi}
+\textbf{(a)} Determinan matriks $M$:
+\[
+\det(M) = a \cdot a - 2 \cdot b = a^2 - 2b \pmod{26}.
+\]
+
+\textbf{(b)} Matriks $M \in \mathcal{M}_{2 \times 2}(\mathbb{Z}_{26})$ memiliki invers $\iff \gcd(\det(M), 26) = 1$.
+
+\textbf{(c)} Faktorisasi prima: $26 = 2 \times 13$. Syarat $\gcd(a^2 - 2b, 26) = 1$ ekuivalen dengan sistem:
+\[
+\begin{cases}
+a^2 - 2b \not\equiv 0 \pmod 2 \\
+a^2 - 2b \not\equiv 0 \pmod{13}
+\end{cases}
+\]
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Tinjauan Modulo 2:}
+    \[
+    a^2 - 2b \equiv a^2 - 0 \equiv a^2 \pmod 2.
+    \]
+    Maka:
+    \[
+    a^2 - 2b \not\equiv 0 \pmod 2 \iff a^2 \equiv 1 \pmod 2 \iff a \equiv 1 \pmod 2 \iff a \text{ ganjil}.
+    \]
+    
+    \item \textbf{Tinjauan Modulo 13:}
+    \[
+    a^2 - 2b \not\equiv 0 \pmod{13} \iff 2b \not\equiv a^2 \pmod{13}.
+    \]
+    Karena $2 \times 7 = 14 \equiv 1 \pmod{13}$, maka $2^{-1} \equiv 7 \pmod{13}$. Kalikan kedua ruas dengan 7:
+    \[
+    b \not\equiv 7a^2 \pmod{13}.
+    \]
+\end{enumerate}
+$\therefore M$ invertible atas $\mathbb{Z}_{26} \iff a \text{ ganjil}$ dan $b \not\equiv 7a^2 \pmod{13}$.
+\end{solusi}
+
+\begin{soalklasik}{Soal 5 [Klasik - Hill 2x2 Dekripsi]}
+Diberikan kunci matriks Sandi Hill:
+\[
+K = \begin{pmatrix} 3 & 1 \\ 2 & 3 \end{pmatrix} \in \mathcal{M}_{2 \times 2}(\mathbb{Z}_{26}).
+\]
+\begin{enumerate}[label=(\alph*)]
+    \item Tentukan determinan $K$, buktikan $K$ memiliki invers di $\mathbb{Z}_{26}$, dan hitung matriks dekripsi $K^{-1} \pmod{26}$.
+    \item Lakukan dekripsi terhadap blok ciphertext $\mathbf{y} = \begin{pmatrix} 7 \\ 15 \end{pmatrix} \pmod{26}$.
+\end{enumerate}
+\end{soalklasik}
+
+\begin{solusi}
+\textbf{(a)} Determinan:
+\[
+\det(K) = 3(3) - 1(2) = 9 - 2 = 7.
+\]
+Karena $\gcd(7, 26) = 1$, maka $K$ invertible atas $\mathbb{Z}_{26}$.
+Mencari $7^{-1} \pmod{26}$:
+\[
+7 \times 15 = 105 = 4 \times 26 + 1 \equiv 1 \pmod{26} \implies 7^{-1} \equiv 15 \pmod{26}.
+\]
+Adjoin matriks $K$:
+\[
+\operatorname{adj}(K) = \begin{pmatrix} 3 & -1 \\ -2 & 3 \end{pmatrix} \equiv \begin{pmatrix} 3 & 25 \\ 24 & 3 \end{pmatrix} \pmod{26}.
+\]
+Matriks invers $K^{-1}$:
+\begin{align*}
+K^{-1} &\equiv 15 \begin{pmatrix} 3 & -1 \\ -2 & 3 \end{pmatrix} = \begin{pmatrix} 45 & -15 \\ -30 & 45 \end{pmatrix} \pmod{26} \\
+&\equiv \begin{pmatrix} 19 & 11 \\ 22 & 19 \end{pmatrix} \pmod{26}.
+\end{align*}
+
+\textbf{(b)} Dekripsi $\mathbf{y} = \begin{pmatrix} 7 \\ 15 \end{pmatrix}$:
+\begin{align*}
+\mathbf{x} &\equiv K^{-1} \mathbf{y} \pmod{26} \\
+&= \begin{pmatrix} 19 & 11 \\ 22 & 19 \end{pmatrix} \begin{pmatrix} 7 \\ 15 \end{pmatrix} \\
+&= \begin{pmatrix} 19(7) + 11(15) \\ 22(7) + 19(15) \end{pmatrix} = \begin{pmatrix} 133 + 165 \\ 154 + 285 \end{pmatrix} = \begin{pmatrix} 298 \\ 439 \end{pmatrix} \pmod{26}.
+\end{align*}
+Reduksi modulo 26:
+\[
+298 = 11 \times 26 + 12 \equiv 12 \pmod{26}, \quad 439 = 16 \times 26 + 23 \equiv 23 \pmod{26}.
+\]
+$\therefore \mathbf{x} = \begin{pmatrix} 12 \\ 23 \end{pmatrix} \pmod{26}$.
+\end{solusi}
+
+\begin{soalklasik}{Soal 6 [Klasik - Hill 3x3 Aljabar]}
+Diberikan matriks $3 \times 3$ atas $\mathbb{Z}_{26}$:
+\[
+A = \begin{pmatrix} 1 & 0 & 1 \\ 0 & a & 1 \\ 1 & 2 & 1 \end{pmatrix}.
+\]
+\begin{enumerate}[label=(\alph*)]
+    \item Hitung determinan matriks $A$ dalam $\mathbb{Z}_{26}$.
+    \item Tentukan semua nilai parameter $a \in \mathbb{Z}_{26}$ yang memungkinkan matriks $A$ dapat digunakan sebagai matriks kunci enkripsi Sandi Hill. Jelaskan implikasi aljabar dari hasil yang Anda peroleh.
+\end{enumerate}
+\end{soalklasik}
+
+\begin{solusi}
+\textbf{(a)} Ekspansi kofaktor pada baris pertama:
+\begin{align*}
+\det(A) &= 1 \cdot \det\begin{pmatrix} a & 1 \\ 2 & 1 \end{pmatrix} - 0 \cdot \det\begin{pmatrix} 0 & 1 \\ 1 & 1 \end{pmatrix} + 1 \cdot \det\begin{pmatrix} 0 & a \\ 1 & 2 \end{pmatrix} \\
+&= 1(a \cdot 1 - 1 \cdot 2) + 1(0 \cdot 2 - a \cdot 1) \\
+&= (a - 2) - a = -2 \equiv 24 \pmod{26}.
+\end{align*}
+
+\textbf{(b)} Matriks $A$ invertible $\iff \gcd(\det(A), 26) = 1$.
+Namun untuk setiap $a \in \mathbb{Z}_{26}$, $\det(A) \equiv 24 \pmod{26}$.
+Evaluasi FPB:
+\[
+\gcd(24, 26) = 2 \ne 1.
+\]
+Karena $\gcd(\det(A), 26) = 2 \ne 1$ untuk setiap $a$, elemen $\det(A)$ adalah pembagi nol (\textit{zero divisor}) di $\mathbb{Z}_{26}$ dan tidak memiliki invers perkalian.
+$\therefore$ Himpunan parameter $a$ yang memenuhi adalah $\emptyset$ (tidak ada).
+\end{solusi}
+
+\begin{soalklasik}{Soal 7 [Klasik - Transposisi Matriks n x m]}
+Misalkan suatu pesan berpanjang $L = n \cdot m$ dituliskan ke dalam matriks berukuran $n \times m$ ($n$ baris, $m$ kolom) secara mendatar (baris demi baris), lalu ciphertext dibentuk dengan membaca matriks tersebut secara vertikal (kolom demi kolom dari kiri ke kanan).
+\begin{enumerate}[label=(\alph*)]
+    \item Tuliskan pemetaan analitis indeks $k = \pi(t)$ yang menyatakan posisi karakter ke-$t$ pada plaintext ($0 \le t < L$) menjadi posisi ke-$k$ pada ciphertext ($0 \le k < L$).
+    \item Berikan formula analitis pemetaan balik (dekripsi) untuk merekonstruksi posisi plaintext dari indeks ciphertext.
+    \item Dekripsi ciphertext berikut yang diketahui berukuran $n = 6$ dan $m = 5$:
+    \[
+    \texttt{"SIAAEAANLNRSNIADMIDAHIUYIDSPTA"}
+    \]
+\end{enumerate}
+\end{soalklasik}
+
+\begin{solusi}
+\textbf{(a)} Karakter plaintext ke-$t \in \{0, 1, \dots, L-1\}$ menempati koordinat:
+\[
+\text{baris } i = \lfloor t / m \rfloor, \quad \text{kolom } j = t \bmod m.
+\]
+Pembacaan kolom demi kolom (setiap kolom berpanjang $n$):
+\[
+k = \pi(t) = j \cdot n + i = (t \bmod m) \cdot n + \lfloor t / m \rfloor.
+\]
+
+\textbf{(b)} Karakter ciphertext ke-$k \in \{0, 1, \dots, L-1\}$ berasal dari:
+\[
+\text{kolom } j = \lfloor k / n \rfloor, \quad \text{baris } i = k \bmod n.
+\]
+Maka indeks posisi karakter pada plaintext adalah:
+\[
+t = \pi^{-1}(k) = i \cdot m + j = (k \bmod n) \cdot m + \lfloor k / n \rfloor.
+\]
+
+\textbf{(c)} Diberikan $L = 30$, $n = 6$ (baris), $m = 5$ (kolom).
+Ciphertext diisikan per kolom berukuran $n = 6$:
+\[
+\begin{array}{c|ccccc}
+\text{Baris} & \text{Kolom } 0 & \text{Kolom } 1 & \text{Kolom } 2 & \text{Kolom } 3 & \text{Kolom } 4 \\ \hline
+0 & \texttt{S} & \texttt{A} & \texttt{N} & \texttt{D} & \texttt{I} \\
+1 & \texttt{I} & \texttt{N} & \texttt{I} & \texttt{A} & \texttt{D} \\
+2 & \texttt{A} & \texttt{L} & \texttt{A} & \texttt{H} & \texttt{S} \\
+3 & \texttt{A} & \texttt{N} & \texttt{D} & \texttt{I} & \texttt{P} \\
+4 & \texttt{E} & \texttt{R} & \texttt{M} & \texttt{U} & \texttt{T} \\
+5 & \texttt{A} & \texttt{S} & \texttt{I} & \texttt{Y} & \texttt{A}
+\end{array}
+\]
+Membaca baris demi baris:
+\[
+\texttt{"SANDI INI ADALAH SANDI PERMUTASI YA"}.
+\]
+\end{solusi}
+
+\begin{soalklasik}{Soal 8 [Klasik - Vigenère Komposisi]}
+Misalkan suatu teks-asal dienkripsi berturut-turut menggunakan dua buah sandi Vigenère dengan panjang kunci masing-masing $m_1$ dan $m_2$.
+Buktikan secara formal bahwa sistem enkripsi komposit tersebut setara dengan sebuah sandi Vigenère tunggal dengan panjang kunci paling banyak $\operatorname{kpk}(m_1, m_2)$.
+\end{soalklasik}
+
+\begin{solusi}
+Misalkan $\mathbf{k}_1 = (k_{1, 0}, \dots, k_{1, m_1-1}) \in \mathbb{Z}_{26}^{m_1}$ dan $\mathbf{k}_2 = (k_{2, 0}, \dots, k_{2, m_2-1}) \in \mathbb{Z}_{26}^{m_2}$.
+Enkripsi tahap 1:
+\[
+y_i \equiv p_i + k_{1, i \bmod m_1} \pmod{26}.
+\]
+Enkripsi tahap 2:
+\[
+c_i \equiv y_i + k_{2, i \bmod m_2} \equiv p_i + \big(k_{1, i \bmod m_1} + k_{2, i \bmod m_2}\big) \pmod{26}.
+\]
+Definisikan barisan pergeseran komposit $s_i \in \mathbb{Z}_{26}$:
+\[
+s_i \equiv k_{1, i \bmod m_1} + k_{2, i \bmod m_2} \pmod{26}.
+\]
+Misalkan $M = \operatorname{kpk}(m_1, m_2)$. Maka $m_1 \mid M$ dan $m_2 \mid M$.
+Untuk setiap $i \ge 0$:
+\begin{align*}
+s_{i + M} &\equiv k_{1, (i + M) \bmod m_1} + k_{2, (i + M) \bmod m_2} \pmod{26} \\
+&\equiv k_{1, i \bmod m_1} + k_{2, i \bmod m_2} \pmod{26} \\
+&\equiv s_i \pmod{26}.
+\end{align*}
+Barisan $(s_i)$ periodik dengan periode yang membagi $M$.
+Definisikan vektor kunci tunggal $\mathbf{k}_3 = (s_0, s_1, \dots, s_{M-1}) \in \mathbb{Z}_{26}^M$.
+Maka $c_i \equiv p_i + k_{3, i \bmod M} \pmod{26}$.
+$\therefore$ Sistem komposit ekuivalen dengan sandi Vigenère berpanjang kunci paling banyak $\operatorname{kpk}(m_1, m_2)$.
+\end{solusi}
+
+\newpage
+% =========================================================================
+\section{Solusi Bagian II: Kriptoanalisis (Soal 9--13)}
+% =========================================================================
+
+\begin{soalanalisis}{Soal 9 [Kriptoanalisis - Kasiski]}
+Diberikan ciphertext hasil enkripsi Vigenère sebagai berikut:
+\[
+\texttt{KXQMYTOZKQWHWMEKXQQXKQXYM}
+\]
+\begin{enumerate}[label=(\alph*)]
+    \item Identifikasi seluruh posisi kemunculan substring berulang $\texttt{KXQ}$ dan $\texttt{KQ}$ (indeks berbasis 1).
+    \item Hitung seluruh jarak selisih antar posisi perulangan tersebut, faktorkan ke dalam perkalian bilangan prima, dan lakukan pengujian Kasiski untuk menduga panjang kunci $m$.
+\end{enumerate}
+\end{soalanalisis}
+
+\begin{solusi}
+\textbf{(a)} Ciphertext berpanjang $N = 25$:
+\[
+\begin{array}{l*{13}{c}}
+\text{Indeks:} & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 \\
+\text{Karakter:} & \texttt{K} & \texttt{X} & \texttt{Q} & \texttt{M} & \texttt{Y} & \texttt{T} & \texttt{O} & \texttt{Z} & \texttt{K} & \texttt{Q} & \texttt{W} & \texttt{H} & \texttt{W} \\[0.5em]
+\text{Indeks:} & 14 & 15 & 16 & 17 & 18 & 19 & 20 & 21 & 22 & 23 & 24 & 25 & \\
+\text{Karakter:} & \texttt{M} & \texttt{E} & \texttt{K} & \texttt{X} & \texttt{Q} & \texttt{Q} & \texttt{X} & \texttt{K} & \texttt{Q} & \texttt{X} & \texttt{Y} & \texttt{M} & \\
+\end{array}
+\]
+Identifikasi posisi:
+\begin{itemize}
+    \item Substring $\texttt{KXQ}$: posisi $1$ dan $16$.
+    \item Substring $\texttt{KQ}$: posisi $9$ dan $21$.
+\end{itemize}
+
+\textbf{(b)} Perhitungan jarak dan faktorisasi:
+\begin{itemize}
+    \item Jarak $\texttt{KXQ}$: $\Delta_1 = 16 - 1 = 15 = 3 \times 5$.
+    \item Jarak $\texttt{KQ}$: $\Delta_2 = 21 - 9 = 12 = 2^2 \times 3$.
+    \item Jarak silang awalan $\texttt{K}$ pada pola:
+    \begin{align*}
+    21 - 1 &= 20 = 2^2 \times 5, \\
+    16 - 9 &= 7 \text{ (prima)}.
+    \end{align*}
+\end{itemize}
+Tinjau FPB jarak perulangan substring trigram $\texttt{KXQ}$ dan jarak kemunculan $\texttt{K}$ dominan:
+\[
+\gcd(15, 20) = 5.
+\]
+Karena trigram $\texttt{KXQ}$ berulang pada jarak $\Delta_1 = 15 = 3 \times 5$, maka kandidat panjang kunci menurut uji Kasiski adalah faktor dari 15, yaitu $m \in \{3, 5\}$. Munculnya kelipatan 5 pada jarak terjauh ($21 - 1 = 20$) memberikan dugaan terkuat:
+\[
+m = 5.
+\]
+\end{solusi}
+
+\begin{soalanalisis}{Soal 10 [Kriptoanalisis - Indeks Koinsidensi]}
+Diberikan teks sandi $\mathbf{x} = x_1 x_2 \dots x_N$ dengan panjang $N$ dan frekuensi kemunculan huruf ke-$i$ adalah $f_i$ ($0 \le i \le 25$).
+\begin{enumerate}[label=(\alph*)]
+    \item Buktikan bahwa nilai harapan Indeks Koinsidensi untuk string yang dibangkitkan dari distribusi peluang seragam $p_i = \frac{1}{26}$ adalah $E[I_c] = \frac{1}{26} \approx 0.03846$.
+    \item Suatu ciphertext berukuran $N = 100$ memiliki tabulasi frekuensi tertentu yang menghasilkan $\sum_{i=0}^{25} f_i(f_i - 1) = 654$. Hitung nilai $I_c$ dan tentukan apakah ciphertext tersebut dienkripsi menggunakan cipher monoalfabetik atau polialfabetik.
+\end{enumerate}
+\end{soalanalisis}
+
+\begin{solusi}
+\textbf{(a)} Indeks Koinsidensi:
+\[
+I_c = \frac{\sum_{i=0}^{25} f_i(f_i - 1)}{N(N - 1)}.
+\]
+Tinjau variabel acak indikator untuk pasangan indeks $1 \le j < k \le N$:
+\[
+I_{j, k} = \begin{cases} 1, & \text{jika } x_j = x_k \\ 0, & \text{jika } x_j \ne x_k \end{cases}
+\]
+Maka $\sum_{i=0}^{25} \binom{f_i}{2} = \sum_{1 \le j < k \le N} I_{j, k}$. Karena setiap karakter dipilih independen dan seragam dengan $p_i = \frac{1}{26}$:
+\[
+P(x_j = x_k) = \sum_{i=0}^{25} P(x_j = i, x_k = i) = \sum_{i=0}^{25} p_i^2 = \sum_{i=0}^{25} \left(\frac{1}{26}\right)^2 = 26 \times \frac{1}{26^2} = \frac{1}{26}.
+\]
+Berdasarkan kelinieran nilai harapan:
+\[
+E\left[\sum_{i=0}^{25} f_i(f_i - 1)\right] = 2 E\left[\sum_{j < k} I_{j, k}\right] = 2 \binom{N}{2} \cdot \frac{1}{26} = N(N - 1) \cdot \frac{1}{26}.
+\]
+Maka:
+\[
+E[I_c] = \frac{N(N - 1) \cdot \frac{1}{26}}{N(N - 1)} = \frac{1}{26} \approx 0.03846.
+\]
+
+\textbf{(b)} Untuk $N = 100$ dan $\sum_{i=0}^{25} f_i(f_i - 1) = 654$:
+\[
+I_c = \frac{654}{100(99)} = \frac{654}{9900} \approx 0.06606.
+\]
+Analisis:
+\begin{itemize}
+    \item $I_{\text{mono}} \approx 0.065$ (teks alami monoalfabetik).
+    \item $I_{\text{acak}} \approx 0.0385$ (teks acak / polialfabetik dengan kunci panjang).
+\end{itemize}
+Karena nilai $I_c = 0.0661$ sangat dekat dengan $0.065$, distribusi frekuensi huruf belum terseragamkan.
+$\therefore$ Ciphertext dienkripsi menggunakan \textbf{sandi monoalfabetik}.
+\end{solusi}
+
+\begin{soalanalisis}{Soal 11 [Kriptoanalisis - Estimasi Panjang Kunci Vigenère]}
+Suatu teks sandi Vigenère berpanjang $N = 500$ karakter menghasilkan Indeks Koinsidensi terhitung sebesar $I_c = 0.0450$.
+Gunakan aproksimasi formula Babbage-Friedman:
+\[
+m \approx \frac{0.027 N}{(N - 1)I_c - 0.038 N + 0.065}
+\]
+untuk menaksir panjang kunci Vigenère $m$ yang digunakan.
+\end{soalanalisis}
+
+\begin{solusi}
+Substitusikan parameter $N = 500$ dan $I_c = 0.0450$:
+\begin{align*}
+\text{Pembilang} &= 0.027 \times 500 = 13.5, \\
+\text{Penyebut} &= (500 - 1)(0.0450) - 0.038(500) + 0.065 \\
+&= 499 \times 0.0450 - 19.0 + 0.065 \\
+&= 22.455 - 19.0 + 0.065 \\
+&= 3.52.
+\end{align*}
+Maka:
+\[
+m \approx \frac{13.5}{3.52} \approx 3.835.
+\]
+Karena panjang kunci $m \in \mathbb{Z}^+$, pembulatan terdekat memberikan taksiran:
+\[
+m \approx 4.
+\]
+\end{solusi}
+
+\begin{soalanalisis}{Soal 12 [Kriptoanalisis - Affine KPA]}
+Seorang kriptanalis berhasil menyadap pasangan plaintext-ciphertext dari sandi Affine atas $\mathbb{Z}_{26}$:
+\[
+\texttt{'IF'} \longrightarrow \texttt{'PQ'}
+\]
+dengan korespondensi alfabet baku $\texttt{A}=0, \texttt{B}=1, \dots, \texttt{Z}=25$.
+\begin{enumerate}[label=(\alph*)]
+    \item Susun sistem kongruensi linier dalam $\mathbb{Z}_{26}$ untuk menentukan kunci $a$ dan $b$.
+    \item Selesaikan sistem tersebut untuk memperoleh nilai eksak pasangan kunci $K = (a, b)$.
+\end{enumerate}
+\end{soalanalisis}
+
+\begin{solusi}
+\textbf{(a)} Konversi nilai numerik karakter:
+\[
+\texttt{I} = 8, \quad \texttt{F} = 5, \quad \texttt{P} = 15, \quad \texttt{Q} = 16.
+\]
+Sistem kongruensi dari $e_K(x) \equiv ax + b \pmod{26}$:
+\begin{align}
+8a + b &\equiv 15 \pmod{26} \\
+5a + b &\equiv 16 \pmod{26}
+\end{align}
+
+\textbf{(b)} Kurangkan persamaan (1) dengan persamaan (2):
+\[
+(8a + b) - (5a + b) \equiv 15 - 16 \pmod{26} \implies 3a \equiv -1 \equiv 25 \pmod{26}.
+\]
+Invers perkalian dari $3$ modulo $26$:
+\[
+3 \times 9 = 27 \equiv 1 \pmod{26} \implies 3^{-1} \equiv 9 \pmod{26}.
+\]
+Kalikan kedua ruas dengan 9:
+\[
+a \equiv 9 \times 25 \equiv 9(-1) = -9 \equiv 17 \pmod{26}.
+\]
+Verifikasi: $\gcd(17, 26) = 1$.
+Substitusikan $a = 17$ ke persamaan (2):
+\begin{align*}
+5(17) + b &\equiv 16 \pmod{26} \\
+85 + b &\equiv 16 \pmod{26} \\
+7 + b &\equiv 16 \pmod{26} \implies b \equiv 9 \pmod{26}.
+\end{align*}
+$\therefore$ Pasangan kunci adalah $K = (a, b) = (17, 9)$.
+\end{solusi}
+
+\begin{soalanalisis}{Soal 13 [Kriptoanalisis - Hill KPA 2x2]}
+Melalui serangan \textit{Known-Plaintext Attack} pada Sandi Hill $2 \times 2$ atas $\mathbb{Z}_{26}$, diperoleh dua pasangan blok plaintext dan ciphertext:
+\[
+\mathbf{p}_1 = \begin{pmatrix} 3 \\ 5 \end{pmatrix} \to \mathbf{c}_1 = \begin{pmatrix} 19 \\ 24 \end{pmatrix}, \quad \mathbf{p}_2 = \begin{pmatrix} 2 \\ 7 \end{pmatrix} \to \mathbf{c}_2 = \begin{pmatrix} 20 \\ 7 \end{pmatrix}.
+\]
+\begin{enumerate}[label=(\alph*)]
+    \item Bentuk persamaan matriks $C \equiv K P \pmod{26}$, di mana $P = [\mathbf{p}_1 \;\; \mathbf{p}_2]$ dan $C = [\mathbf{c}_1 \;\; \mathbf{c}_2]$.
+    \item Buktikan bahwa matriks plaintext $P$ memiliki invers dalam $\mathbb{Z}_{26}$ dan tentukan matriks $P^{-1} \pmod{26}$.
+    \item Hitung matriks kunci rahasia $K = C P^{-1} \pmod{26}$.
+\end{enumerate}
+\end{soalanalisis}
+
+\begin{solusi}
+\textbf{(a)} Susun matriks:
+\[
+P = \begin{pmatrix} 3 & 2 \\ 5 & 7 \end{pmatrix}, \quad C = \begin{pmatrix} 19 & 20 \\ 24 & 7 \end{pmatrix} \implies C \equiv K P \pmod{26}.
+\]
+
+\textbf{(b)} Determinan matriks $P$:
+\[
+\det(P) = 3(7) - 2(5) = 21 - 10 = 11.
+\]
+Karena $\gcd(11, 26) = 1$, maka $P$ invertible di $\mathbb{Z}_{26}$.
+Invers $11$ modulo $26$:
+\[
+11 \times 19 = 209 = 8 \times 26 + 1 \equiv 1 \pmod{26} \implies 11^{-1} \equiv 19 \pmod{26}.
+\]
+Adjoin $P$:
+\[
+\operatorname{adj}(P) = \begin{pmatrix} 7 & -2 \\ -5 & 3 \end{pmatrix} \equiv \begin{pmatrix} 7 & 24 \\ 21 & 3 \end{pmatrix} \pmod{26}.
+\]
+Invers $P^{-1}$:
+\begin{align*}
+P^{-1} &\equiv 19 \begin{pmatrix} 7 & -2 \\ -5 & 3 \end{pmatrix} = \begin{pmatrix} 133 & -38 \\ -95 & 57 \end{pmatrix} \pmod{26} \\
+&\equiv \begin{pmatrix} 3 & 14 \\ 9 & 5 \end{pmatrix} \pmod{26}.
+\end{align*}
+
+\textbf{(c)} Menghitung $K = C P^{-1} \pmod{26}$:
+\begin{align*}
+K &\equiv \begin{pmatrix} 19 & 20 \\ 24 & 7 \end{pmatrix} \begin{pmatrix} 3 & 14 \\ 9 & 5 \end{pmatrix} \pmod{26} \\
+&= \begin{pmatrix} 19(3) + 20(9) & 19(14) + 20(5) \\ 24(3) + 7(9) & 24(14) + 7(5) \end{pmatrix} \\
+&= \begin{pmatrix} 57 + 180 & 266 + 100 \\ 72 + 63 & 336 + 35 \end{pmatrix} = \begin{pmatrix} 237 & 366 \\ 135 & 371 \end{pmatrix} \pmod{26}.
+\end{align*}
+Reduksi modulo 26:
+\begin{align*}
+237 &= 9 \times 26 + 3 \equiv 3, & 366 &= 14 \times 26 + 2 \equiv 2, \\
+135 &= 5 \times 26 + 5 \equiv 5, & 371 &= 14 \times 26 + 7 \equiv 7.
+\end{align*}
+$\therefore K = \begin{pmatrix} 3 & 2 \\ 5 & 7 \end{pmatrix}$.
+\end{solusi}
+
+\newpage
+% =========================================================================
+\section{Solusi Bagian III: Teori Shannon (Soal 14--20)}
+% =========================================================================
+
+\begin{soalshannon}{Soal 14 [Shannon - Perfect Secrecy Geser]}
+Pandang sandi geser dengan $\mathcal{P} = \mathcal{C} = \mathcal{K} = \mathbb{Z}_{26}$. Kunci $K$ dipilih secara acak seragam dengan peluang $p(K = k) = \frac{1}{26}$ untuk setiap $k \in \mathbb{Z}_{26}$, dan pemilihan kunci saling bebas terhadap plaintext $P$.
+Buktikan secara formal bahwa sistem sandi geser tersebut memenuhi definisi keamanan sempurna (\textit{perfect secrecy}):
+\[
+p(x \mid y) = p(x), \quad \forall x \in \mathbb{Z}_{26}, \forall y \in \mathbb{Z}_{26}
+\]
+untuk sebarang distribusi probabilitas a priori $p(x)$ pada $\mathcal{P}$.
+\end{soalshannon}
+
+\begin{solusi}
+Untuk setiap $y \in \mathbb{Z}_{26}$, probabilitas marginal ciphertext adalah:
+\[
+p(y) = \sum_{x' \in \mathbb{Z}_{26}} P(P = x', C = y) = \sum_{x' \in \mathbb{Z}_{26}} p(x') P(K = (y - x') \bmod 26).
+\]
+Karena $K$ berdistribusi seragam dan independen terhadap $P$, $P(K = (y - x') \bmod 26) = \frac{1}{26}$ untuk setiap $x'$. Maka:
+\[
+p(y) = \sum_{x' \in \mathbb{Z}_{26}} p(x') \cdot \frac{1}{26} = \frac{1}{26} \sum_{x' \in \mathbb{Z}_{26}} p(x') = \frac{1}{26} \cdot 1 = \frac{1}{26}.
+\]
+Berdasarkan Definisi Peluang Bersyarat (Aturan Bayes):
+\begin{align*}
+p(x \mid y) &= \frac{P(P = x, C = y)}{p(y)} \\
+&= \frac{p(x) P(K = (y - x) \bmod 26)}{p(y)} \\
+&= \frac{p(x) \cdot \frac{1}{26}}{\frac{1}{26}} = p(x).
+\end{align*}
+Karena $p(x \mid y) = p(x)$ berlaku untuk setiap $x \in \mathcal{P}$ dan setiap $y \in \mathcal{C}$, maka sistem memenuhi definisi keamanan sempurna (\textit{perfect secrecy}).
+\end{solusi}
+
+\begin{soalshannon}{Soal 15 [Shannon - Matriks Probabilitas C]}
+Pandang sistem kripto dengan ruang pesan $\mathcal{P} = \{a, b, c\}$, ruang kunci $\mathcal{K} = \{K_1, K_2, K_3\}$, dan ruang teks sandi $\mathcal{C} = \{1, 2, 3, 4\}$. Matriks enkripsi didefinisikan sebagai:
+\[
+\begin{array}{c|ccc}
+e_K(p) & a & b & c \\ \hline
+K_1 & 1 & 2 & 3 \\
+K_2 & 2 & 3 & 4 \\
+K_3 & 3 & 4 & 1
+\end{array}
+\]
+Distribusi peluang pemilihan kunci adalah seragam: $p(K_1) = p(K_2) = p(K_3) = \frac{1}{3}$.
+Distribusi peluang teks-asal diberikan oleh: $p(a) = \frac{1}{2}, p(b) = \frac{1}{3}, p(c) = \frac{1}{6}$.
+Hitung nilai eksak distribusi probabilitas marginal ciphertext:
+\[
+p(C = 1), \quad p(C = 2), \quad p(C = 3), \quad \text{dan} \quad p(C = 4).
+\]
+\end{soalshannon}
+
+\begin{solusi}
+Formula marginal: $p(y) = \sum_{x \in \mathcal{P}} \sum_{\{k : e_k(x) = y\}} p(x) p(k) = \frac{1}{3} \sum_{\{x : \exists k, e_k(x)=y\}} p(x)$.
+\begin{itemize}[leftmargin=*]
+    \item Untuk $y = 1$: dihasilkan oleh pasangan $(K_1, a)$ dan $(K_3, c)$.
+    \[
+    p(1) = \frac{1}{3} p(a) + \frac{1}{3} p(c) = \frac{1}{3}\left(\frac{1}{2} + \frac{1}{6}\right) = \frac{1}{3}\left(\frac{4}{6}\right) = \frac{4}{18} = \frac{2}{9}.
+    \]
+    
+    \item Untuk $y = 2$: dihasilkan oleh pasangan $(K_1, b)$ dan $(K_2, a)$.
+    \[
+    p(2) = \frac{1}{3} p(b) + \frac{1}{3} p(a) = \frac{1}{3}\left(\frac{1}{3} + \frac{1}{2}\right) = \frac{1}{3}\left(\frac{5}{6}\right) = \frac{5}{18}.
+    \]
+    
+    \item Untuk $y = 3$: dihasilkan oleh pasangan $(K_1, c)$, $(K_2, b)$, dan $(K_3, a)$.
+    \[
+    p(3) = \frac{1}{3} p(c) + \frac{1}{3} p(b) + \frac{1}{3} p(a) = \frac{1}{3}\left(\frac{1}{6} + \frac{1}{3} + \frac{1}{2}\right) = \frac{1}{3}(1) = \frac{1}{3} = \frac{6}{18}.
+    \]
+    
+    \item Untuk $y = 4$: dihasilkan oleh pasangan $(K_2, c)$ dan $(K_3, b)$.
+    \[
+    p(4) = \frac{1}{3} p(c) + \frac{1}{3} p(b) = \frac{1}{3}\left(\frac{1}{6} + \frac{1}{3}\right) = \frac{1}{3}\left(\frac{3}{6}\right) = \frac{3}{18} = \frac{1}{6}.
+    \]
+\end{itemize}
+Verifikasi total probabilitas:
+\[
+\sum_{y=1}^4 p(y) = \frac{4}{18} + \frac{5}{18} + \frac{6}{18} + \frac{3}{18} = \frac{18}{18} = 1.
+\]
+$\therefore p(1) = \frac{2}{9}, \; p(2) = \frac{5}{18}, \; p(3) = \frac{1}{3}, \; p(4) = \frac{1}{6}$.
+\end{solusi}
+
+\begin{soalshannon}{Soal 16 [Shannon - Entropi H(P), H(K), H(C)]}
+Berdasarkan sistem kripto pada Soal 15:
+\begin{enumerate}[label=(\alph*)]
+    \item Hitung nilai entropi teks-asal $H(P)$ dan entropi kunci $H(K)$ dalam satuan bit (berikan representasi analitis eksak dan hampiran desimal 4 angka di belakang koma).
+    \item Hitung nilai entropi ciphertext $H(C)$ dalam satuan bit.
+\end{enumerate}
+\end{soalshannon}
+
+\begin{solusi}
+\textbf{(a)} Entropi plaintext $H(P)$ dengan $p(a) = 1/2, p(b) = 1/3, p(c) = 1/6$:
+\begin{align*}
+H(P) &= -\left(\frac{1}{2}\log_2\frac{1}{2} + \frac{1}{3}\log_2\frac{1}{3} + \frac{1}{6}\log_2\frac{1}{6}\right) \\
+&= \frac{1}{2}(1) + \frac{1}{3}\log_2 3 + \frac{1}{6}(\log_2 2 + \log_2 3) \\
+&= \frac{1}{2} + \frac{1}{6} + \left(\frac{1}{3} + \frac{1}{6}\right)\log_2 3 \\
+&= \frac{2}{3} + \frac{1}{2}\log_2 3.
+\end{align*}
+Nilai numerik ($\log_2 3 \approx 1.58496$):
+\[
+H(P) \approx 0.6667 + 0.5(1.58496) = 1.4591 \text{ bit}.
+\]
+Entropi kunci seragam $|\mathcal{K}| = 3$:
+\[
+H(K) = \log_2 3 \approx 1.5850 \text{ bit}.
+\]
+
+\textbf{(b)} Entropi ciphertext $H(C)$ dengan $p = \left(\frac{4}{18}, \frac{5}{18}, \frac{6}{18}, \frac{3}{18}\right)$:
+\begin{align*}
+H(C) &= -\sum_{y=1}^4 p(y) \log_2 p(y) \\
+&= -\left[\frac{4}{18}\log_2\left(\frac{4}{18}\right) + \frac{5}{18}\log_2\left(\frac{5}{18}\right) + \frac{6}{18}\log_2\left(\frac{6}{18}\right) + \frac{3}{18}\log_2\left(\frac{3}{18}\right)\right] \\
+&= \log_2 18 - \frac{1}{18}\big(4\log_2 4 + 5\log_2 5 + 6\log_2 6 + 3\log_2 3\big) \\
+&= (1 + 2\log_2 3) - \frac{1}{18}\big(4(2) + 5\log_2 5 + 6(1 + \log_2 3) + 3\log_2 3\big) \\
+&= 1 + 2\log_2 3 - \frac{1}{18}\big(14 + 5\log_2 5 + 9\log_2 3\big).
+\end{align*}
+Evaluasi numerik:
+\begin{align*}
+-\frac{4}{18}\log_2\left(\frac{4}{18}\right) &= -\frac{2}{9}\log_2\left(\frac{2}{9}\right) \approx 0.4822, \\
+-\frac{5}{18}\log_2\left(\frac{5}{18}\right) &\approx 0.5133, \\
+-\frac{6}{18}\log_2\left(\frac{6}{18}\right) &= -\frac{1}{3}\log_2\left(\frac{1}{3}\right) \approx 0.5283, \\
+-\frac{3}{18}\log_2\left(\frac{3}{18}\right) &= -\frac{1}{6}\log_2\left(\frac{1}{6}\right) \approx 0.4308.
+\end{align*}
+Jumlahkan:
+\[
+H(C) \approx 0.4822 + 0.5133 + 0.5283 + 0.4308 = 1.9547 \text{ bit}.
+\]
+\end{solusi}
+
+\begin{soalshannon}{Soal 17 [Shannon - Equivocation H(K|C) dan H(P|C)]}
+Berdasarkan sistem kripto pada Soal 15:
+\begin{enumerate}[label=(\alph*)]
+    \item Buktikan secara deduktif penurunan identitas \textit{Key Equivocation}:
+    \[
+    H(K \mid C) = H(K) + H(P) - H(C)
+    \]
+    untuk sistem kripto dengan dekripsi deterministik dan kunci yang saling bebas terhadap pesan.
+    \item Hitung nilai numerik $H(K \mid C)$ dan $H(P \mid C)$.
+    \item Berdasarkan nilai $H(P \mid C)$ dan distribusi bersyarat $p(a \mid 1)$, buktikan apakah sistem ini memenuhi atau melanggar syarat keamanan sempurna (\textit{perfect secrecy}).
+\end{enumerate}
+\end{soalshannon}
+
+\begin{solusi}
+\textbf{(a)} Ekspansikan entropi gabungan $H(P, K, C)$ melalui dua urutan pengkondisian aturan rantai:
+\begin{enumerate}[leftmargin=*]
+    \item Urutan 1: $H(P, K, C) = H(P, K) + H(C \mid P, K)$.
+    \begin{itemize}
+        \item Karena $P$ dan $K$ saling bebas: $H(P, K) = H(P) + H(K)$.
+        \item Karena enkripsi bersifat deterministik ($C = e_K(P)$), nilai $C$ pasti jika $P$ dan $K$ diketahui, sehingga $H(C \mid P, K) = 0$.
+    \end{itemize}
+    Maka:
+    \[
+    H(P, K, C) = H(P) + H(K).
+    \]
+    
+    \item Urutan 2: $H(P, K, C) = H(C) + H(K \mid C) + H(P \mid K, C)$.
+    \begin{itemize}
+        \item Karena dekripsi bersifat deterministik ($P = d_K(C)$), nilai $P$ pasti jika $K$ dan $C$ diketahui, sehingga $H(P \mid K, C) = 0$.
+    \end{itemize}
+    Maka:
+    \[
+    H(P, K, C) = H(C) + H(K \mid C).
+    \]
+\end{enumerate}
+Samakan kedua persamaan:
+\[
+H(C) + H(K \mid C) = H(P) + H(K) \implies H(K \mid C) = H(K) + H(P) - H(C).
+\]
+
+\textbf{(b)} Perhitungan numerik $H(K \mid C)$:
+\[
+H(K \mid C) = 1.5850 + 1.4591 - 1.9547 = 1.0894 \text{ bit}.
+\]
+Perhitungan $H(P \mid C)$:
+Perhatikan bahwa pada matriks enkripsi Soal 15, setiap kolom memuat simbol ciphertext yang berbeda, dan setiap baris memuat simbol ciphertext yang berbeda. Artinya, untuk suatu $C = y$ yang teramati, mengetahui pesan $p$ menentukan secara unik kunci $k$ yang digunakan ($H(K \mid P, C) = 0$).
+Akibatnya:
+\[
+H(P, K \mid C) = H(K \mid C) + H(P \mid K, C) = H(K \mid C) + 0 = H(K \mid C),
+\]
+dan di sisi lain:
+\[
+H(P, K \mid C) = H(P \mid C) + H(K \mid P, C) = H(P \mid C) + 0 = H(P \mid C).
+\]
+$\therefore H(P \mid C) = H(K \mid C) = 1.0894 \text{ bit}$.
+
+\textbf{(c)} Tinjau syarat keamanan sempurna:
+\begin{itemize}
+    \item Ditinjau dari entropi: Sistem aman sempurna $\iff H(P \mid C) = H(P)$.
+    Diperoleh:
+    \[
+    H(P \mid C) = 1.0894 \ne 1.4591 = H(P).
+    \]
+    \item Ditinjau dari probabilitas bersyarat $p(a \mid 1)$:
+    \[
+    p(a \mid 1) = \frac{P(P=a, C=1)}{p(C=1)} = \frac{p(a) p(K_1)}{p(1)} = \frac{\frac{1}{2} \cdot \frac{1}{3}}{\frac{4}{18}} = \frac{\frac{1}{6}}{\frac{4}{18}} = \frac{3}{4} = 0.75.
+    \]
+    Sedangkan $p(a) = 0.50$. Karena $p(a \mid 1) \ne p(a)$, mengamati ciphertext $C=1$ mengubah keyakinan tentang pesan $a$.
+\end{itemize}
+$\therefore$ Sistem \textbf{tidak memiliki keamanan sempurna}.
+\end{solusi}
+
+\begin{soalklasik}{Soal 18 [Shannon - Teorema Karakterisasi]}
+Buktikan Teorema Shannon berikut:
+Andaikan suatu sistem kripto $(\mathcal{P}, \mathcal{C}, \mathcal{K}, \mathcal{E}, \mathcal{D})$ memenuhi $|\mathcal{K}| = |\mathcal{C}| = |\mathcal{P}|$.
+Sistem tersebut memiliki keamanan sempurna jika dan hanya jika:
+\begin{enumerate}[label=(\arabic*)]
+    \item Setiap kunci $k \in \mathcal{K}$ digunakan dengan probabilitas seragam: $p(k) = \frac{1}{|\mathcal{K}|}$.
+    \item Untuk setiap $x \in \mathcal{P}$ dan setiap $y \in \mathcal{C}$, terdapat tepat satu kunci $k \in \mathcal{K}$ sedemikian hingga $e_k(x) = y$.
+\end{enumerate}
+\end{soalklasik}
+
+\begin{solusi}
+\textbf{Bukti $(\impliedby)$:}
+Misalkan syarat (1) dan (2) dipenuhi.
+Untuk setiap $x \in \mathcal{P}$ dan $y \in \mathcal{C}$, terdapat tepat satu kunci $k_{x, y} \in \mathcal{K}$ dengan $e_{k_{x, y}}(x) = y$.
+Distribusi marginal $p(y)$:
+\[
+p(y) = \sum_{x' \in \mathcal{P}} p(x') P(e_K(x') = y) = \sum_{x' \in \mathcal{P}} p(x') p(k_{x', y}) = \frac{1}{|\mathcal{K}|} \sum_{x' \in \mathcal{P}} p(x') = \frac{1}{|\mathcal{K}|}.
+\]
+Probabilitas bersyarat $p(x \mid y)$:
+\[
+p(x \mid y) = \frac{P(P=x, C=y)}{p(y)} = \frac{p(x) p(k_{x, y})}{p(y)} = \frac{p(x) \cdot \frac{1}{|\mathcal{K}|}}{\frac{1}{|\mathcal{K}|}} = p(x).
+\]
+$\therefore$ Sistem aman sempurna.
+
+\textbf{Bukti $(\implies)$:}
+Misalkan sistem memiliki keamanan sempurna: $p(x \mid y) = p(x)$ untuk setiap $x \in \mathcal{P}, y \in \mathcal{C}$.
+Asumsikan tanpa mengurangi keumuman bahwa $p(x) > 0$ untuk setiap $x \in \mathcal{P}$.
+Dari definisi keamanan sempurna:
+\[
+p(y \mid x) = \frac{p(x \mid y) p(y)}{p(x)} = \frac{p(x) p(y)}{p(x)} = p(y) > 0.
+\]
+Karena $p(y \mid x) > 0$, maka untuk setiap $x \in \mathcal{P}$ dan setiap $y \in \mathcal{C}$, harus terdapat sedikitnya satu kunci $k \in \mathcal{K}$ sedemikian hingga $e_k(x) = y$.
+Definisikan himpunan kunci $K(x, y) = \{k \in \mathcal{K} : e_k(x) = y\}$. Maka:
+\[
+|K(x, y)| \ge 1, \quad \forall x \in \mathcal{P}, \forall y \in \mathcal{C}.
+\]
+Untuk suatu $x \in \mathcal{P}$ yang tetap, karena enkripsi adalah pemetaan fungsi ($e_k(x)$ bernilai tunggal), himpunan-himpunan $\{K(x, y) : y \in \mathcal{C}\}$ saling asing dan membentuk partisi dari $\mathcal{K}$:
+\[
+\bigcup_{y \in \mathcal{C}} K(x, y) = \mathcal{K}.
+\]
+Akibatnya:
+\[
+|\mathcal{K}| = \sum_{y \in \mathcal{C}} |K(x, y)| \ge \sum_{y \in \mathcal{C}} 1 = |\mathcal{C}|.
+\]
+Karena diketahui $|\mathcal{K}| = |\mathcal{C}|$, ketaksamaan di atas haruslah menjadi kesamaan murni. Hal ini mengharuskan:
+\[
+|K(x, y)| = 1, \quad \forall x \in \mathcal{P}, \forall y \in \mathcal{C}.
+\]
+Ini membuktikan syarat (2): terdapat tepat satu kunci $k$ sedemikian hingga $e_k(x) = y$.
+
+Selanjutnya, karena $|K(x, y)| = 1$, misalkan $K(x, y) = \{k\}$. Maka:
+\[
+p(y \mid x) = p(k).
+\]
+Namun dari keamanan sempurna, $p(y \mid x) = p(y)$, yang nilainya tidak bergantung pada $x$.
+Artinya, setiap kunci $k \in \mathcal{K}$ yang memetakan $x$ ke $y$ memiliki probabilitas yang sama dengan $p(y)$.
+Karena pemetaan $y \mapsto k$ adalah bijeksi untuk $x$ tertentu, maka $p(k)$ bernilai konstan untuk seluruh $k \in \mathcal{K}$.
+Karena $\sum_{k \in \mathcal{K}} p(k) = 1$, maka:
+\[
+p(k) = \frac{1}{|\mathcal{K}|}, \quad \forall k \in \mathcal{K}.
+\]
+Ini membuktikan syarat (1).
+\end{solusi}
+
+\begin{soalshannon}{Soal 19 [Shannon - Sifat Entropi \& Subaditivitas]}
+Misalkan $X$ dan $Y$ adalah dua variabel acak diskret pada ruang berhingga.
+\begin{enumerate}[label=(\alph*)]
+    \item Buktikan identitas aturan rantai entropi:
+    \[
+    H(X, Y) = H(Y) + H(X \mid Y).
+    \]
+    \item Buktikan ketaksamaan subaditivitas:
+    \[
+    H(X \mid Y) \le H(X) \iff H(X, Y) \le H(X) + H(Y)
+    \]
+    menggunakan sifat kecekungan (\textit{concavity}) fungsi $\log_2(t)$ (Ketaksamaan Jensen), serta tentukan syarat perlu dan cukup agar kesamaan berlaku.
+\end{enumerate}
+\end{soalshannon}
+
+\begin{solusi}
+\textbf{(a)} Berdasarkan definisi entropi bersama:
+\begin{align*}
+H(X, Y) &= -\sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x, y) \log_2 p(x, y) \\
+&= -\sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x, y) \log_2 \big(p(y) p(x \mid y)\big) \\
+&= -\sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x, y) \log_2 p(y) - \sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x, y) \log_2 p(x \mid y) \\
+&= -\sum_{y \in \mathcal{Y}} \left(\sum_{x \in \mathcal{X}} p(x, y)\right) \log_2 p(y) + \sum_{y \in \mathcal{Y}} p(y) \left(-\sum_{x \in \mathcal{X}} p(x \mid y) \log_2 p(x \mid y)\right) \\
+&= -\sum_{y \in \mathcal{Y}} p(y) \log_2 p(y) + \sum_{y \in \mathcal{Y}} p(y) H(X \mid Y = y) \\
+&= H(Y) + H(X \mid Y).
+\end{align*}
+
+\textbf{(b)} Tinjau selisih:
+\begin{align*}
+H(X) - H(X \mid Y) &= -\sum_{x} p(x) \log_2 p(x) - \left(-\sum_{x, y} p(x, y) \log_2 p(x \mid y)\right) \\
+&= -\sum_{x, y} p(x, y) \log_2 p(x) + \sum_{x, y} p(x, y) \log_2 \frac{p(x, y)}{p(y)} \\
+&= \sum_{x, y} p(x, y) \log_2 \frac{p(x, y)}{p(x) p(y)}.
+\end{align*}
+Terapkan Ketaksamaan Jensen pada fungsi cekung $\log_2(t)$:
+\begin{align*}
+\sum_{x, y} p(x, y) \log_2 \frac{p(x) p(y)}{p(x, y)} &\le \log_2\left(\sum_{x, y} p(x, y) \frac{p(x) p(y)}{p(x, y)}\right) \\
+&= \log_2\left(\sum_{x} p(x) \sum_{y} p(y)\right) \\
+&= \log_2(1 \cdot 1) = 0.
+\end{align*}
+Akibatnya:
+\[
+-\sum_{x, y} p(x, y) \log_2 \frac{p(x, y)}{p(x) p(y)} \le 0 \implies \sum_{x, y} p(x, y) \log_2 \frac{p(x, y)}{p(x) p(y)} \ge 0.
+\]
+Maka:
+\[
+H(X) - H(X \mid Y) \ge 0 \iff H(X \mid Y) \le H(X).
+\]
+Tambahkan $H(Y)$ pada kedua ruas:
+\[
+H(Y) + H(X \mid Y) \le H(X) + H(Y) \iff H(X, Y) \le H(X) + H(Y).
+\]
+Karena fungsi $\log_2(t)$ cekung murni (\textit{strictly concave}), kesamaan berlaku jika dan hanya jika argumennya konstan untuk seluruh pasangan dengan $p(x, y) > 0$:
+\[
+\frac{p(x) p(y)}{p(x, y)} = 1 \iff p(x, y) = p(x) p(y), \quad \forall x, y.
+\]
+$\therefore$ Kesamaan berlaku jika dan hanya jika variabel acak $X$ dan $Y$ saling bebas (\textit{independen}).
+\end{solusi}
+
+\begin{soalshannon}{Soal 20 [Shannon - Enkoding Huffman]}
+Diberikan alfabet sumber $X = \{a, b, c, d, e\}$ dengan distribusi probabilitas:
+\[
+p(a) = 0.35, \quad p(b) = 0.25, \quad p(c) = 0.20, \quad p(d) = 0.12, \quad p(e) = 0.08.
+\]
+\begin{enumerate}[label=(\alph*)]
+    \item Konstruksikan pohon Huffman biner dan tentukan penetapan kata-kode biner (\textit{prefix-free code}) optimal untuk setiap simbol.
+    \item Hitung panjang rata-rata kode:
+    \[
+    L(C) = \sum_{x \in X} p(x) \ell(x).
+    \]
+    \item Hitung entropi $H(X)$ dan verifikasi bahwa hasil enkoding memenuhi Batas Teorema Shannon Tanpa Derau:
+    \[
+    H(X) \le L(C) < H(X) + 1.
+    \]
+\end{enumerate}
+\end{soalshannon}
+
+\begin{solusi}
+\textbf{(a)} Algoritma Huffman:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Tahap 0 (Urutan awal):} $a(0.35), b(0.25), c(0.20), d(0.12), e(0.08)$.
+    \item \textbf{Tahap 1:} Gabungkan $d(0.12)$ dan $e(0.08) \to \{d, e\}(0.20)$.\\
+    Node aktif: $a(0.35), b(0.25), c(0.20), \{d, e\}(0.20)$.
+    \item \textbf{Tahap 2:} Gabungkan $c(0.20)$ dan $\{d, e\}(0.20) \to \{c, d, e\}(0.40)$.\\
+    Node aktif: $\{c, d, e\}(0.40), a(0.35), b(0.25)$.
+    \item \textbf{Tahap 3:} Gabungkan $a(0.35)$ dan $b(0.25) \to \{a, b\}(0.60)$.\\
+    Node aktif: $\{a, b\}(0.60), \{c, d, e\}(0.40)$.
+    \item \textbf{Tahap 4:} Gabungkan $\{a, b\}(0.60)$ dan $\{c, d, e\}(0.40) \to \text{Root}(1.00)$.
+\end{itemize}
+Penetapan bit biner (Cabang kiri $= 0$, Cabang kanan $= 1$):
+\begin{itemize}
+    \item Dari Root: Cabang kanan $\to \{a, b\}$ (prefiks $1$), Cabang kiri $\to \{c, d, e\}$ (prefiks $0$).
+    \item Node $\{a, b\}$: $a \to 10$, $b \to 11$.
+    \item Node $\{c, d, e\}$: $c \to 00$, $\{d, e\} \to 01$.
+    \item Node $\{d, e\}$: $d \to 010$, $e \to 011$.
+\end{itemize}
+Tabel Enkoding Huffman Bebas-Prefiks:
+\[
+\begin{array}{cccc}
+\toprule
+\text{Simbol } x & \text{Peluang } p(x) & \text{Kata-Kode } C(x) & \text{Panjang } \ell(x) \\
+\midrule
+a & 0.35 & 10 & 2 \\
+b & 0.25 & 11 & 2 \\
+c & 0.20 & 00 & 2 \\
+d & 0.12 & 010 & 3 \\
+e & 0.08 & 011 & 3 \\
+\bottomrule
+\end{array}
+\]
+
+\textbf{(b)} Panjang rata-rata kode:
+\begin{align*}
+L(C) &= \sum_{x \in X} p(x) \ell(x) \\
+&= 0.35(2) + 0.25(2) + 0.20(2) + 0.12(3) + 0.08(3) \\
+&= 0.70 + 0.50 + 0.40 + 0.36 + 0.24 \\
+&= 2.20 \text{ bit/simbol}.
+\end{align*}
+
+\textbf{(c)} Entropi sumber $H(X)$:
+\begin{align*}
+H(X) &= -\sum_{x \in X} p(x) \log_2 p(x) \\
+&= -\big(0.35\log_2 0.35 + 0.25\log_2 0.25 + 0.20\log_2 0.20 + 0.12\log_2 0.12 + 0.08\log_2 0.08\big) \\
+&\approx -\big(0.35(-1.5146) + 0.25(-2.0000) + 0.20(-2.3219) + 0.12(-3.0589) + 0.08(-3.6439)\big) \\
+&\approx 0.5301 + 0.5000 + 0.4644 + 0.3671 + 0.2915 \\
+&= 2.1531 \text{ bit}.
+\end{align*}
+Verifikasi Batas Teorema Shannon Tanpa Derau:
+\[
+H(X) \le L(C) < H(X) + 1 \iff 2.1531 \le 2.20 < 3.1531.
+\]
+Ketaksamaan tersebut terbukti benar dan terpenuhi secara presisi.
+\end{solusi}
+
+\end{document}
