@@ -26,6 +26,11 @@ Struktur direktori disusun modular berdasarkan urutan topik perkuliahan:
 - **`06 Faktorisasi/`**
   - `slides/`: Slide perkuliahan (`6 Faktorisasi.pdf`).
   - `catatan/` & `tugas-dan-latihan/`: Algoritma faktorisasi integer (Pollard rho, $p-1$, basis basis faktor).
+- **`07 Block Cipher (DES & AES)/`**
+  - `Panduan_Lengkap_DES_dan_AES.pdf` & `.tex`: Dokumen panduan komprehensif teori DES dan AES, aljabar $GF(2^8)$, Feistel, SPN, dan mode operasi.
+  - `01_DES_From_Scratch.ipynb`: Implementasi DES murni Python *from scratch*, permutasi bit, 8 S-box, dan uji NIST.
+  - `02_AES_From_Scratch.ipynb`: Implementasi AES-128 murni Python *from scratch*, pembangkitan aljabar S-box, transformasi ronde, dan uji NIST.
+  - `03_Mode_Operasi_dan_Eksperimen_Lanjutan.ipynb`: Implementasi Padding PKCS#7, mode ECB/CBC/CTR, dan analisis propagasi error.
 - **`Past Problems/`**
   - Arsip soal dan pembahasan UTS, UAS, serta diskusi kelompok tahun-tahun sebelumnya.
 
