@@ -16,6 +16,8 @@
 \usepackage{hyperref}
 \usepackage{array}
 \usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc}
 
 \hypersetup{
     colorlinks=true,
@@ -366,17 +368,17 @@ Petakan 64 bit teks terang dengan tabel $IP$ baku, lalu bagi dua menjadi 32 bit 
 \begin{enumerate}[leftmargin=*]
     \item Terapkan $PC\text{-}1$ pada kunci 64-bit untuk memperoleh register 28-bit $C_0$ dan $D_0$:
     \begin{align*}
-    C_0 &= \texttt{1000100 0111001 0110011 1100000}_2 \quad (28\text{ bit}) \\
-    D_0 &= \texttt{0101000 1100011 0011111 0101001}_2 \quad (28\text{ bit})
+    C_0 &= \texttt{0000000 0011111 1110000 0001001}_2 \quad (28\text{ bit}) \\
+    D_0 &= \texttt{0001000 1000000 0000100 1000001}_2 \quad (28\text{ bit})
     \end{align*}
     \item Geser ke kiri 1 bit ($\text{LS}_1$):
     \begin{align*}
-    C_1 &= \texttt{0001000 1110010 1100111 1000001}_2 \\
-    D_1 &= \texttt{1010001 1000110 0111110 1010010}_2
+    C_1 &= \texttt{0000000 0111111 1100000 0010010}_2 \\
+    D_1 &= \texttt{0010001 0000000 0001001 0000010}_2
     \end{align*}
-    \item Terapkan $PC\text{-}2$ pada $C_1 \parallel D_1$ untuk memperoleh subkunci 48-bit $K_1$:
+    \item Terapkan $PC\text{-}2$ pada gabungan $C_1 \parallel D_1$ untuk memperoleh subkunci 48-bit $K_1$:
     \begin{equation*}
-    \mathbf{K_1} = \texttt{000010 101101 011100 100000 001011 001001 100001 100111}_2 \quad (48\text{ bit})
+    \mathbf{K_1} = \texttt{101100 001001 001000 101010 001001 000000 010000 100000}_2 \quad (48\text{ bit})
     \end{equation*}
 \end{enumerate}
 
@@ -384,12 +386,12 @@ Petakan 64 bit teks terang dengan tabel $IP$ baku, lalu bagi dua menjadi 32 bit 
 \begin{enumerate}[leftmargin=*]
     \item \textbf{Ekspansi $E(R_0)$:} Memperluas 32 bit $R_0$ menjadi 48 bit:
     \begin{equation*}
-    E(R_0) = \texttt{100000 000000 000000 000000 000000 001111 110000 000010}_2
+    E(R_0) = \texttt{100000 000000 000000 000000 000000 001111 110000 000110}_2
     \end{equation*}
     \item \textbf{XOR dengan $K_1$:}
     \begin{align*}
     A &= E(R_0) \oplus K_1 \\
-    &= \texttt{100010 101101 011100 100000 001011 000110 010001 100101}_2 \quad (48\text{ bit})
+    &= \texttt{001100 001001 001000 101010 001001 001111 100000 100110}_2 \quad (48\text{ bit})
     \end{align*}
     \item \textbf{Evaluasi 8 Kotak-S ($S_1$ s.d $S_8$):}
     \begin{table}[H]
@@ -399,20 +401,20 @@ Petakan 64 bit teks terang dengan tabel $IP$ baku, lalu bagi dua menjadi 32 bit 
     \toprule
     \textbf{Kotak-S} & \textbf{Bit Input (6-bit)} & \textbf{Bit Luar ($b_1 b_6$)} & \textbf{Baris Desimal} & \textbf{Bit Tengah ($b_2 b_3 b_4 b_5$)} & \textbf{Kolom Desimal} & \textbf{Output (4-bit)} \\
     \midrule
-    $S_1$ & \texttt{100010} & \texttt{10} & 2 & \texttt{0001} & 1  & $1 = \texttt{0001}_2$ \\
-    $S_2$ & \texttt{101101} & \texttt{11} & 3 & \texttt{0110} & 6  & $4 = \texttt{0100}_2$ \\
-    $S_3$ & \texttt{011100} & \texttt{00} & 0 & \texttt{1110} & 14 & $0 = \texttt{0000}_2$ \\
-    $S_4$ & \texttt{100000} & \texttt{10} & 2 & \texttt{0000} & 0  & $10 = \texttt{1010}_2$ \\
-    $S_5$ & \texttt{001011} & \texttt{01} & 1 & \texttt{0101} & 5  & $0 = \texttt{0000}_2$ \\
-    $S_6$ & \texttt{000110} & \texttt{00} & 0 & \texttt{0011} & 3  & $15 = \texttt{1111}_2$ \\
-    $S_7$ & \texttt{010001} & \texttt{01} & 1 & \texttt{1000} & 8  & $14 = \texttt{1110}_2$ \\
-    $S_8$ & \texttt{100101} & \texttt{11} & 3 & \texttt{0010} & 2  & $14 = \texttt{1110}_2$ \\
+    $S_1$ & \texttt{001100} & \texttt{00} & 0 & \texttt{0110} & 6  & $11 = \texttt{1011}_2$ \\
+    $S_2$ & \texttt{001001} & \texttt{01} & 1 & \texttt{0100} & 4  & $15 = \texttt{1111}_2$ \\
+    $S_3$ & \texttt{001000} & \texttt{00} & 0 & \texttt{0100} & 4  & $6 = \texttt{0110}_2$ \\
+    $S_4$ & \texttt{101010} & \texttt{10} & 2 & \texttt{0101} & 5  & $11 = \texttt{1011}_2$ \\
+    $S_5$ & \texttt{001001} & \texttt{01} & 1 & \texttt{0100} & 4  & $4 = \texttt{0100}_2$ \\
+    $S_6$ & \texttt{001111} & \texttt{01} & 1 & \texttt{0111} & 7  & $5 = \texttt{0101}_2$ \\
+    $S_7$ & \texttt{100000} & \texttt{10} & 2 & \texttt{0000} & 0  & $1 = \texttt{0001}_2$ \\
+    $S_8$ & \texttt{100110} & \texttt{10} & 2 & \texttt{0011} & 3  & $1 = \texttt{0001}_2$ \\
     \bottomrule
     \end{tabular}
     \end{table}
     Gabungkan ke-8 output 4-bit menjadi 32 bit:
     \begin{equation*}
-    \text{Output Kotak-S} = \texttt{0001 0100 0000 1010 0000 1111 1110 1110}_2
+    \text{Output Kotak-S} = \texttt{1011 1111 0110 1011 0100 0101 0001 0001}_2
     \end{equation*}
     \item \textbf{Permutasi $P$ (P-Box):}
     \begin{equation*}
@@ -489,6 +491,154 @@ AES beroperasi pada blok \textbf{128 bit (16 karakter teks / 16 Byte)} yang disu
     \item \textbf{AddRoundKey:} Melakukan operasi XOR antara matriks State dengan matriks subkunci ronde ($4 \times 4$).
 \end{enumerate}
 
+\subsection{Diagram Alir (\textit{Flowchart}) Struktur Algoritma AES-128}
+Struktur alur enkripsi AES-128 secara lengkap diperlihatkan pada Gambar~\ref{fig:aes_flowchart}. Perhatikan bahwa:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Sebelum Ronde 1 (Inisialisasi):} Teks terang langsung di-XOR dengan subkunci $K_0$ melalui tahap \textit{Initial AddRoundKey}.
+    \item \textbf{Ronde 1 sampai 9 (Ronde Standar):} Mengeksekusi secara lengkap 4 transformasi: $\mathtt{SubBytes} \to \mathtt{ShiftRows} \to \mathtt{MixColumns} \to \mathtt{AddRoundKey}(K_r)$.
+    \item \textbf{Ronde 10 (Ronde Terakhir):} Tahap $\mathtt{MixColumns}$ \textbf{ditiadakan} agar struktur enkripsi dan dekripsi simetris dan efisien: $\mathtt{SubBytes} \to \mathtt{ShiftRows} \to \mathtt{AddRoundKey}(K_{10})$.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    font=\small,
+    box/.style={rectangle, draw=primaryblue, fill=blue!5, thick, rounded corners=2pt, minimum width=4.2cm, minimum height=0.65cm, align=center},
+    roundbox/.style={rectangle, draw=darkgreen, fill=green!5, thick, rounded corners=3pt, minimum width=4.0cm, minimum height=0.6cm, align=center},
+    keybox/.style={rectangle, draw=orange!80!black, fill=orange!10, thick, rounded corners=2pt, minimum width=3.8cm, minimum height=0.75cm, align=center},
+    startstop/.style={rectangle, draw=red!70!black, fill=red!5, thick, rounded corners=4pt, minimum width=4.2cm, minimum height=0.7cm, align=center, font=\bfseries\small},
+    arrow/.style={-{Stealth[scale=1.0]}, thick, draw=primaryblue},
+    keyarrow/.style={-{Stealth[scale=1.0]}, thick, draw=orange!80!black, dashed}
+]
+
+% Left column (State flow)
+\node (pt) at (0, 0) [startstop] {Teks Terang / Plaintext\\(128 bit / 16 Byte)};
+\node (ark0) at (0, -1.3) [box] {Initial AddRoundKey ($K_0$)};
+
+\node (sb1) at (0, -2.7) [roundbox] {1. SubBytes (Kotak-S)};
+\node (sr1) at (0, -3.5) [roundbox] {2. ShiftRows (Geser Baris)};
+\node (mc1) at (0, -4.3) [roundbox] {3. MixColumns (Matriks MDS)};
+\node (ark1) at (0, -5.1) [roundbox] {4. AddRoundKey ($K_r$)};
+
+\draw [draw=darkgreen, dashed, thick, rounded corners=6pt] (-2.4, -2.1) rectangle (2.4, -5.7);
+\node [anchor=north west, font=\bfseries\footnotesize, text=darkgreen] at (-2.3, -2.1) {Ronde 1 s.d. 9 (Diulang 9 Kali)};
+
+\node (sb10) at (0, -6.8) [roundbox] {1. SubBytes (Kotak-S)};
+\node (sr10) at (0, -7.6) [roundbox] {2. ShiftRows (Geser Baris)};
+\node (ark10) at (0, -8.4) [roundbox] {3. AddRoundKey ($K_{10}$)};
+
+\draw [draw=purple!70!black, dashed, thick, rounded corners=6pt] (-2.4, -6.2) rectangle (2.4, -9.0);
+\node [anchor=north west, font=\bfseries\footnotesize, text=purple!70!black] at (-2.3, -6.2) {Ronde 10 (Tanpa MixColumns)};
+
+\node (ct) at (0, -10.0) [startstop] {Teks Tersandi / Ciphertext\\(128 bit / 16 Byte)};
+
+% Right column (Key Schedule flow)
+\node (key) at (5.5, 0) [startstop] {Kunci Rahasia / Cipher Key\\(128 bit / 16 Byte)};
+\node (keyexp) at (5.5, -1.3) [keybox] {Ekspansi Kunci (Key Expansion)\\(Hasilkan 44 Word $w_0 \dots w_{43}$)};
+
+% Connectors
+\draw [arrow] (pt) -- (ark0);
+\draw [arrow] (key) -- (keyexp);
+
+\draw [keyarrow] (keyexp.west) -- (ark0.east) node[midway, above, font=\scriptsize] {Subkunci $K_0$};
+
+\draw [arrow] (ark0) -- (sb1);
+\draw [arrow] (sb1) -- (sr1);
+\draw [arrow] (sr1) -- (mc1);
+\draw [arrow] (mc1) -- (ark1);
+
+\draw [keyarrow] (keyexp.south) -- ++(0,-3.8) -| node[near end, above, font=\scriptsize] {Subkunci $K_1 \dots K_9$} (ark1.east);
+
+\draw [arrow] (ark1) -- (sb10);
+\draw [arrow] (sb10) -- (sr10);
+\draw [arrow] (sr10) -- (ark10);
+
+\draw [keyarrow] (keyexp.south) -- ++(0,-7.1) -| node[near end, above, font=\scriptsize] {Subkunci $K_{10}$} (ark10.east);
+
+\draw [arrow] (ark10) -- (ct);
+
+\end{tikzpicture}
+\caption{Diagram Alir (Flowchart) Struktur Keseluruhan Enkripsi AES-128}
+\label{fig:aes_flowchart}
+\end{figure}
+
+\subsection{Tabel Kotak-S (\textit{S-Box}) Standar Rijndael}
+Tabel Kotak-S AES adalah pemetaan substitusi $16 \times 16$ (total 256 nilai byte). Cara membacanya menggunakan representasi heksadesimal dari sebuah byte $\mathtt{xy}$:
+\begin{itemize}[leftmargin=*]
+    \item Digit $\mathtt{x}$ (4-bit tinggi / \texttt{byte >> 4}) menentukan \textbf{Baris}.
+    \item Digit $\mathtt{y}$ (4-bit rendah / \texttt{byte \& 0x0F}) menentukan \textbf{Kolom}.
+    \item \textbf{Contoh Pencarian Nilai S-Box:}
+    \begin{itemize}
+        \item Nilai desimal $0 = \mathtt{0x00} \longrightarrow \text{Baris } \mathtt{0}, \text{ Kolom } \mathtt{0} \longrightarrow \mathtt{0x63} = \mathbf{99}$ desimal.
+        \item Nilai desimal $7 = \mathtt{0x07} \longrightarrow \text{Baris } \mathtt{0}, \text{ Kolom } \mathtt{7} \longrightarrow \mathtt{0xC5} = \mathbf{197}$ desimal.
+        \item Nilai desimal $19 = \mathtt{0x13} \longrightarrow \text{Baris } \mathtt{1}, \text{ Kolom } \mathtt{3} \longrightarrow \mathtt{0x7D} = \mathbf{125}$ desimal.
+        \item Nilai desimal $75 = \mathtt{0x4B} \longrightarrow \text{Baris } \mathtt{4}, \text{ Kolom } \mathtt{B} \longrightarrow \mathtt{0xB3} = \mathbf{179}$ desimal.
+        \item Nilai desimal $85 = \mathtt{0x55} \longrightarrow \text{Baris } \mathtt{5}, \text{ Kolom } \mathtt{5} \longrightarrow \mathtt{0xFC} = \mathbf{252}$ desimal.
+    \end{itemize}
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\small
+\caption{Tabel Kotak-S (S-Box) Standar NIST AES / Rijndael (dalam Heksadesimal)}
+\vspace{0.2cm}
+\begin{tabular}{|c|cccccccccccccccc|}
+\hline
+  & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{A} & \textbf{B} & \textbf{C} & \textbf{D} & \textbf{E} & \textbf{F} \\
+\hline
+\textbf{0} & \texttt{63} & \texttt{7C} & \texttt{77} & \texttt{7B} & \texttt{F2} & \texttt{6B} & \texttt{6F} & \texttt{C5} & \texttt{30} & \texttt{01} & \texttt{67} & \texttt{2B} & \texttt{FE} & \texttt{D7} & \texttt{AB} & \texttt{76} \\
+\textbf{1} & \texttt{CA} & \texttt{82} & \texttt{C9} & \texttt{7D} & \texttt{FA} & \texttt{59} & \texttt{47} & \texttt{F0} & \texttt{AD} & \texttt{D4} & \texttt{A2} & \texttt{AF} & \texttt{9C} & \texttt{A4} & \texttt{72} & \texttt{C0} \\
+\textbf{2} & \texttt{B7} & \texttt{FD} & \texttt{93} & \texttt{26} & \texttt{36} & \texttt{3F} & \texttt{F7} & \texttt{CC} & \texttt{34} & \texttt{A5} & \texttt{E5} & \texttt{F1} & \texttt{71} & \texttt{D8} & \texttt{31} & \texttt{15} \\
+\textbf{3} & \texttt{04} & \texttt{C7} & \texttt{23} & \texttt{C3} & \texttt{18} & \texttt{96} & \texttt{05} & \texttt{9A} & \texttt{07} & \texttt{12} & \texttt{80} & \texttt{E2} & \texttt{EB} & \texttt{27} & \texttt{B2} & \texttt{75} \\
+\textbf{4} & \texttt{09} & \texttt{83} & \texttt{2C} & \texttt{1A} & \texttt{1B} & \texttt{6E} & \texttt{5A} & \texttt{A0} & \texttt{52} & \texttt{3B} & \texttt{D6} & \texttt{B3} & \texttt{29} & \texttt{E3} & \texttt{2F} & \texttt{84} \\
+\textbf{5} & \texttt{53} & \texttt{D1} & \texttt{00} & \texttt{ED} & \texttt{20} & \texttt{FC} & \texttt{B1} & \texttt{5B} & \texttt{6A} & \texttt{CB} & \texttt{BE} & \texttt{39} & \texttt{4A} & \texttt{4C} & \texttt{58} & \texttt{CF} \\
+\textbf{6} & \texttt{D0} & \texttt{EF} & \texttt{AA} & \texttt{FB} & \texttt{43} & \texttt{4D} & \texttt{33} & \texttt{85} & \texttt{45} & \texttt{F9} & \texttt{02} & \texttt{7F} & \texttt{50} & \texttt{3C} & \texttt{9F} & \texttt{A8} \\
+\textbf{7} & \texttt{51} & \texttt{A3} & \texttt{40} & \texttt{8F} & \texttt{92} & \texttt{9D} & \texttt{38} & \texttt{F5} & \texttt{BC} & \texttt{B6} & \texttt{DA} & \texttt{21} & \texttt{10} & \texttt{FF} & \texttt{F3} & \texttt{D2} \\
+\textbf{8} & \texttt{CD} & \texttt{0C} & \texttt{13} & \texttt{EC} & \texttt{5F} & \texttt{97} & \texttt{44} & \texttt{17} & \texttt{C4} & \texttt{A7} & \texttt{7E} & \texttt{3D} & \texttt{64} & \texttt{5D} & \texttt{19} & \texttt{73} \\
+\textbf{9} & \texttt{60} & \texttt{81} & \texttt{4F} & \texttt{DC} & \texttt{22} & \texttt{2A} & \texttt{90} & \texttt{88} & \texttt{46} & \texttt{EE} & \texttt{B8} & \texttt{14} & \texttt{DE} & \texttt{5E} & \texttt{0B} & \texttt{DB} \\
+\textbf{A} & \texttt{E0} & \texttt{32} & \texttt{3A} & \texttt{0A} & \texttt{49} & \texttt{06} & \texttt{24} & \texttt{5C} & \texttt{C2} & \texttt{D3} & \texttt{AC} & \texttt{62} & \texttt{91} & \texttt{95} & \texttt{E4} & \texttt{79} \\
+\textbf{B} & \texttt{E7} & \texttt{C8} & \texttt{37} & \texttt{6D} & \texttt{8D} & \texttt{D5} & \texttt{4E} & \texttt{A9} & \texttt{6C} & \texttt{56} & \texttt{F4} & \texttt{EA} & \texttt{65} & \texttt{7A} & \texttt{AE} & \texttt{08} \\
+\textbf{C} & \texttt{BA} & \texttt{78} & \texttt{25} & \texttt{2E} & \texttt{1C} & \texttt{A6} & \texttt{B4} & \texttt{C6} & \texttt{E8} & \texttt{DD} & \texttt{74} & \texttt{1F} & \texttt{4B} & \texttt{BD} & \texttt{8B} & \texttt{8A} \\
+\textbf{D} & \texttt{70} & \texttt{3E} & \texttt{B5} & \texttt{66} & \texttt{48} & \texttt{03} & \texttt{F6} & \texttt{0E} & \texttt{61} & \texttt{35} & \texttt{57} & \texttt{B9} & \texttt{86} & \texttt{C1} & \texttt{1D} & \texttt{9E} \\
+\textbf{E} & \texttt{E1} & \texttt{F8} & \texttt{98} & \texttt{11} & \texttt{69} & \texttt{D9} & \texttt{8E} & \texttt{94} & \texttt{9B} & \texttt{1E} & \texttt{87} & \texttt{E9} & \texttt{CE} & \texttt{55} & \texttt{28} & \texttt{DF} \\
+\textbf{F} & \texttt{8C} & \texttt{A1} & \texttt{89} & \texttt{0D} & \texttt{BF} & \texttt{E6} & \texttt{42} & \texttt{68} & \texttt{41} & \texttt{99} & \texttt{2D} & \texttt{0F} & \texttt{B0} & \texttt{54} & \texttt{BB} & \texttt{16} \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Algoritma Ekspansi Kunci (\textit{Key Expansion}) AES-128}
+Untuk menghasilkan 11 subkunci ronde ($K_0, K_1, \dots, K_{10}$), kunci rahasia utama 16 byte diperluas menjadi susunan 44 buah \textbf{\textit{Word}} ($w_0, w_1, \dots, w_{43}$), di mana 1 \textit{Word} adalah vektor kolom berisi 4 byte (32 bit):
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Inisialisasi 4 Word Pertama ($w_0, w_1, w_2, w_3$):} Diambil langsung dari 4 kolom matriks kunci rahasia utama $K_0$.
+    \item \textbf{Operasi Inti pada Word:}
+    \begin{itemize}
+        \item $\mathbf{\mathtt{RotWord}([b_0, b_1, b_2, b_3]^T)} = [b_1, b_2, b_3, b_0]^T$: Menggeser posisi byte secara siklik ke atas sebanyak 1 byte (byte pertama pindah ke paling bawah).
+        \item $\mathbf{\mathtt{SubWord}([b_0, b_1, b_2, b_3]^T)} = [S(b_0), S(b_1), S(b_2), S(b_3)]^T$: Mensubstitusikan masing-masing dari ke-4 byte menggunakan Kotak-S AES.
+        \item $\mathbf{\mathtt{Rcon}[j]} = [\text{RC}[j], 0, 0, 0]^T$: Vektor konstanta ronde ke-$j$, di mana 3 byte terbawah selalu bernilai 0. Nilai $\text{RC}[j]$ di $GF(2^8)$ (dalam heksadesimal \& desimal) adalah:
+        \begin{center}
+        \small
+        \begin{tabular}{ccccccccccc}
+        \toprule
+        \textbf{Ronde $j$} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} \\
+        \midrule
+        $\text{RC}[j]$ (Heks) & \texttt{01} & \texttt{02} & \texttt{04} & \texttt{08} & \texttt{10} & \texttt{20} & \texttt{40} & \texttt{80} & \texttt{1B} & \texttt{36} \\
+        $\text{RC}[j]$ (Desimal) & 1 & 2 & 4 & 8 & 16 & 32 & 64 & 128 & 27 & 54 \\
+        \bottomrule
+        \end{tabular}
+        \end{center}
+    \end{itemize}
+    \item \textbf{Rumus Rekursi Pembangkitan Word ($w_i$ untuk $i = 4, 5, \dots, 43$):}
+    \begin{equation}
+    w_i = \begin{cases}
+    w_{i-4} \oplus \mathtt{SubWord}(\mathtt{RotWord}(w_{i-1})) \oplus \mathtt{Rcon}[i/4], & \text{jika } i \pmod 4 = 0 \text{ (kolom pertama ronde baru)} \\
+    w_{i-4} \oplus w_{i-1}, & \text{jika } i \pmod 4 \neq 0 \text{ (kolom 2, 3, dan 4)}
+    \end{cases}
+    \end{equation}
+\end{enumerate}
+
+Setiap subkunci ronde $K_r$ dibentuk dari gabungan 4 word berurutan: $K_r = [w_{4r}, w_{4r+1}, w_{4r+2}, w_{4r+3}]$.
+
 \newpage
 % =========================================================================
 \section{Lembar Pengerjaan Contoh Soal Manual AES-128 (Teks \& Desimal)}
@@ -503,7 +653,7 @@ AES beroperasi pada blok \textbf{128 bit (16 karakter teks / 16 Byte)} yang disu
 \textbf{Tugas:}
 \begin{enumerate}[leftmargin=*]
     \item Susun matriks State awal dan matriks subkunci $K_0$ dalam karakter teks dan nilai desimal ($0 \dots 255$).
-    \item Hitung pembangkitan subkunci ronde 1 ($K_1$) dalam bentuk desimal.
+    \item Hitung pembangkitan subkunci ronde 1 ($K_1$) secara rinci menggunakan $\mathtt{RotWord}$, $\mathtt{SubWord}$, dan $\mathtt{Rcon}[1]$.
     \item Hitung Initial AddRoundKey ($\text{State} \oplus K_0$).
     \item Hitung seluruh 4 transformasi pada Ronde 1: $\mathtt{SubBytes}$, $\mathtt{ShiftRows}$, $\mathtt{MixColumns}$ (tampilkan matriks desimal), dan $\mathtt{AddRoundKey}$.
     \item Tampilkan tabel rekapitulasi state akhir tiap ronde dan ciphertext akhir dalam desimal dan biner.
@@ -540,11 +690,38 @@ Nilai Desimal ASCII: $[75, 85, 78, 67, 73, 32, 82, 65, 72, 65, 83, 73, 65, 75, 8
 85 & 32 & 65 & 75 \\
 78 & 82 & 83 & 85 \\
 67 & 65 & 73 & 33
-\end{bmatrix}
+\end{bmatrix}, \quad
+\text{di mana: }
+w_0 = \begin{bmatrix} 75 \\ 85 \\ 78 \\ 67 \end{bmatrix}, \;
+w_1 = \begin{bmatrix} 73 \\ 32 \\ 82 \\ 65 \end{bmatrix}, \;
+w_2 = \begin{bmatrix} 72 \\ 65 \\ 83 \\ 73 \end{bmatrix}, \;
+w_3 = \begin{bmatrix} 65 \\ 75 \\ 85 \\ 33 \end{bmatrix}
 \end{equation*}
 
-\subsubsection*{Langkah 2: Pembangkitan Subkunci Ronde 1 ($K_1$)}
-Melalui algoritma Key Expansion dengan $\mathtt{RotWord}$, $\mathtt{SubWord}$ (S-box), dan $\mathtt{Rcon}[1]$, diperoleh matriks subkunci ronde 1 dalam bentuk desimal:
+\subsubsection*{Langkah 2: Perhitungan Pembangkitan Subkunci Ronde 1 ($K_1 = [w_4, w_5, w_6, w_7]$)}
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Menghitung $w_4$ ($i=4$, kelipatan 4, ronde $j=1$):}
+    \begin{itemize}
+        \item Ambil word sebelumnya $w_3 = [65, 75, 85, 33]^T$.
+        \item Terapkan $\mathtt{RotWord}(w_3) = [75, 85, 33, 65]^T$ (geser ke atas secara siklik).
+        \item Terapkan $\mathtt{SubWord}$ menggunakan S-box:
+        $$[S(75), S(85), S(33), S(65)]^T = [179, 252, 253, 131]^T$$
+        \item XOR dengan vektor konstanta ronde $\mathtt{Rcon}[1] = [1, 0, 0, 0]^T$:
+        $$[179 \oplus 1, 252 \oplus 0, 253 \oplus 0, 131 \oplus 0]^T = [178, 252, 253, 131]^T$$
+        \item XOR dengan $w_0 = [75, 85, 78, 67]^T$:
+        $$\mathbf{w_4} = \begin{bmatrix} 75 \oplus 178 \\ 85 \oplus 252 \\ 78 \oplus 253 \\ 67 \oplus 131 \end{bmatrix} = \mathbf{\begin{bmatrix} 249 \\ 169 \\ 179 \\ 192 \end{bmatrix}}$$
+    \end{itemize}
+
+    \item \textbf{Menghitung $w_5, w_6, w_7$ ($i$ bukan kelipatan 4):}
+    \begin{itemize}
+        \item $\mathbf{w_5} = w_1 \oplus w_4 = \begin{bmatrix} 73 \oplus 249 \\ 32 \oplus 169 \\ 82 \oplus 179 \\ 65 \oplus 192 \end{bmatrix} = \mathbf{\begin{bmatrix} 176 \\ 137 \\ 225 \\ 129 \end{bmatrix}}$
+        \item $\mathbf{w_6} = w_2 \oplus w_5 = \begin{bmatrix} 72 \oplus 176 \\ 65 \oplus 137 \\ 83 \oplus 225 \\ 73 \oplus 129 \end{bmatrix} = \mathbf{\begin{bmatrix} 248 \\ 200 \\ 178 \\ 200 \end{bmatrix}}$
+        \item $\mathbf{w_7} = w_3 \oplus w_6 = \begin{bmatrix} 65 \oplus 248 \\ 75 \oplus 200 \\ 85 \oplus 178 \\ 33 \oplus 200 \end{bmatrix} = \mathbf{\begin{bmatrix} 185 \\ 131 \\ 231 \\ 233 \end{bmatrix}}$
+    \end{itemize}
+\end{enumerate}
+
+Susun keempat word $[w_4, w_5, w_6, w_7]$ sebagai kolom matriks subkunci ronde 1 ($K_1$):
 \begin{equation*}
 \mathbf{K_1\text{ (Desimal)}} = \begin{bmatrix}
 249 & 176 & 248 & 185 \\
@@ -571,19 +748,34 @@ Lakukan operasi XOR bitwise antara setiap elemen State Awal dengan $K_0$:
 \end{bmatrix}}
 \end{equation*}
 
-\subsubsection*{Langkah 4: Empat Transformasi Ronde 1}
+\subsubsection*{Langkah 4: Rincian Empat Transformasi Ronde 1}
 
-\paragraph{4a. SubBytes:} Setiap nilai digantikan dengan nilai S-box (dalam desimal):
-\begin{equation*}
-\text{State}_{\text{SubBytes}} = \mathbf{\begin{bmatrix}
+\paragraph{4a. SubBytes (Substitusi Byte Non-Linear):}
+Setiap byte pada matriks $\text{State}_0$ digantikan secara independen dengan nilai padanannya pada Kotak-S (S-box) Rijndael:
+\begin{align*}
+\text{State}_{\text{SubBytes}} &= \begin{bmatrix}
+S(0) & S(29) & S(9) & S(8) \\
+S(7) & S(111) & S(7) & S(31) \\
+S(7) & S(21) & S(26) & S(23) \\
+S(19) & S(19) & S(105) & S(0)
+\end{bmatrix} \\
+&= \mathbf{\begin{bmatrix}
 99  & 164 & 1   & 48 \\
 197 & 168 & 197 & 192 \\
 197 & 89  & 162 & 240 \\
 125 & 125 & 249 & 99
 \end{bmatrix}}
-\end{equation*}
+\end{align*}
 
-\paragraph{4b. ShiftRows:} Geser baris ke kiri secara melingkar (baris $0, 1, 2, 3$ geser $0, 1, 2, 3$ posisi):
+\paragraph{4b. ShiftRows (Pergeseran Baris Siklik):}
+Setiap baris digeser secara melingkar ke kiri (\textit{cyclic left shift}) dengan jumlah pergeseran sesuai indeks barisnya:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Baris 0 (geser 0):} $[99, 164, 1, 48] \longrightarrow [99, 164, 1, 48]$
+    \item \textbf{Baris 1 (geser 1):} $[197, 168, 197, 192] \longrightarrow [168, 197, 192, 197]$
+    \item \textbf{Baris 2 (geser 2):} $[197, 89, 162, 240] \longrightarrow [162, 240, 197, 89]$
+    \item \textbf{Baris 3 (geser 3):} $[125, 125, 249, 99] \longrightarrow [99, 125, 125, 249]$
+\end{itemize}
+Hasil susunan matriks setelah $\mathtt{ShiftRows}$:
 \begin{equation*}
 \text{State}_{\text{ShiftRows}} = \mathbf{\begin{bmatrix}
 99  & 164 & 1   & 48 \\
@@ -593,7 +785,40 @@ Lakukan operasi XOR bitwise antara setiap elemen State Awal dengan $K_0$:
 \end{bmatrix}}
 \end{equation*}
 
-\paragraph{4c. MixColumns:} Perkalian dengan matriks MDS atas Lapangan Galois $GF(2^8)$:
+\paragraph{4c. MixColumns (Pencampuran Kolom Linear di $GF(2^8)$):}
+Setiap vektor kolom $\begin{bmatrix} s_0 & s_1 & s_2 & s_3 \end{bmatrix}^T$ dikalikan dengan matriks konstanta MDS:
+\begin{equation*}
+\begin{bmatrix} s'_0 \\ s'_1 \\ s'_2 \\ s'_3 \end{bmatrix} =
+\begin{bmatrix}
+2 & 3 & 1 & 1 \\
+1 & 2 & 3 & 1 \\
+1 & 1 & 2 & 3 \\
+3 & 1 & 1 & 2
+\end{bmatrix}
+\begin{bmatrix} s_0 \\ s_1 \\ s_2 \\ s_3 \end{bmatrix}
+\end{equation*}
+
+\textbf{Contoh Perhitungan Manual Detail pada Kolom 0 ($\begin{bmatrix} 99 & 168 & 162 & 99 \end{bmatrix}^T$):}
+\begin{itemize}[leftmargin=*]
+    \item \textit{Komputasi dasar perkalian Galois Field:}
+    \begin{itemize}
+        \item $2 \cdot 99 = \mathtt{xtime}(99) = 99 \times 2 = \mathbf{198}$ (karena $99 < 128$)
+        \item $3 \cdot 99 = (2 \cdot 99) \oplus 99 = 198 \oplus 99 = \mathbf{165}$
+        \item $2 \cdot 168 = \mathtt{xtime}(168) = ((168 \times 2) \oplus 27) \pmod{256} = (80 \oplus 27) = \mathbf{75}$
+        \item $3 \cdot 168 = (2 \cdot 168) \oplus 168 = 75 \oplus 168 = \mathbf{227}$
+        \item $2 \cdot 162 = \mathtt{xtime}(162) = (68 \oplus 27) = \mathbf{95}$
+        \item $3 \cdot 162 = 95 \oplus 162 = \mathbf{253}$
+    \end{itemize}
+    \item \textit{Evaluasi 4 elemen Kolom 0:}
+    \begin{align*}
+    s'_0 &= (2 \cdot 99) \oplus (3 \cdot 168) \oplus (1 \cdot 162) \oplus (1 \cdot 99) = 198 \oplus 227 \oplus 162 \oplus 99 = \mathbf{228} \\
+    s'_1 &= (1 \cdot 99) \oplus (2 \cdot 168) \oplus (3 \cdot 162) \oplus (1 \cdot 99) = 99 \oplus 75 \oplus 253 \oplus 99 = \mathbf{182} \\
+    s'_2 &= (1 \cdot 99) \oplus (1 \cdot 168) \oplus (2 \cdot 162) \oplus (3 \cdot 99) = 99 \oplus 168 \oplus 95 \oplus 165 = \mathbf{49} \\
+    s'_3 &= (3 \cdot 99) \oplus (1 \cdot 168) \oplus (1 \cdot 162) \oplus (2 \cdot 99) = 165 \oplus 168 \oplus 162 \oplus 198 = \mathbf{105}
+    \end{align*}
+\end{itemize}
+
+Dengan menerapkan proses yang sama pada Kolom 1, 2, dan 3, diperoleh:
 \begin{equation*}
 \text{State}_{\text{MixColumns}} = \mathbf{\begin{bmatrix}
 228 & 138 & 225 & 148 \\
@@ -603,7 +828,8 @@ Lakukan operasi XOR bitwise antara setiap elemen State Awal dengan $K_0$:
 \end{bmatrix}}
 \end{equation*}
 
-\paragraph{4d. AddRoundKey ($K_1$):} Lakukan XOR dengan matriks subkunci $K_1$:
+\paragraph{4d. AddRoundKey ($K_1$):}
+Lakukan operasi XOR bitwise elemen-demi-elemen antara matriks $\text{State}_{\text{MixColumns}}$ dengan matriks subkunci $K_1$:
 \begin{equation*}
 \text{State}_{\text{Ronde 1 Akhir}} = \begin{bmatrix}
 228 \oplus 249 & 138 \oplus 176 & 225 \oplus 248 & 148 \oplus 185 \\
