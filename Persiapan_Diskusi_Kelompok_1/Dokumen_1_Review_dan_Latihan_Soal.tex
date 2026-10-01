@@ -103,33 +103,41 @@ Dokumen ini disusun sebagai panduan persiapan terarah menjelang \textbf{Diskusi 
 \section{Bagian I: Review Materi \& Rangkuman Rumus Kunci}
 % =========================================================================
 
-\subsection{Definisi Formal Sistem Kripto (Kriptosistem)}
+\subsection{Definisi Formal Kriptosistem \& Model Penyerangan (Attack Models)}
+
 Suatu kriptosistem adalah sebuah 5-tupel $(\mathcal{P}, \mathcal{C}, \mathcal{K}, \mathcal{E}, \mathcal{D})$ yang memenuhi:
 \begin{enumerate}[leftmargin=*]
     \item $\mathcal{P}$ adalah himpunan berhingga dari teks-asal (\textit{plaintext}).
     \item $\mathcal{C}$ adalah himpunan berhingga dari teks-sandi (\textit{ciphertext}).
     \item $\mathcal{K}$ adalah himpunan berhingga dari kunci (\textit{keyspace}).
-    \item Untuk setiap $k \in \mathcal{K}$, terdapat aturan enkripsi $e_k \in \mathcal{E}$ dengan $e_k: \mathcal{P} \to \mathcal{C}$, dan aturan dekripsi $d_k \in \mathcal{D}$ dengan $d_k: \mathcal{C} \to \mathcal{P}$, sedemikian hingga untuk setiap $x \in \mathcal{P}$ berlaku:
-    \[
-    d_k(e_k(x)) = x.
-    \]
+    \item Untuk setiap $k \in \mathcal{K}$, terdapat aturan enkripsi $e_k \in \mathcal{E}$ ($e_k: \mathcal{P} \to \mathcal{C}$) dan aturan dekripsi $d_k \in \mathcal{D}$ ($d_k: \mathcal{C} \to \mathcal{P}$) sedemikian hingga untuk setiap $x \in \mathcal{P}$ berlaku $d_k(e_k(x)) = x$.
 \end{enumerate}
+
+\begin{teoribox}{4 Model Penyerangan Standar Kriptoanalisis (Berdasarkan Informasi Penyerang)}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Ciphertext-Only Attack (COA):} Penyerang hanya memiliki akses ke string ciphertext $y \in \mathcal{C}$. Ini adalah model penyerangan paling realistis dan paling menantang.
+    \item \textbf{Known-Plaintext Attack (KPA):} Penyerang memiliki sejumlah pasangan plaintext dan ciphertext yang berkorespondensi $(x_1, y_1), (x_2, y_2), \dots$ yang dienkripsi menggunakan kunci rahasia yang sama.
+    \item \textbf{Chosen-Plaintext Attack (CPA):} Penyerang memiliki akses ke mesin enkripsi (\textit{encryption oracle}) sehingga bebas memilih plaintext $x$ sembarang dan memperoleh ciphertext $y = e_k(x)$ yang bersesuaian.
+    \item \textbf{Chosen-Ciphertext Attack (CCA):} Penyerang memiliki akses ke mesin dekripsi (\textit{decryption oracle}) sehingga bebas memilih ciphertext $y$ sembarang dan memperoleh plaintext $x = d_k(y)$ yang bersesuaian (kecuali ciphertext target).
+\end{enumerate}
+\end{teoribox}
 
 \subsection{Kriptografi Klasik: Formulasi \& Syarat Invertibilitas}
 
-\begin{teoribox}{Ringkasan Sandi Klasik Utama}
+\begin{teoribox}{Formulasi Matematis Sandi Klasik Utama}
 \begin{itemize}[leftmargin=*]
     \item \textbf{Sandi Geser (Shift Cipher):} $\mathcal{P} = \mathcal{C} = \mathcal{K} = \mathbb{Z}_{26}$.
     \[
     e_k(x) \equiv x + k \pmod{26}, \quad d_k(y) \equiv y - k \pmod{26}.
     \]
-    Himpunan fungsi enkripsi $\{e_k : k \in \mathbb{Z}_{26}\}$ terhadap operasi komposisi membentuk grup siklis berorde 26 yang isomorfik terhadap $(\mathbb{Z}_{26}, +)$.
+    Himpunan fungsi enkripsi $\{e_k : k \in \mathbb{Z}_{26}\}$ terhadap operasi komposisi fungsi $(\circ)$ membentuk grup siklis berorde 26 yang isomorfik terhadap grup aditif $(\mathbb{Z}_{26}, +)$.
     
     \item \textbf{Sandi Affine:} $\mathcal{P} = \mathcal{C} = \mathbb{Z}_{26}$, $\mathcal{K} = \{(a, b) \in \mathbb{Z}_{26} \times \mathbb{Z}_{26} : \gcd(a, 26) = 1\}$.
     \[
     e_K(x) \equiv ax + b \pmod{26}, \quad d_K(y) \equiv a^{-1}(y - b) \pmod{26}.
     \]
     Banyaknya kemungkinan kunci: $|\mathcal{K}| = \varphi(26) \times 26 = 12 \times 26 = 312$.
+    Syarat invertibilitas: $\gcd(a, 26) = 1 \iff a \in \{1, 3, 5, 7, 9, 11, 15, 17, 19, 21, 23, 25\}$.
     
     \item \textbf{Sandi Hill ($m \times m$):} Pesan dibagi ke dalam blok vektor kolom $\mathbf{x} \in \mathbb{Z}_{26}^m$. Kunci berupa matriks $K \in \mathcal{M}_{m \times m}(\mathbb{Z}_{26})$.
     \[
@@ -146,45 +154,211 @@ Suatu kriptosistem adalah sebuah 5-tupel $(\mathcal{P}, \mathcal{C}, \mathcal{K}
     
     \item \textbf{Sandi Transposisi / Permutasi Matriks $n \times m$:} Pesan berpanjang $L = n \cdot m$ dituliskan baris demi baris pada matriks $n \times m$, lalu ciphertext dibaca kolom demi kolom dari kiri ke kanan.
     \begin{itemize}
-        \item Indeks karakter plaintext ke-$t$ ($0 \le t < L$) dipetakan ke koordinat sel baris $i = \lfloor t/m \rfloor$ dan kolom $j = t \bmod m$.
-        \item Indeks karakter ciphertext ke-$k$ ($0 \le k < L$) diperoleh dari koordinat baris $i = k \bmod n$ dan kolom $j = \lfloor k/n \rfloor$.
-        \item Dekripsi dilakukan dengan menyusun ciphertext per kolom berukuran $n$ sebanyak $m$ buah kolom, lalu membaca ulang per baris.
+        \item Indeks karakter plaintext ke-$t$ ($0 \le t < L$) dipetakan ke koordinat sel baris $i = \lfloor t/m \rfloor$ dan kolom $j = t \bmod m$, sehingga indeks ciphertext ke-$k$ adalah:
+        \[
+        k = \pi(t) = (t \bmod m) \cdot n + \lfloor t/m \rfloor.
+        \]
+        \item Pemetaan balik (dekripsi): Indeks karakter ciphertext ke-$k$ ($0 \le k < L$) dipetakan kembali ke indeks plaintext $t$:
+        \[
+        t = \pi^{-1}(k) = (k \bmod n) \cdot m + \lfloor k/n \rfloor.
+        \]
     \end{itemize}
     
-    \item \textbf{Sandi Vigenère:} Kunci berupa vektor $\mathbf{k} = (k_0, k_1, \dots, k_{m-1}) \in \mathbb{Z}_{26}^m$.
+    \item \textbf{Sandi Vigenère:} Kunci berupa vektor periodik $\mathbf{k} = (k_0, k_1, \dots, k_{m-1}) \in \mathbb{Z}_{26}^m$ berpanjang $m$.
     \[
     c_i \equiv p_i + k_{i \bmod m} \pmod{26}, \quad p_i \equiv c_i - k_{i \bmod m} \pmod{26}.
     \]
+    Komposisi dua sandi Vigenère berpanjang $m_1$ dan $m_2$ setara dengan sandi Vigenère tunggal berpanjang paling banyak $\operatorname{kpk}(m_1, m_2)$.
 \end{itemize}
 \end{teoribox}
 
-\subsection{Kriptoanalisis: Metode Frekuensi, Kasiski, \& Indeks Koinsidensi}
+\newpage
+\subsection{Panduan Lengkap Kriptoanalisis Berdasarkan Jenis Sandi}
 
-\begin{teoribox}{Alat Kriptoanalisis Kunci Polialfabetik \& Aljabar}
-\begin{enumerate}[leftmargin=*]
-    \item \textbf{Uji Kasiski (Kasiski Examination):} Jika suatu pola substring yang sama berulang pada ciphertext pada jarak $\Delta_1, \Delta_2, \dots, \Delta_r$, maka panjang kunci $m$ berpeluang besar merupakan faktor persekutuan dari jarak-jarak tersebut:
+\begin{table}[h!]
+\centering
+\small
+\caption{\textbf{Tabel Pemetaan Strategi \& Kebutuhan Data Kriptoanalisis Sandi Klasik}}
+\vspace{0.15cm}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{l l l l p{6.2cm}}
+\toprule
+\textbf{Nama Sandi} & \textbf{Kategori Sandi} & \textbf{Model Serangan} & \textbf{Data Minimum} & \textbf{Metode Kriptoanalisis Utama} \\
+\midrule
+\textbf{Sandi Geser} & Monoalfabetik & COA / KPA & 1 pasang karakter & • Brute-force 26 kunci \\
+& & & (atau $N \ge 30$) & • Pencocokan frekuensi unigram tertinggi \\
+\hline
+\textbf{Sandi Affine} & Monoalfabetik & KPA & 2 pasang karakter & • Sistem kongruensi linear 2 persamaan mod 26 \\
+& & COA & 2 huruf tersering & • Analisis frekuensi unigram ($E, T$ atau $A, N$) \\
+& & Brute-force & Ciphertext pendek & • Uji $12 \times 26 = 312$ pasangan $(a, b)$ \\
+\hline
+\textbf{Sandi Hill ($m \times m$)} & Poligram Aljabar & KPA & $m$ pasang vektor blok & • Aljabar matriks $K \equiv Y X^{-1} \pmod{26}$ \\
+& & COA & $N \gg m$ & • Analisis frekuensi $m$-gram \& pencarian aljabar \\
+\hline
+\textbf{Sandi Transposisi} & Permutasi Karakter & COA & $N = n \cdot m$ & • Identifikasi $I_c \approx I_{\text{mono}}$ \\
+& & & & • Faktorisasi $N$, rekonstruksi kolom \& bigram \\
+\hline
+\textbf{Sandi Vigenère} & Polialfabetik & COA & $N \ge 100$ & • \textbf{Tahap 1:} Uji Kasiski \& Friedman (Cari $m$) \\
+& Periodik & & & • \textbf{Tahap 2:} Dekomposisi $m$ kolom \\
+& & & & • \textbf{Tahap 3:} Analisis frekuensi / korelasi tiap kolom \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+\subsubsection{A. Kriptoanalisis Sandi Monoalfabetik \& Aljabar}
+
+\begin{teoribox}{1. Kriptoanalisis Sandi Affine ($e(x) \equiv ax + b \pmod{26}$)}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Prosedur Known-Plaintext Attack (KPA):}
+    \begin{enumerate}[label=\textbf{Langkah \arabic*:}, leftmargin=*]
+        \item Ambil $2$ pasangan plaintext-ciphertext berbeda: $p_1 \to c_1$ dan $p_2 \to c_2$.
+        \item Susun sistem kongruensi linear:
+        \[
+        \begin{cases} a \cdot p_1 + b \equiv c_1 \pmod{26} \\ a \cdot p_2 + b \equiv c_2 \pmod{26} \end{cases}
+        \]
+        \item Kurangkan persamaan (1) dengan persamaan (2) untuk mengeliminasi $b$:
+        \[
+        a(p_1 - p_2) \equiv (c_1 - c_2) \pmod{26}.
+        \]
+        \item Definisikan $\Delta p = (p_1 - p_2) \bmod 26$ dan $\Delta c = (c_1 - c_2) \bmod 26$. Jika $\gcd(\Delta p, 26) = 1$, cari invers $(\Delta p)^{-1} \pmod{26}$, maka:
+        \[
+        a \equiv \Delta c \cdot (\Delta p)^{-1} \pmod{26}.
+        \]
+        \item Substitusikan nilai $a$ yang diperoleh ke salah satu persamaan untuk mencari $b$:
+        \[
+        b \equiv c_1 - a \cdot p_1 \pmod{26}.
+        \]
+        \item Verifikasi bahwa $\gcd(a, 26) = 1$ dan ujikan kunci $K = (a, b)$ untuk mendekripsi seluruh pesan.
+    \end{enumerate}
+    \item \textbf{Prosedur Ciphertext-Only Attack (COA):}
+    Hitung frekuensi kemunculan setiap huruf di ciphertext. Ambil dua huruf dengan frekuensi tertinggi (misal $y_1, y_2$), lalu asumsikan $y_1, y_2$ berkorespondensi dengan dua huruf paling sering pada bahasa teks asli (misal pada Bahasa Inggris: $\texttt{'E'} = 4, \texttt{'T'} = 19$; pada Bahasa Indonesia: $\texttt{'A'} = 0, \texttt{'N'} = 13$). Selesaikan dengan metode KPA di atas.
+\end{itemize}
+\end{teoribox}
+
+\begin{teoribox}{2. Kriptoanalisis Sandi Hill $m \times m$ via KPA ($\mathbf{y} \equiv K \mathbf{x} \pmod{26}$)}
+\begin{enumerate}[label=\textbf{Langkah \arabic*:}, leftmargin=*]
+    \item Kumpulkan $m$ buah pasangan blok vektor plaintext-ciphertext independen:
     \[
-    m \mid \gcd(\Delta_1, \Delta_2, \dots, \Delta_r).
+    \mathbf{x}_1 \to \mathbf{y}_1, \quad \mathbf{x}_2 \to \mathbf{y}_2, \quad \dots, \quad \mathbf{x}_m \to \mathbf{y}_m \quad (\mathbf{x}_j, \mathbf{y}_j \in \mathbb{Z}_{26}^m).
     \]
-    \item \textbf{Indeks Koinsidensi ($I_c$):} Peluang bahwa dua huruf yang dipilih secara acak dari teks sandi berpanjang $N$ adalah identik:
+    \item Susun matriks plaintext $X = [\mathbf{x}_1 \; \mathbf{x}_2 \; \dots \; \mathbf{x}_m]$ dan matriks ciphertext $Y = [\mathbf{y}_1 \; \mathbf{y}_2 \; \dots \; \mathbf{y}_m]$ berukuran $m \times m$, sehingga berlaku:
     \[
-    I_c(\mathbf{x}) = \frac{\sum_{i=0}^{25} f_i(f_i - 1)}{N(N - 1)}.
+    Y \equiv K \cdot X \pmod{26}.
     \]
-    \begin{itemize}
-        \item Teks acak murni seragam: $I_{\text{acak}} = \frac{1}{26} \approx 0.0385$.
-        \item Teks bahasa alami monoalfabetik (Inggris): $I_{\text{mono}} \approx 0.065$ (Bahasa Indonesia $\approx 0.07 - 0.08$).
-    \end{itemize}
-    \textbf{Rumus Babbage-Friedman untuk Estimasi Panjang Kunci Vigenère:}
+    \item Hitung determinan $\det(X) \pmod{26}$ dan pastikan $\gcd(\det(X), 26) = 1$ (yakni $\det(X)$ ganjil dan bukan kelipatan 13).
+    \item Hitung matriks invers $X^{-1} \pmod{26}$ menggunakan rumus:
     \[
-    m \approx \frac{0.027 N}{(N - 1)I_c - 0.038 N + 0.065}.
+    X^{-1} \equiv (\det X)^{-1} \cdot \operatorname{adj}(X) \pmod{26}.
     \]
-    \item \textbf{Known-Plaintext Attack (KPA) pada Sandi Hill $m \times m$:} Jika diketahui $m$ buah pasangan blok independen $(\mathbf{x}_j, \mathbf{y}_j)$, bentuk matriks $X = [\mathbf{x}_1 \dots \mathbf{x}_m]$ dan $Y = [\mathbf{y}_1 \dots \mathbf{y}_m]$ sehingga $Y \equiv K X \pmod{26}$. Jika $\gcd(\det(X), 26) = 1$, maka:
+    \item Kalikan kedua ruas dari sebelah kanan dengan $X^{-1}$ untuk memperoleh matriks kunci rahasia:
     \[
-    K \equiv Y X^{-1} \pmod{26}.
+    K \equiv Y \cdot X^{-1} \pmod{26}.
     \]
 \end{enumerate}
 \end{teoribox}
 
+\newpage
+\subsubsection{B. Kriptoanalisis Sandi Polialfabetik (Vigenère): Urutan Eksekusi Sistematis}
+
+Pada Sandi Vigenère, analisis frekuensi huruf tunggal secara langsung pada seluruh teks akan \textbf{gagal} karena pergeseran polialfabetik menyebabkan distribusi frekuensi menjadi rata (\textit{flattened}). Oleh karena itu, kriptoanalisis Vigenère \textbf{wajib} dilakukan melalui urutan alur hierarkis 5 tahap berikut:
+
+\begin{center}
+\small
+\begin{tcolorbox}[colback=white, colframe=colanalisis, title=\textbf{Bagan Alur Urutan Metode Kriptoanalisis Sandi Vigenère}]
+\textbf{Tahap 0 (Uji Diagnostik)} $\to$ \textbf{Tahap 1 (Estimasi Panjang Kunci $m$)} $\to$ \textbf{Tahap 2 (Partisi Kolom)} $\to$ \textbf{Tahap 3 (Pecahkan Kunci Kolom)} $\to$ \textbf{Tahap 4 (Dekripsi Penuh)}
+\end{tcolorbox}
+\end{center}
+
+\begin{enumerate}[label=\textbf{Tahap \arabic* :}, leftmargin=*]
+    \setcounter{enumi}{-1}
+    \item \textbf{Uji Diagnostik Sifat Sandi (Indeks Koinsidensi Teks Utuh)}
+    
+    Hitung nilai Indeks Koinsidensi ($I_c$) dari teks sandi $\mathbf{y}$ berpanjang $N$:
+    \[
+    I_c(\mathbf{y}) = \frac{\sum_{i=0}^{25} f_i(f_i - 1)}{N(N - 1)}.
+    \]
+    \begin{itemize}[leftmargin=*]
+        \item \textbf{Kriteria Keputusan:}
+        \begin{itemize}
+            \item Jika $I_c \approx 0{,}065$ (Inggris) atau $\approx 0{,}074$ (Indonesia) $\implies$ Cipher adalah \textbf{monoalfabetik} atau transposisi.
+            \item Jika $I_c \approx 0{,}038 - 0{,}045$ $\implies$ Cipher adalah \textbf{polialfabetik} (seperti Vigenère). Lanjutkan ke Tahap 1.
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{Menentukan Panjang Periode Kunci ($m$)}
+    
+    Terdapat 3 metode pelengkap untuk menentukan panjang kunci $m$:
+    \begin{itemize}[leftmargin=*]
+        \item \textbf{Metode A: Uji Kasiski (Kasiski Examination)}
+        \begin{enumerate}[label=\alph*., leftmargin=*]
+            \item Temukan seluruh pola substring berulang dengan panjang $n \ge 3$ (misal $3$-gram atau $4$-gram).
+            \item Catat posisi indeks awal kemunculan masing-masing pola ($p_1, p_2, \dots$) dan hitung jarak selisihnya: $D_{ij} = p_j - p_i$.
+            \item Faktorisasi seluruh jarak selisih $D_{ij}$ ke dalam faktor-faktor pembaginya.
+            \item Tentukan $\gcd$ atau kandidat $m$ yang paling dominan membagi mayoritas jarak selisih:
+            \[
+            m \mid \gcd(D_1, D_2, \dots, D_r).
+            \]
+        \end{enumerate}
+        \item \textbf{Metode B: Formula Estimasi Babbage-Friedman}
+        Jika data substring berulang minim, gunakan estimasi formula Friedman:
+        \[
+        m \approx \frac{0{,}027 N}{(N - 1)I_c - 0{,}038 N + 0{,}065}.
+        \]
+        \item \textbf{Metode C: Rata-Rata Indeks Koinsidensi Kolom ($\bar{I}_c(m)$)}
+        Uji nilai kandidat $m = 1, 2, 3, \dots, 12$. Partisi teks menjadi $m$ kolom dan hitung rata-rata $I_c$ kolomnya: $\bar{I}_c(m) = \frac{1}{m}\sum_{j=0}^{m-1} I_c(\mathbf{y}^{(j)})$. Nilai $m$ yang tepat ditandai dengan lonjakan tajam nilai $\bar{I}_c(m) \approx 0{,}065$.
+    \end{itemize}
+
+    \item \textbf{Dekomposisi Ciphertext Menjadi $m$ Sub-Stream Monoalfabetik (Partisi Kolom)}
+    
+    Setelah nilai $m$ dipastikan, susun ciphertext berpanjang $N$ ke dalam matriks dengan lebar $m$ kolom, lalu ekstrak $m$ buah sub-vektor kolom $\mathbf{y}^{(0)}, \mathbf{y}^{(1)}, \dots, \mathbf{y}^{(m-1)}$:
+    \[
+    \mathbf{y}^{(j)} = (y_j, \, y_{j+m}, \, y_{j+2m}, \, \dots) \quad \text{untuk } j \in \{0, 1, \dots, m-1\}.
+    \]
+    Setiap sub-vektor kolom $\mathbf{y}^{(j)}$ sekarang merupakan teks yang dienkripsi oleh \textbf{Sandi Geser tunggal} dengan satu huruf kunci $k_j \in \mathbb{Z}_{26}$.
+
+    \item \textbf{Menentukan Huruf Kunci Tiap Kolom ($k_j$)}
+    
+    Untuk menentukan nilai kunci $k_j$, kriptanalis dapat menggunakan 3 teknik komplementer:
+    \begin{itemize}[leftmargin=*]
+        \item \textbf{Teknik 1: Korelasi Probabilitas Bahasa (\textit{Language Matching}):}
+        Untuk setiap kemungkinan pergeseran $k \in \{0, 1, \dots, 25\}$, hitung nilai korelasi terhadap profil frekuensi bahasa asli:
+        \[
+        M_j(k) = \sum_{i=0}^{25} p_i \cdot \frac{f_{i+k}^{(j)}}{N_j}
+        \]
+        di mana $p_i$ adalah frekuensi teoretis huruf ke-$i$ bahasa alami (misal $p_{\text{'E'}} \approx 0{,}127$). Pilih $k_j = \arg\max_{k} M_j(k)$ (puncak korelasi mencapai $\approx 0{,}065$).
+        
+        \item \textbf{Teknik 2: Mutual Index of Coincidence ($MIC$) Antar Sub-Kolom:}
+        Digunakan untuk mencari \textbf{selisih pergeseran relatif} antar dua sub-kolom $\mathbf{y}^{(a)}$ dan $\mathbf{y}^{(b)}$ tanpa perlu menebak bahasa terlebih dahulu:
+        \[
+        MIC(\mathbf{y}^{(a)}, \mathbf{y}^{(b)}, g) = \frac{\sum_{i=0}^{25} f_{a, i} \cdot f_{b, (i+g) \bmod 26}}{N_a \cdot N_b}
+        \]
+        Nilai pergeseran relatif optimal $g_{\max} = \arg\max_g MIC(g)$ yang menghasilkan nilai $\approx 0{,}065$ memberikan hubungan kunci:
+        \[
+        k_b - k_a \equiv g_{\max} \pmod{26} \iff k_b \equiv k_a + g_{\max} \pmod{26}.
+        \]
+        Dengan demikian, seluruh $m$ huruf kunci dapat dinyatakan dalam satu variabel $k_0$, sehingga ruang pencarian tereduksi drastis menjadi hanya $26$ kemungkinan.
+        
+        \item \textbf{Teknik 3: Pencocokan Frekuensi Puncak (Cepat):}
+        Ambil huruf dengan kemunculan terbanyak pada kolom $j$ ($y_{\max}^{(j)}$) dan pasangkan langsung dengan huruf tersering bahasa asli ($x_{\max} = \texttt{'E'} = 4$ atau $\texttt{'A'} = 0$):
+        \[
+        k_j \equiv y_{\max}^{(j)} - x_{\max} \pmod{26}.
+        \]
+    \end{itemize}
+
+    \item \textbf{Rekonstruksi Kunci Penuh \& Dekripsi Seluruh Pesan}
+    
+    Gabungkan seluruh komponen kunci menjadi vektor kata-kunci utuh:
+    \[
+    \mathbf{k} = (k_0, k_1, \dots, k_{m-1}).
+    \]
+    Lakukan dekripsi pada setiap karakter $y_i$ ($0 \le i < N$) menggunakan aturan balik Sandi Vigenère:
+    \[
+    x_i \equiv y_i - k_{i \bmod m} \pmod{26}.
+    \]
+\end{enumerate}
+
+\newpage
 \subsection{Teori Shannon: Keamanan Sempurna, Entropi, \& Equivocation}
 
 \begin{teoribox}{Konsep \& Rumus Sakti Teori Shannon}
