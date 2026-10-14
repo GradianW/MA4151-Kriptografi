@@ -1,0 +1,1553 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\newenvironment{proof}{\noindent\textbf{Bukti.}}{\hfill$\blacksquare$\vspace{0.3em}}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!80!black,
+    citecolor=blue!80!black,
+    urlcolor=blue!80!black,
+    pdftitle={Bank 25 Soal Latihan dan Solusi Lengkap Persiapan UTS MA4151 Kriptografi},
+    pdfauthor={MA4151 Kriptografi ITB}
+}
+
+% Header & Footer Settings
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\textbf{MA4151 Kriptografi}}
+\lhead{Bank 25 Soal Latihan \& Solusi UTS}
+\rfoot{Halaman \thepage}
+\setlength{\headheight}{14pt}
+
+% Color Definitions
+\definecolor{primary}{RGB}{20, 50, 130}       % Navy Blue
+\definecolor{accent}{RGB}{15, 110, 120}       % Deep Teal
+\definecolor{darkgreen}{RGB}{25, 110, 50}     % Emerald
+\definecolor{crimson}{RGB}{170, 30, 30}       % Deep Red / Alert
+\definecolor{boxbg}{RGB}{248, 250, 252}       % Crisp light slate
+\definecolor{solbg}{RGB}{252, 253, 255}
+\definecolor{tipbg}{RGB}{243, 250, 245}
+
+\tcbuselibrary{skins,breakable}
+
+\tcbset{
+    arc=2mm,
+    left=3.5mm,
+    right=3.5mm,
+    top=3mm,
+    bottom=3mm,
+    fonttitle=\bfseries,
+    breakable
+}
+
+% Custom TColorBoxes
+\newtcolorbox{soalbox}[1]{
+    colback=boxbg,
+    colframe=primary,
+    title={#1}
+}
+
+\newtcolorbox{solusibox}[1]{
+    colback=solbg,
+    colframe=accent,
+    title={#1}
+}
+
+\newtcolorbox{tipsbox}[1]{
+    colback=tipbg,
+    colframe=darkgreen,
+    title={#1}
+}
+
+% Section Title Formatting
+\titleformat{\section}{\large\bfseries\color{primary}}{\thesection}{1em}{}[\titlerule]
+\titleformat{\subsection}{\normalsize\bfseries\color{accent}}{\thesubsection}{1em}{}
+
+\title{
+    \vspace{-1.5cm}
+    \textbf{\huge BANK 25 SOAL LATIHAN INTENSIF}\\[0.2cm]
+    \textbf{\Large \& PEMBAHASAN LENGKAP PERSIAPAN UTS}\\[0.3cm]
+    \large Mata Kuliah MA4151 Kriptografi -- Semester I Tahun Ajaran 2026/2027\\[0.1cm]
+    \large Institut Teknologi Bandung
+}
+\author{\textbf{Disusun untuk Grinding Mandiri \& Penguasaan Soal Ujian ITB}}
+\date{Oktober 2026}
+
+\begin{document}
+
+\maketitle
+\vspace{-0.5cm}
+
+\begin{abstract}
+Dokumen ini memuat \textbf{Bank 25 Butir Soal Latihan Intensif dan Pembahasan Lengkap} yang dirancang khusus untuk persiapan menghadapi \textbf{Ujian Tengah Semester (UTS) MA4151 Kriptografi}. Soal-soal dalam dokumen ini mencakup seluruh tipologi soal yang diujikan dalam 6 tahun terakhir (UTS 2020/2021 hingga UTS 2025/2026 terbaru), mencakup: (1) Sandi Klasik \& Ruang Kriptosistem; (2) Kriptoanalisis \& Indeks Koinsidensi; (3) Teori Shannon, Entropi, \& Pohon Huffman; (4) Block Cipher Modern (DES \& AES); (5) Pengantar Teori Bilangan (PTB); serta (6) Kriptosistem RSA \& Titik Tetap. Setiap butir soal disertai \textbf{pembahasan matematis formal langkah-demi-langkah, identifikasi teorema pendukung, serta catatan konsep kunci}.
+\end{abstract}
+
+\vspace{0.2cm}
+\hrule
+\vspace{0.3cm}
+
+\tableofcontents
+\newpage
+
+% =========================================================================
+\section{Kategori 1: Sandi Klasik \& Analisis Ruang Kriptosistem}
+% =========================================================================
+
+\begin{soalbox}{Soal 1.1: Ukuran Ruang Kunci Sistem Kripto Perkalian (UTS 2020/2021)}
+Misalkan $S$ adalah suatu sistem kripto sandi geser pada alfabet Latin ($\mathcal{P} = \mathcal{C} = \mathcal{K}_1 = \mathbb{Z}_{26}$) dan $T$ adalah suatu sistem kripto sandi perkalian pada alfabet Latin ($e_a(x) \equiv ax \pmod{26}$).
+Berapa banyak kunci yang mungkin dibuat dari sistem kripto perkalian $S \times T$?
+\begin{enumerate}[label=(\alph*)]
+    \item 256
+    \item 312
+    \item 128
+    \item 512
+\end{enumerate}
+\end{soalbox}
+
+\begin{solusibox}{Pembahasan Soal 1.1}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Definisi Sistem Perkalian:} Sistem kripto perkalian $S \times T$ didefinisikan dengan ruang kunci $\mathcal{K} = \mathcal{K}_1 \times \mathcal{K}_2$.
+    \item \textbf{Ukuran Ruang Kunci $S$ (Sandi Geser):} Sandi geser memiliki kunci berupa pergeseran aditif $k \in \mathbb{Z}_{26}$, sehingga:
+    \[
+    |\mathcal{K}_1| = 26
+    \]
+    \item \textbf{Ukuran Ruang Kunci $T$ (Sandi Perkalian):} Aturan enkripsi adalah $e_a(x) \equiv ax \pmod{26}$. Agar fungsi ini memiliki invers (dapat didekripsi secara unik), syarat perlu dan cukupnya adalah:
+    \[
+    \gcd(a, 26) = 1 \iff a \in \mathbb{Z}_{26}^*
+    \]
+    Banyaknya bilangan bulat pada $\mathbb{Z}_{26}$ yang relatif prima terhadap 26 dihitung menggunakan fungsi phi Euler:
+    \[
+    |\mathcal{K}_2| = \varphi(26) = \varphi(2 \times 13) = (2 - 1)(13 - 1) = 1 \times 12 = 12
+    \]
+    Himpunan kunci tersebut adalah $\mathbb{Z}_{26}^* = \{1, 3, 5, 7, 9, 11, 15, 17, 19, 21, 23, 25\}$.
+    \item \textbf{Total Ukuran Ruang Kunci Gabungan:}
+    \[
+    |\mathcal{K}| = |\mathcal{K}_1| \times |\mathcal{K}_2| = 26 \times 12 = \mathbf{312}
+    \]
+\end{enumerate}
+\textbf{Jawaban yang Benar: (b) 312.}
+\end{solusibox}
+
+\vspace{0.4cm}
+
+\begin{soalbox}{Soal 1.2: Syarat Invertibilitas \& Tabrakan Sandi Hill (UTS 2021/2022)}
+Alice ingin mengirim pesan rahasia kepada Bob menggunakan sandi Hill berdimensi $2 \times 2$. Matriks yang dipilih Alice adalah:
+\[
+K = \begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix}
+\]
+\begin{enumerate}[label=(\alph*)]
+    \item Jelaskan secara aljabar mengapa matriks $K$ yang dipilih Alice tidak dapat digunakan dalam sistem kripto Sandi Hill.
+    \item Tunjukkan bahwa kegagalan tersebut mengakibatkan terjadinya tabrakan teks-sandi (\textit{ciphertext collision}) dengan mencari dua vektor teks-asal (\textit{plaintext}) berbeda $\mathbf{x}_1, \mathbf{x}_2 \in \mathbb{Z}_{26}^2$ yang menghasilkan teks-sandi yang sama persis: $K\mathbf{x}_1 \equiv K\mathbf{x}_2 \pmod{26}$.
+\end{enumerate}
+\end{soalbox}
+
+\begin{solusibox}{Pembahasan Soal 1.2}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Analisis Determinan Matriks:}
+    Hitung determinan matriks $K$:
+    \[
+    \det(K) = (1)(4) - (2)(3) = 4 - 6 = -2 \equiv 24 \pmod{26}
+    \]
+    Matriks $K$ memiliki invers modulo 26 jika dan hanya jika $\gcd(\det(K), 26) = 1$. Namun:
+    \[
+    \gcd(24, 26) = 2 \neq 1
+    \]
+    Karena $\det(K) \equiv 0 \pmod 2$, elemen determinan tidak memiliki invers multiplikatif di dalam gelanggang $\mathbb{Z}_{26}$. Akibatnya, matriks invers $K^{-1} \pmod{26}$ tidak ada, sehingga Bob tidak akan pernah bisa mendekripsi pesan secara unik.
+    \item \textbf{Menemukan Vektor Tabrakan (\textit{Null Space} Modulo 26):}
+    Kondisi $K\mathbf{x}_1 \equiv K\mathbf{x}_2 \pmod{26}$ ekuivalen dengan mencari vektor selisih tak-nol $\mathbf{v} = \mathbf{x}_1 - \mathbf{x}_2 \not\equiv \mathbf{0} \pmod{26}$ sedemikian hingga:
+    \[
+    K \mathbf{v} \equiv \begin{pmatrix} 0 \\ 0 \end{pmatrix} \pmod{26}
+    \]
+    Misalkan $\mathbf{v} = \begin{pmatrix} v_1 \\ v_2 \end{pmatrix}$. Susun sistem kongruensi linier:
+    \[
+    \begin{cases}
+    v_1 + 2v_2 \equiv 0 \pmod{26} & \implies v_1 \equiv -2v_2 \pmod{26} \\
+    3v_1 + 4v_2 \equiv 0 \pmod{26} & \implies 3(-2v_2) + 4v_2 \equiv -2v_2 \equiv 0 \pmod{26}
+    \end{cases}
+    \]
+    Kongruensi $-2v_2 \equiv 0 \pmod{26} \iff 2v_2 \equiv 0 \pmod{26}$ memiliki solusi umum:
+    \[
+    v_2 \equiv 0 \pmod{13} \implies v_2 \in \{0, 13\}
+    \]
+    Ambil solusi tak-nol $v_2 = 13$. Maka:
+    \[
+    v_1 \equiv -2(13) = -26 \equiv 0 \pmod{26}
+    \]
+    Diperoleh vektor selisih tak-nol:
+    \[
+    \mathbf{v} = \begin{pmatrix} 0 \\ 13 \end{pmatrix} \not\equiv \begin{pmatrix} 0 \\ 0 \end{pmatrix} \pmod{26}
+    \]
+    \item \textbf{Verifikasi Pasangan Plaintext Berbeda:}
+    Pilih plaintext sembarang $\mathbf{x}_1 = \begin{pmatrix} 0 \\ 0 \end{pmatrix}$ (huruf \texttt{"AA"}).\\
+    Maka $\mathbf{x}_2 = \mathbf{x}_1 + \mathbf{v} = \begin{pmatrix} 0 \\ 13 \end{pmatrix}$ (huruf \texttt{"AN"}).
+    Hitung ciphertext masing-masing:
+    \[
+    K \mathbf{x}_1 = \begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix} \begin{pmatrix} 0 \\ 0 \end{pmatrix} \equiv \begin{pmatrix} 0 \\ 0 \end{pmatrix} \pmod{26} \quad (\texttt{"AA"})
+    \]
+    \[
+    K \mathbf{x}_2 = \begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix} \begin{pmatrix} 0 \\ 13 \end{pmatrix} = \begin{pmatrix} 26 \\ 52 \end{pmatrix} \equiv \begin{pmatrix} 0 \\ 0 \end{pmatrix} \pmod{26} \quad (\texttt{"AA"})
+    \]
+    Dua kata-asal yang berbeda (\texttt{"AA"} dan \texttt{"AN"}) menghasilkan kata-sandi yang sama persis (\texttt{"AA"}). Terbukti terjadi tabrakan teks-sandi.
+\end{enumerate}
+\end{solusibox}
+
+\vspace{0.4cm}
+
+\begin{soalbox}{Soal 1.3: Pembuktian Teorema Kunci Involusi Sandi Permutasi (UTS 2020/2021)}
+Suatu kunci sandi $K$ disebut \textbf{kunci involusi} jika aturan enkripsi identik dengan aturan dekripsi, yaitu $e_K = d_K$.
+Buktikan secara formal bahwa permutasi $\pi \in S_m$ dalam sandi permutasi berukuran blok $m$ merupakan kunci involusi jika dan hanya jika:
+\[
+\pi(i) = j \implies \pi(j) = i, \quad \forall i, j \in \{1, 2, \dots, m\}
+\]
+\end{soalbox}
+
+\begin{solusibox}{Pembahasan Soal 1.3}
+\begin{proof}
+Tinjau definisi sandi permutasi pada blok berukuran $m$. Untuk sembarang blok teks-asal $\mathbf{x} = (x_1, \dots, x_m) \in \mathcal{P}$, aturan enkripsi dan dekripsinya adalah:
+\[
+e_\pi(x_1, \dots, x_m) = (x_{\pi(1)}, \dots, x_{\pi(m)}), \qquad d_\pi(y_1, \dots, y_m) = (y_{\pi^{-1}(1)}, \dots, y_{\pi^{-1}(m)})
+\]
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Arah Maju ($\implies$):} Asumsikan $\pi$ adalah kunci involusi.
+    Berdasarkan definisi, $e_\pi = d_\pi$, yang berarti untuk setiap blok $\mathbf{x}$, berlaku:
+    \[
+    (x_{\pi(1)}, \dots, x_{\pi(m)}) = (x_{\pi^{-1}(1)}, \dots, x_{\pi^{-1}(m)}) \implies \pi(k) = \pi^{-1}(k), \quad \forall k \in \{1, \dots, m\}
+    \]
+    Sehingga $\pi = \pi^{-1}$, atau secara ekuivalen $\pi \circ \pi = \operatorname{id}$.\\
+    Ambil sembarang $i, j \in \{1, \dots, m\}$ sedemikian hingga $\pi(i) = j$.
+    Terapkan fungsi $\pi$ pada kedua ruas:
+    \[
+    \pi(\pi(i)) = \pi(j)
+    \]
+    Karena $\pi \circ \pi = \operatorname{id}$, maka ruas kiri menjadi $\operatorname{id}(i) = i$. Dengan demikian, diperoleh:
+    \[
+    \pi(j) = i
+    \]
+    Terbukti bahwa $\pi(i) = j \implies \pi(j) = i$.
+    \item \textbf{Arah Mundur ($\impliedby$):} Asumsikan bahwa untuk setiap $i, j \in \{1, \dots, m\}$ berlaku $\pi(i) = j \implies \pi(j) = i$.
+    Ambil sembarang $i \in \{1, \dots, m\}$. Misalkan $j = \pi(i)$.
+    Berdasarkan asumsi yang diberikan, maka berlaku $\pi(j) = i$.
+    Substitusikan $j = \pi(i)$ ke dalam persamaan tersebut:
+    \[
+    \pi(\pi(i)) = i = \operatorname{id}(i)
+    \]
+    Karena kesamaan ini berlaku untuk seluruh $i \in \{1, \dots, m\}$, disimpulkan bahwa:
+    \[
+    \pi \circ \pi = \operatorname{id} \implies \pi = \pi^{-1}
+    \]
+    Karena $\pi = \pi^{-1}$, maka aturan dekripsi memenuhi $d_\pi = e_{\pi^{-1}} = e_\pi$. Terbukti bahwa $\pi$ adalah kunci involusi.
+\end{enumerate}
+\end{proof}
+\end{solusibox}
+
+\vspace{0.4cm}
+
+\begin{soalbox}{Soal 1.4: Dekripsi Sandi Permutasi Bahasa Indonesia (UTS 2022/2023 \& 2023/2024)}
+Diberikan teks-sandi:
+\[
+\texttt{GUED NAGC SAEN KRSE TYAN ANMA}
+\]
+yang diperoleh dengan mengenkripsi teks-asal berbahasa Indonesia menggunakan sandi permutasi pada blok 4 huruf ($m = 4$).
+Tentukan permutasi kunci $\pi$ dan temukan kata-asal (\textit{plaintext}) aslinya!
+\end{soalbox}
+
+\begin{solusibox}{Pembahasan Soal 1.4}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Identifikasi Blok Ciphertext ($m = 4$):}
+    Teks sandi terdiri atas 6 blok masing-masing berpanjang 4 huruf:
+    \[
+    C_1 = \texttt{GUED}, \quad C_2 = \texttt{NAGC}, \quad C_3 = \texttt{SAEN}, \quad C_4 = \texttt{KRSE}, \quad C_5 = \texttt{TYAN}, \quad C_6 = \texttt{ANMA}
+    \]
+    \item \textbf{Analisis Posisi \& Rekonstruksi Kata:}
+    Tinjau blok $C_1 = \texttt{G}_1 \texttt{U}_2 \texttt{E}_3 \texttt{D}_4$. Kata bahasa Indonesia yang sangat alami adalah \texttt{"GEDU"} (dari kata \texttt{GEDUNG}).
+    Untuk mengubah $C_1 = \texttt{GUED}$ menjadi $P_1 = \texttt{GEDU}$, kita mengambil karakter pada posisi:
+    \[
+    P_1[1] = C_1[1] = \texttt{G}, \quad P_1[2] = C_1[3] = \texttt{E}, \quad P_1[3] = C_1[4] = \texttt{D}, \quad P_1[4] = C_1[2] = \texttt{U}
+    \]
+    Artinya, aturan dekripsi memetakan urutan karakter:
+    \[
+    d_\pi(y_1, y_2, y_3, y_4) = (y_1, y_3, y_4, y_2)
+    \]
+    Sehingga permutasi dekripsi adalah $\pi^{-1} = \begin{pmatrix} 1 & 2 & 3 & 4 \\ 1 & 3 & 4 & 2 \end{pmatrix}$.\\
+    Permutasi enkripsi yang bersesuaian adalah kebalikannya: $\pi = \begin{pmatrix} 1 & 2 & 3 & 4 \\ 1 & 4 & 2 & 3 \end{pmatrix}$, yaitu $e_\pi(x_1, x_2, x_3, x_4) = (x_1, x_4, x_2, x_3)$.
+    \item \textbf{Menerapkan Dekripsi ke Seluruh Blok:}
+    \begin{align*}
+    C_1 &= \texttt{G}_1 \texttt{U}_2 \texttt{E}_3 \texttt{D}_4 \implies (y_1, y_3, y_4, y_2) = \mathbf{\texttt{GEDU}} \\
+    C_2 &= \texttt{N}_1 \texttt{A}_2 \texttt{G}_3 \texttt{C}_4 \implies (y_1, y_3, y_4, y_2) = \mathbf{\texttt{NGCA}} \\
+    C_3 &= \texttt{S}_1 \texttt{A}_2 \texttt{E}_3 \texttt{N}_4 \implies (y_1, y_3, y_4, y_2) = \mathbf{\texttt{SENA}} \\
+    C_4 &= \texttt{K}_1 \texttt{R}_2 \texttt{S}_3 \texttt{E}_4 \implies (y_1, y_3, y_4, y_2) = \mathbf{\texttt{KSER}} \\
+    C_5 &= \texttt{T}_1 \texttt{Y}_2 \texttt{A}_3 \texttt{N}_4 \implies (y_1, y_3, y_4, y_2) = \mathbf{\texttt{TANY}} \\
+    C_6 &= \texttt{A}_1 \texttt{N}_2 \texttt{M}_3 \texttt{A}_4 \implies (y_1, y_3, y_4, y_2) = \mathbf{\texttt{AMAN}}
+    \end{align*}
+    \item \textbf{Menggabungkan Plaintext Lengkap:}
+    Menggabungkan seluruh blok menghasilkan kalimat bahasa Indonesia yang sempurna:
+    \[
+    \texttt{GEDU NGCA SENA KSER TANY AMAN} \implies \mathbf{\texttt{"GEDUNG CAS ENAK SERTA NYAMAN"}}
+    \]
+\end{enumerate}
+\end{solusibox}
+
+\vspace{0.4cm}
+
+\begin{soalbox}{Soal 1.5: Sandi Alir LFSR \& Siklus Periode Maksimum (m-sequence)}
+Diberikan sebuah Linear Feedback Shift Register (LFSR) berderajat $m = 4$ atas lapangan biner $\mathbb{F}_2$ dengan relasi rekurensi:
+\[
+s_{i+4} \equiv s_{i+1} \oplus s_i \pmod 2, \quad i \ge 0
+\]
+dan status awal (\textit{seed}) $(s_0, s_1, s_2, s_3) = (1, 0, 0, 0)$.
+\begin{enumerate}[label=(\alph*)]
+    \item Tentukan polinomial karakteristik koneksi $C(D)$ dari LFSR tersebut.
+    \item Hitung dan tuliskan 15 bit pertama aliran kunci (\textit{keystream}) $s_0, s_1, \dots, s_{14}$.
+    \item Buktikan bahwa periode dari aliran bit tersebut adalah periode maksimum $T = 2^4 - 1 = 15$.
+\end{enumerate}
+\end{soalbox}
+
+\begin{solusibox}{Pembahasan Soal 1.5}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Polinomial Karakteristik Koneksi:}
+    Persamaan umpan balik adalah $s_{i+4} = c_1 s_{i+3} \oplus c_2 s_{i+2} \oplus c_3 s_{i+1} \oplus c_4 s_i$.
+    Membandingkan koefisien: $c_1 = 0, c_2 = 0, c_3 = 1, c_4 = 1$.
+    Polinomial koneksinya adalah:
+    \[
+    C(D) = 1 + c_1 D + c_2 D^2 + c_3 D^3 + c_4 D^4 = \mathbf{1 + D^3 + D^4} \quad (\text{atau } D^4 + D + 1)
+    \]
+    \item \textbf{Pembangkitan Aliran Bit Langkah demi Langkah:}
+    Status awal: $s_0 = 1, s_1 = 0, s_2 = 0, s_3 = 0$.
+    \begin{align*}
+    s_4 &= s_1 \oplus s_0 = 0 \oplus 1 = \mathbf{1} \\
+    s_5 &= s_2 \oplus s_1 = 0 \oplus 0 = \mathbf{0} \\
+    s_6 &= s_3 \oplus s_2 = 0 \oplus 0 = \mathbf{0} \\
+    s_7 &= s_4 \oplus s_3 = 1 \oplus 0 = \mathbf{1} \\
+    s_8 &= s_5 \oplus s_4 = 0 \oplus 1 = \mathbf{1} \\
+    s_9 &= s_6 \oplus s_5 = 0 \oplus 0 = \mathbf{0} \\
+    s_{10} &= s_7 \oplus s_6 = 1 \oplus 0 = \mathbf{1} \\
+    s_{11} &= s_8 \oplus s_7 = 1 \oplus 1 = \mathbf{0} \\
+    s_{12} &= s_9 \oplus s_8 = 0 \oplus 1 = \mathbf{1} \\
+    s_{13} &= s_{10} \oplus s_9 = 1 \oplus 0 = \mathbf{1} \\
+    s_{14} &= s_{11} \oplus s_{10} = 0 \oplus 1 = \mathbf{1} \\
+    s_{15} &= s_{12} \oplus s_{11} = 1 \oplus 0 = \mathbf{1} \\
+    s_{16} &= s_{13} \oplus s_{12} = 1 \oplus 1 = \mathbf{0} \\
+    s_{17} &= s_{14} \oplus s_{13} = 1 \oplus 1 = \mathbf{0} \\
+    s_{18} &= s_{15} \oplus s_{14} = 1 \oplus 1 = \mathbf{0}
+    \end{align*}
+    Perhatikan bahwa pada langkah ke-15, status register menjadi $(s_{15}, s_{16}, s_{17}, s_{18}) = (1, 0, 0, 0)$, yang persis sama dengan status awal $(s_0, s_1, s_2, s_3) = (1, 0, 0, 0)$!
+    Aliran 15 bit pertama adalah:
+    \[
+    (s_0, s_1, \dots, s_{14}) = \mathbf{(1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1)}
+    \]
+    \item \textbf{Pembuktian Periode Maksimum:}
+    LFSR memiliki $m = 4$ sel biner, sehingga total status yang mungkin adalah $2^4 = 16$. Karena status nol mutlak $(0, 0, 0, 0)$ tidak pernah dikunjungi (menghasilkan status diam), maka jumlah status bukan-nol maksimal adalah $2^4 - 1 = 15$.
+    Karena urutan status berulang tepat setelah 15 langkah dan mengunjungi seluruh 15 status bukan-nol unik, maka periode aliran kunci adalah periode maksimum $T = 2^4 - 1 = \mathbf{15}$ (merupakan sebuah \textit{m-sequence}).
+\end{enumerate}
+\end{solusibox}
+
+\newpage
+% =========================================================================
+\section{Kategori 2: Kriptoanalisis (KPA, Kasiski, \& Indeks Koinsidensi)}
+% =========================================================================
+
+\begin{soalbox}{Soal 2.1: Serangan Teks-Asal Diketahui Sandi Affine (UTS 2020/2021)}
+Misalkan suatu sandi Affine memiliki kunci rahasia $K = (m, n)$ dengan $m, n \in \mathbb{Z}_{26}$ dan $\gcd(m, 26) = 1$.
+Diketahui teks-asal \texttt{"hahaha"} menghasilkan teks-sandi \texttt{"NONONO"}.
+Tentukan nilai dari $m + n$!
+\begin{enumerate}[label=(\alph*)]
+    \item 11
+    \item 25
+    \item 37
+    \item 30
+\end{enumerate}
+\end{soalbox}
+
+\begin{solusibox}{Pembahasan Soal 2.1}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Konversi Huruf ke Angka Modulo 26:}
+    \begin{itemize}
+        \item Huruf \texttt{'h'} $= 7$, huruf \texttt{'a'} $= 0$.
+        \item Huruf \texttt{'N'} $= 13$, huruf \texttt{'O'} $= 14$.
+    \end{itemize}
+    Teks \texttt{"hahaha"} $\to$ \texttt{"NONONO"} memberikan dua pasangan plaintext-ciphertext:
+    \[
+    (x_1, y_1) = (7, 13) \quad \text{dan} \quad (x_2, y_2) = (0, 14)
+    \]
+    \item \textbf{Menyusun Sistem Persamaan Kongruensi:}
+    Aturan enkripsi sandi affine: $y \equiv m x + n \pmod{26}$.
+    \[
+    \begin{cases}
+    7m + n \equiv 13 \pmod{26} & \text{(Persamaan 1)} \\
+    0m + n \equiv 14 \pmod{26} & \text{(Persamaan 2)}
+    \end{cases}
+    \]
+    \item \textbf{Menyelesaikan Nilai $n$ dan $m$:}
+    Dari Persamaan 2 langsung diperoleh:
+    \[
+    n = 14
+    \]
+    Substitusikan $n = 14$ ke Persamaan 1:
+    \[
+    7m + 14 \equiv 13 \pmod{26} \implies 7m \equiv 13 - 14 \equiv -1 \equiv 25 \pmod{26}
+    \]
+    Cari invers dari $7 \pmod{26}$ menggunakan Algoritma Euclidean:
+    \[
+    26 = 3(7) + 5, \quad 7 = 1(5) + 2, \quad 5 = 2(2) + 1 \implies 1 = 5 - 2(2) = 5 - 2(7 - 5) = 3(5) - 2(7)
+    \]
+    \[
+    1 = 3(26 - 3 \cdot 7) - 2(7) = 3(26) - 11(7) \implies 7 \times (-11) \equiv 1 \pmod{26}
+    \]
+    Karena $-11 \equiv 15 \pmod{26}$, maka $7^{-1} \equiv 15 \pmod{26}$.\\
+    Kalikan kedua ruas dengan 15:
+    \[
+    m \equiv 25 \times 15 = 375 \equiv 14 \times 26 + 11 \equiv \mathbf{11} \pmod{26}
+    \]
+    Periksa syarat invertibilitas: $\gcd(m, 26) = \gcd(11, 26) = 1$ (\textbf{Valid!}).
+    \item \textbf{Menghitung Nilai $m + n$:}
+    \[
+    m + n = 11 + 14 = \mathbf{25}
+    \]
+\end{enumerate}
+\textbf{Jawaban yang Benar: (b) 25.}
+\end{solusibox}
+
+\vspace{0.4cm}
+
+\begin{soalbox}{Soal 2.2: Uji Kasiski pada Sandi Vigen\`ere (UTS 2024/2025 No 5)}
+Diberikan teks-sandi yang dienkripsi menggunakan sandi Vigen\`ere sebagai berikut:
+\[
+\texttt{KXQMYTOZKQWHWMEKXQQXKQXYM}
+\]
+Dengan menggunakan tes Kasiski, tentukan dugaan panjang kuncinya dengan meninjau dua pasang substring berulang!
+\end{soalbox}
+
+\begin{solusibox}{Pembahasan Soal 2.2}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Pencatatan Indeks Karakter Ciphertext (Panjang $N = 25$):}
+    \begin{center}
+    \footnotesize
+    \begin{tabular}{c ccccc ccccc ccc}
+    \toprule
+    \textbf{Indeks} & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 \\
+    \textbf{Huruf}  & \texttt{K} & \texttt{X} & \texttt{Q} & \texttt{M} & \texttt{Y} & \texttt{T} & \texttt{O} & \texttt{Z} & \texttt{K} & \texttt{Q} & \texttt{W} & \texttt{H} & \texttt{W} \\
+    \midrule
+    \textbf{Indeks} & 13 & 14 & 15 & 16 & 17 & 18 & 19 & 20 & 21 & 22 & 23 & 24 & \\
+    \textbf{Huruf}  & \texttt{M} & \texttt{E} & \texttt{K} & \texttt{X} & \texttt{Q} & \texttt{Q} & \texttt{X} & \texttt{K} & \texttt{Q} & \texttt{X} & \texttt{Y} & \texttt{M} & \\
+    \bottomrule
+    \end{tabular}
+    \end{center}
+    \item \textbf{Mengidentifikasi Substring Berulang Panjang $\ge 3$:}
+    \begin{itemize}
+        \item \textbf{Substring 1 (\texttt{"KXQ"}):}
+        \begin{itemize}
+            \item Muncul pertama kali pada indeks 0: \texttt{K(0) X(1) Q(2)}.
+            \item Muncul kedua kali pada indeks 15: \texttt{K(15) X(16) Q(17)}.
+            \item Jarak kemunculan: $d_1 = 15 - 0 = \mathbf{15}$.
+        \end{itemize}
+        \item \textbf{Substring 2 (\texttt{"KQX"} atau \texttt{"KQXYM"}):}
+        \begin{itemize}
+            \item Perhatikan substring \texttt{"KQX"} pada indeks 20: \texttt{K(20) Q(21) X(22)}.
+            \item Perhatikan juga kemunculan trigram \texttt{"QXY"} pada indeks 21: \texttt{Q(21) X(22) Y(23)} dan bigram \texttt{"MY"} pada indeks 3 dan 23.
+            \item Perhatikan substring \texttt{"KXQ"} dan variasi polialfabetiknya:
+            Periksa substring \texttt{"KQ"} pada indeks: 8 (\texttt{K(8) Q(9)}), 15 (\texttt{K(15) X(16) Q(17)}), 20 (\texttt{K(20) Q(21)}).
+            Selisih posisi antara indeks 20 dan 8: $d_2 = 20 - 8 = \mathbf{12}$.
+            \item Tinjau substring \texttt{"XQ"}:
+            Muncul pada indeks 1 (\texttt{X(1) Q(2)}), indeks 16 (\texttt{X(16) Q(17)}), dan indeks 17 (\texttt{Q(17) Q(18) X(19)}).
+            Jarak: $16 - 1 = \mathbf{15}$.
+        \end{itemize}
+    \end{itemize}
+    \item \textbf{Perhitungan Faktor Pembagi Bersama Terbesar (FPB / GCD):}
+    Dua jarak utama yang diperoleh adalah $d_1 = 15$ dan $d_2 = 12$:
+    \[
+    \gcd(d_1, d_2) = \gcd(15, 12) = \mathbf{3}
+    \]
+    Bila ditinjau pasangan jarak lain $d_1 = 15$ (kelipatan 3 dan 5) dan pola perulangan \texttt{MY} pada jarak $23 - 3 = 20$:
+    \[
+    \gcd(15, 20) = \mathbf{5}
+    \]
+    \item \textbf{Kesimpulan:} Berdasarkan tes Kasiski, panjang kata kunci $m$ yang paling mungkin membagi selisih jarak tersebut adalah $\mathbf{m = 3}$ atau $\mathbf{m = 5}$.
+\end{enumerate}
+\end{solusibox}
+
+\vspace{0.4cm}
+
+\begin{soalbox}{Soal 2.3: Penurunan Rumus Indeks Koinsidensi \& Analisis Transformasi Sandi (UTS 2025/2026 No 1)}
+Misalkan $f_0, f_1, \dots, f_{25}$ berturut-turut menyatakan distribusi frekuensi kemunculan huruf A, B, \dots, Z dalam string $x = x_1 x_2 \dots x_n$ yang terdiri atas $n$ buah karakter alfabet.
+Indeks koinsidensi $I_c(x)$ didefinisikan sebagai peluang bahwa sembarang dua unsur yang diambil secara acak dari $x$ tanpa pengembalian akan terwakili oleh huruf identik yang sama persis:
+\[
+I_c(x) = \frac{1}{n(n - 1)} \sum_{i=0}^{25} f_i (f_i - 1)
+\]
+\begin{enumerate}[label=(\alph*)]
+    \item Tunjukkan bagaimana cara memperoleh formula tersebut dari prinsip kombinatorika dasar.
+    \item Nyatakan dan jelaskan apa yang terjadi pada nilai $I_c(y)$ (apakah naik, turun, atau tetap tak berubah dari kondisi $I_c(x) \approx 0.065$) pada tiap skenario berikut:
+    \begin{enumerate}[label=(\roman*)]
+        \item Jika $y$ adalah hasil enkripsi $e_\pi(x_1 \dots x_n) = x_{\pi(1)} \dots x_{\pi(n)}$ oleh suatu permutasi $\pi \in S_n$.
+        \item Jika $y$ adalah hasil enkripsi menggunakan sandi geser dengan kunci $K = 11$.
+        \item Jika $y$ adalah hasil enkripsi menggunakan sandi Vigen\`ere dengan panjang katakunci $m = 5$.
+    \end{enumerate}
+\end{enumerate}
+\end{soalbox}
+
+\begin{solusibox}{Pembahasan Soal 2.3}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Penurunan Formal Formula $I_c(x)$:}
+    \begin{itemize}
+        \item Total banyaknya cara memilih 2 karakter sembarang dari string $x$ berpanjang $n$ tanpa memperhatikan urutan (tanpa pengembalian) adalah:
+        \[
+        \binom{n}{2} = \frac{n(n - 1)}{2}
+        \]
+        \item Dua karakter yang terpilih berhuruf sama jika keduanya sama-sama huruf ke-$i$ (untuk suatu $i \in \{0, 1, \dots, 25\}$). Karena terdapat $f_i$ buah huruf ke-$i$ di dalam teks, banyaknya cara memilih 2 huruf ke-$i$ adalah:
+        \[
+        \binom{f_i}{2} = \frac{f_i(f_i - 1)}{2}
+        \]
+        \item Total cara memilih 2 karakter identik untuk seluruh alfabet adalah penjumlahan saling lepas:
+        \[
+        \sum_{i=0}^{25} \binom{f_i}{2} = \sum_{i=0}^{25} \frac{f_i(f_i - 1)}{2}
+        \]
+        \item Peluang memilih 2 karakter yang identik adalah rasio kejadian terhadap ruang sampel:
+        \[
+        I_c(x) = \frac{\sum_{i=0}^{25} \binom{f_i}{2}}{\binom{n}{2}} = \frac{\sum_{i=0}^{25} \frac{f_i(f_i - 1)}{2}}{\frac{n(n - 1)}{2}} = \mathbf{\frac{1}{n(n - 1)} \sum_{i=0}^{25} f_i (f_i - 1)}
+        \]
+        Terbukti secara kombinatorik.
+    \end{itemize}
+    \item \textbf{Analisis Perilaku $I_c(y)$ pada Tiga Skenario:}
+    \begin{enumerate}[label=(\roman*)]
+        \item \textbf{Skenario Permutasi Posisi ($\pi \in S_n$):}
+        Permutasi hanya menukar letak urutan karakter dan sama sekali tidak menambah, menghapus, atau mengubah identitas huruf apa pun. Akibatnya, frekuensi kemunculan setiap huruf tetap sama: $f_i(y) = f_i(x)$ untuk semua $i$.
+        \textbf{Kesimpulan: $I_c(y)$ TETAP TAK BERUBAH ($I_c(y) = I_c(x) \approx 0.065$).}
+        \item \textbf{Skenario Sandi Geser ($K = 11$):}
+        Sandi geser memetakan huruf ke-$i$ ke huruf $(i + 11) \bmod 26$ secara bijektif (satu-satu). Frekuensi hanya bergeser siklis: $f_{(i+11)\bmod 26}(y) = f_i(x)$.
+        Karena jumlahan $\sum_{i=0}^{25} f_i(f_i - 1)$ menjumlahkan seluruh alfabet, maka urutan penjumlahan tidak mempengaruhi nilai total.
+        \textbf{Kesimpulan: $I_c(y)$ TETAP TAK BERUBAH ($I_c(y) = I_c(x) \approx 0.065$).}
+        \item \textbf{Skenario Sandi Vigen\`ere ($m = 5$):}
+        Sandi Vigen\`ere adalah substitusi polialfabetik. Teks dipartisi ke dalam 5 coset independen yang masing-masing digeser dengan nilai kunci berbeda. Distribusi frekuensi huruf pada teks sandi gabungan diratakan (*flattened/smoothed*), sehingga mendekati distribusi teks acak seragam.
+        \textbf{Kesimpulan: $I_c(y)$ TURUN DRASTIS} dari kondisi teks asli $\approx 0.065$ mendekati nilai acak murni seragam:
+        \[
+        I_c(y) \approx \frac{1}{26} \approx \mathbf{0.0385}
+        \]
+    \end{enumerate}
+\end{enumerate}
+\end{solusibox}
+
+\vspace{0.4cm}
+
+\begin{soalbox}{Soal 2.4: Indeks Koinsidensi Tak Lengkap (UTS 2021/2022 No 4)}
+Definisikan \textit{"indeks koinsidensi tidak lengkap"} sebagai indeks koinsidensi yang tidak memakai seluruh huruf pada alfabet Latin (artinya tidak semua huruf dari A--Z dipakai).
+Misalkan pada suatu kata $x$ digunakan $N = 120$ huruf dari A hingga X dan memiliki indeks koinsidensi tidak lengkap $\frac{4}{119}$.
+Lalu kata $x$ diubah menjadi kata $x'$ berpanjang $N' = 130$ huruf yang mencakup seluruh alfabet Latin dengan menambahkan 10 huruf yang terdiri atas huruf Y dan Z, sedemikian hingga indeks koinsidensi $x'$ menjadi $\frac{522}{16770}$ (catatan: $16770 = 130 \times 129$).
+Tentukan banyaknya huruf Y dan Z masing-masing yang ditambahkan pada $x'$!
+\begin{enumerate}[label=(\alph*)]
+    \item 7 dan 3 (atau sebaliknya)
+    \item 6 dan 4 (atau sebaliknya)
+    \item 10 dan 0 (atau sebaliknya)
+    \item 5 dan 5
+\end{enumerate}
+\end{soalbox}
+
+\begin{solusibox}{Pembahasan Soal 2.4}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Menghitung Nilai Jumlahan Awal $\sum f_i(f_i - 1)$ pada Kata $x$:}
+    Diketahui $N = 120$ dan huruf yang ada hanyalah dari A sampai X (huruf Y dan Z belum ada, frekuensinya $f_Y = f_Z = 0$).
+    Formula indeks koinsidensi awal:
+    \[
+    I_c(x) = \frac{\sum_{i=A}^X f_i(f_i - 1)}{120 \times 119} = \frac{4}{119}
+    \]
+    Kalikan kedua ruas dengan $120 \times 119$:
+    \[
+    \sum_{i=A}^X f_i(f_i - 1) = \frac{4}{119} \times 120 \times 119 = 4 \times 120 = \mathbf{480}
+    \]
+    \item \textbf{Menyusun Persamaan untuk Kata Baru $x'$:}
+    Ditambahkan sejumlah $y$ buah huruf Y dan $z$ buah huruf Z dengan total:
+    \[
+    y + z = 10 \implies z = 10 - y
+    \]
+    Panjang kata baru menjadi $N' = 120 + 10 = 130$.
+    Penyebut baru adalah $N'(N' - 1) = 130 \times 129 = 16770$.
+    Indeks koinsidensi baru:
+    \[
+    I_c(x') = \frac{\sum_{i=A}^X f_i(f_i - 1) + y(y - 1) + z(z - 1)}{16770} = \frac{522}{16770}
+    \]
+    Maka pembilang harus bernilai 522:
+    \[
+    480 + y(y - 1) + z(z - 1) = 522 \implies y(y - 1) + z(z - 1) = 522 - 480 = \mathbf{42}
+    \]
+    \item \textbf{Menyelesaikan Persamaan Aljabar Kuadrat:}
+    Substitusikan $z = 10 - y$:
+    \[
+    (y^2 - y) + ((10 - y)^2 - (10 - y)) = 42
+    \]
+    \[
+    y^2 - y + (100 - 20y + y^2 - 10 + y) = 42
+    \]
+    \[
+    2y^2 - 20y + 90 = 42 \implies 2y^2 - 20y + 48 = 0
+    \]
+    Bagi kedua ruas dengan 2:
+    \[
+    y^2 - 10y + 24 = 0 \implies (y - 6)(y - 4) = 0
+    \]
+    Diperoleh dua solusi simetris:
+    \[
+    y = 6 \implies z = 4 \quad \text{atau} \quad y = 4 \implies z = 6
+    \]
+    Banyaknya huruf Y dan Z adalah \textbf{6 dan 4 (atau sebaliknya)}.
+\end{enumerate}
+\textbf{Jawaban yang Benar: (b) 6 dan 4 (atau sebaliknya).}
+\end{solusibox}
+
+\newpage
+% =========================================================================
+\section{Kategori 3: Teori Shannon, Entropi, \& Pengkodean Huffman}
+% =========================================================================
+
+\begin{soalbox}{Soal 3.1: Pengkodean Huffman Optimal \& Perbandingan Entropi (UTS 2022/2023 \& 2023/2024 No 4)}
+Misalkan variabel acak diskret $X = \{a, b, c, d, e\}$ memiliki distribusi probabilitas:
+\[
+p(a) = 0.35, \quad p(b) = 0.25, \quad p(c) = 0.20, \quad p(d) = 0.12, \quad p(e) = 0.08
+\]
+\begin{enumerate}[label=(\alph*)]
+    \item Gunakan algoritma Huffman untuk mengonstruksikan pengkodean bebas-prefiks (\textit{prefix-free encoding}) optimal bagi $X$. Tuliskan kata sandi (\textit{codeword}) untuk setiap simbol!
+    \item Hitung panjang rata-rata ekspektasi $L(X)$ dari pengkodean tersebut.
+    \item Hitung nilai eksak entropi Shannon $H(X)$ (dalam bit/simbol).
+    \item Bandingkan $L(X)$ dengan $H(X)$, serta hitung efisiensi dan redundansi pengkodeannya.
+\end{enumerate}
+\end{soalbox}
+
+\begin{solusibox}{Pembahasan Soal 3.1}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Konstruksi Pohon Huffman (Greedy Merging):}
+    \begin{itemize}
+        \item Simbol awal dan peluang: $a(0.35), b(0.25), c(0.20), d(0.12), e(0.08)$.
+        \item \textbf{Langkah 1:} Gabungkan dua peluang terkecil: $e(0.08)$ dan $d(0.12) \implies v_1(0.20)$.
+        \item Daftar simpul aktif: $v_1(0.20), c(0.20), b(0.25), a(0.35)$.
+        \item \textbf{Langkah 2:} Gabungkan dua terkecil: $v_1(0.20)$ dan $c(0.20) \implies v_2(0.40)$.
+        \item Daftar simpul aktif: $b(0.25), a(0.35), v_2(0.40)$.
+        \item \textbf{Langkah 3:} Gabungkan dua terkecil: $b(0.25)$ dan $a(0.35) \implies v_3(0.60)$.
+        \item Daftar simpul aktif: $v_2(0.40), v_3(0.60)$.
+        \item \textbf{Langkah 4:} Gabungkan dua simpul terakhir: $v_2(0.40)$ dan $v_3(0.60) \implies \text{Akar}(1.00)$.
+    \end{itemize}
+    \item \textbf{Penetapan Codeword Bebas-Prefiks:}
+    Beri label cabang kiri = 0 dan cabang kanan = 1:
+    \begin{itemize}
+        \item Simbol $a$: Dari akar $\to$ kanan ($v_3$) $\to$ kanan $\implies \mathbf{11}$ (panjang $\ell(a) = 2$).
+        \item Simbol $b$: Dari akar $\to$ kanan ($v_3$) $\to$ kiri $\implies \mathbf{10}$ (panjang $\ell(b) = 2$).
+        \item Simbol $c$: Dari akar $\to$ kiri ($v_2$) $\to$ kanan $\implies \mathbf{01}$ (panjang $\ell(c) = 2$).
+        \item Simbol $d$: Dari akar $\to$ kiri ($v_2$) $\to$ kiri ($v_1$) $\to$ kanan $\implies \mathbf{001}$ (panjang $\ell(d) = 3$).
+        \item Simbol $e$: Dari akar $\to$ kiri ($v_2$) $\to$ kiri ($v_1$) $\to$ kiri $\implies \mathbf{000}$ (panjang $\ell(e) = 3$).
+    \end{itemize}
+    \item \textbf{Menghitung Panjang Rata-rata Ekspektasi $L(X)$:}
+    \[
+    L(X) = \sum_{x \in X} p(x) \cdot \ell(x) = 0.35(2) + 0.25(2) + 0.20(2) + 0.12(3) + 0.08(3)
+    \]
+    \[
+    L(X) = 0.70 + 0.50 + 0.40 + 0.36 + 0.24 = \mathbf{2.20 \text{ bit/simbol}}
+    \]
+    \item \textbf{Menghitung Entropi Shannon $H(X)$:}
+    Gunakan formula $H(X) = -\sum p(x) \log_2 p(x)$:
+    \begin{align*}
+    p(a) \log_2 p(a) &= 0.35 \log_2(0.35) \approx 0.35(-1.51457) \approx -0.53010 \\
+    p(b) \log_2 p(b) &= 0.25 \log_2(0.25) = 0.25(-2.00000) = -0.50000 \\
+    p(c) \log_2 p(c) &= 0.20 \log_2(0.20) \approx 0.20(-2.32193) \approx -0.46439 \\
+    p(d) \log_2 p(d) &= 0.12 \log_2(0.12) \approx 0.12(-3.05889) \approx -0.36707 \\
+    p(e) \log_2 p(e) &= 0.08 \log_2(0.08) \approx 0.08(-3.64386) \approx -0.29151
+    \end{align*}
+    Jumlahkan seluruh komponen:
+    \[
+    H(X) = -(-0.53010 - 0.50000 - 0.46439 - 0.36707 - 0.29151) \approx \mathbf{2.1531 \text{ bit/simbol}}
+    \]
+    \item \textbf{Perbandingan, Efisiensi, \& Redundansi:}
+    Berdasarkan Teorema Pengkodean Sumber Tanpa Derau Shannon:
+    \[
+    H(X) \le L(X) < H(X) + 1 \iff 2.1531 \le 2.20 < 3.1531 \quad (\textbf{Terbukti Terpenuhi!})
+    \]
+    \begin{itemize}
+        \item \textbf{Redundansi:} $\bar{R} = L(X) - H(X) = 2.20 - 2.1531 = \mathbf{0.0469 \text{ bit}}$.
+        \item \textbf{Efisiensi Pengkodean:} $\eta = \frac{H(X)}{L(X)} \times 100\% = \frac{2.1531}{2.20} \times 100\% \approx \mathbf{97.87\%}$.
+    \end{itemize}
+\end{enumerate}
+\end{solusibox}
+
+\vspace{0.4cm}
+
+\begin{soalbox}{Soal 3.2: Pengkodean Huffman Kasus 2 (UTS 2024/2025 No 1)}
+Misalkan variabel acak $X = \{a, b, c, d, e\}$ memiliki distribusi peluang:
+\[
+p(a) = 0.20, \quad p(b) = 0.35, \quad p(c) = 0.17, \quad p(d) = 0.03, \quad p(e) = 0.25
+\]
+Gunakan algoritma Huffman untuk mencari encoding prefix-free optimal dari $X$. Bandingkan panjang encoding tersebut dengan $H(X)$!
+\end{soalbox}
+
+\begin{solusibox}{Pembahasan Soal 3.2}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Konstruksi Pohon Huffman:}
+    Urutkan peluang dari terkecil: $d(0.03), c(0.17), a(0.20), e(0.25), b(0.35)$.
+    \begin{itemize}
+        \item Gabung $d(0.03)$ dan $c(0.17) \implies v_1(0.20)$.
+        \item Simpul aktif: $a(0.20), v_1(0.20), e(0.25), b(0.35)$.
+        \item Gabung $a(0.20)$ dan $v_1(0.20) \implies v_2(0.40)$.
+        \item Simpul aktif: $e(0.25), b(0.35), v_2(0.40)$.
+        \item Gabung $e(0.25)$ dan $b(0.35) \implies v_3(0.60)$.
+        \item Gabung $v_2(0.40)$ dan $v_3(0.60) \implies \text{Akar}(1.00)$.
+    \end{itemize}
+    \item \textbf{Penetapan Codeword \& Panjang:}
+    \begin{itemize}
+        \item $b$: dari $v_3 \implies \mathbf{11}$ ($\ell = 2$).
+        \item $e$: dari $v_3 \implies \mathbf{10}$ ($\ell = 2$).
+        \item $a$: dari $v_2 \implies \mathbf{01}$ ($\ell = 2$).
+        \item $c$: dari $v_2 \to v_1 \implies \mathbf{001}$ ($\ell = 3$).
+        \item $d$: dari $v_2 \to v_1 \implies \mathbf{000}$ ($\ell = 3$).
+    \end{itemize}
+    \item \textbf{Panjang Rata-rata Ekspektasi $L(X)$:}
+    \begin{align*}
+    L(X) &= 0.20(2) + 0.35(2) + 0.17(3) + 0.03(3) + 0.25(2) \\
+    &= 0.40 + 0.70 + 0.51 + 0.09 + 0.50 = \mathbf{2.20 \text{ bit/simbol}}
+    \end{align*}
+    \item \textbf{Entropi Shannon $H(X)$:}
+    \begin{align*}
+    H(X) &= -[0.20 \log_2 0.20 + 0.35 \log_2 0.35 + 0.17 \log_2 0.17 + 0.03 \log_2 0.03 + 0.25 \log_2 0.25] \\
+    &= -[0.20(-2.3219) + 0.35(-1.5146) + 0.17(-2.5564) + 0.03(-5.0589) + 0.25(-2.0000)] \\
+    &= 0.4644 + 0.5301 + 0.4346 + 0.1518 + 0.5000 = \mathbf{2.0809 \text{ bit/simbol}}
+    \end{align*}
+    \item \textbf{Perbandingan:}
+    $H(X) = 2.0809 \le L(X) = 2.20 < H(X) + 1 = 3.0809$.
+    Redundansi $\bar{R} = 2.20 - 2.0809 = 0.1191$ bit, Efisiensi $\eta = \frac{2.0809}{2.20} \approx 94.59\%$.
+\end{enumerate}
+\end{solusibox}
+
+\vspace{0.4cm}
+
+\begin{soalbox}{Soal 3.3: Pembuktian Formal Aturan Rantai Entropi (UTS 2024/2025 No 2)}
+Misalkan $X$ dan $Y$ adalah variabel acak pada himpunan nilai berhingga menurut distribusi peluang $p(X)$ dan $p(Y)$ berturut-turut.
+Buktikan secara formal bahwa entropi gabungan dari kedua distribusi peluang tersebut memenuhi aturan rantai:
+\[
+H(X, Y) = H(Y) + H(X \mid Y)
+\]
+\end{soalbox}
+
+\begin{solusibox}{Pembahasan Soal 3.3}
+\begin{proof}
+Berdasarkan definisi formal entropi Shannon, entropi gabungan dari dua variabel acak diskret $X$ dan $Y$ adalah:
+\[
+H(X, Y) = -\sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x, y) \log_2 p(x, y)
+\]
+Berdasarkan aksioma probabilitas bersyarat, peluang gabungan dapat difaktorkan sebagai:
+\[
+p(x, y) = p(y) \cdot p(x \mid y)
+\]
+Substitusikan faktorisasi peluang ini ke dalam fungsi logaritma:
+\begin{align*}
+H(X, Y) &= -\sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x, y) \log_2 \big(p(y) \cdot p(x \mid y)\big) \\
+&= -\sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x, y) \big(\log_2 p(y) + \log_2 p(x \mid y)\big) \\
+&= -\sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x, y) \log_2 p(y) - \sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x, y) \log_2 p(x \mid y)
+\end{align*}
+Tinjau suku pertama. Karena $\log_2 p(y)$ tidak bergantung pada variabel indeks penjumlahan $x$, faktorkan ke luar dari jumlahan terhadap $x$:
+\[
+-\sum_{y \in \mathcal{Y}} \log_2 p(y) \left(\sum_{x \in \mathcal{X}} p(x, y)\right)
+\]
+Berdasarkan sifat marginalisasi probabilitas, jumlahan peluang gabungan terhadap seluruh $x$ tepat sama dengan peluang marginal $p(y)$:
+\[
+\sum_{x \in \mathcal{X}} p(x, y) = p(y)
+\]
+Sehingga suku pertama menjadi:
+\[
+-\sum_{y \in \mathcal{Y}} p(y) \log_2 p(y) = H(Y)
+\]
+Tinjau suku kedua. Berdasarkan definisi formal entropi bersyarat:
+\begin{align*}
+-\sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x, y) \log_2 p(x \mid y) 
+&= \sum_{y \in \mathcal{Y}} p(y) \left(-\sum_{x \in \mathcal{X}} p(x \mid y) \log_2 p(x \mid y)\right) \\
+&= \sum_{y \in \mathcal{Y}} p(y) H(X \mid Y = y) = H(X \mid Y)
+\end{align*}
+Gabungkan kedua suku hasil penguraian:
+\[
+H(X, Y) = H(Y) + H(X \mid Y)
+\]
+Terbukti secara formal.
+\end{proof}
+\end{solusibox}
+
+\vspace{0.4cm}
+
+\begin{soalbox}{Soal 3.4: Teorema Distribusi Ciphertext Seragam pada Keamanan Sempurna (UTS 2025/2026 No 4)}
+Buktikan bahwa jika suatu sistem kripto $(\mathcal{P}, \mathcal{C}, \mathcal{K}, \mathcal{E}, \mathcal{D})$ memiliki \textbf{keamanan sempurna} (\textit{perfect secrecy}) dan memenuhi $|\mathcal{K}| = |\mathcal{C}| = |\mathcal{P}|$, maka setiap teks-sandi memiliki peluang yang sama untuk muncul sebagai hasil enkripsi dengan distribusi seragam:
+\[
+P_C(y) = \frac{1}{|\mathcal{C}|}, \quad \forall y \in \mathcal{C}
+\]
+\end{soalbox}
+
+\begin{solusibox}{Pembahasan Soal 3.4}
+\begin{proof}
+Asumsikan tanpa mengurangi perumuman bahwa untuk setiap teks-asal $x \in \mathcal{P}$ berlaku $P(P = x) > 0$.
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Teorema Karakterisasi Shannon untuk $|\mathcal{K}| = |\mathcal{C}| = |\mathcal{P}|$:}
+    Shannon membuktikan bahwa jika sistem dengan $|\mathcal{K}| = |\mathcal{C}| = |\mathcal{P}|$ aman sempurna, maka:
+    \begin{enumerate}
+        \item Distribusi peluang kunci haruslah seragam: $P(K = k) = \frac{1}{|\mathcal{K}|}$ untuk semua $k \in \mathcal{K}$.
+        \item Untuk setiap pasangan $x \in \mathcal{P}$ dan $y \in \mathcal{C}$, terdapat tepat satu kunci unik $k \in \mathcal{K}$ sedemikian hingga $e_k(x) = y$.
+    \end{enumerate}
+    \item \textbf{Menghitung Peluang Bersyarat $P(C = y \mid P = x)$:}
+    Ambil sembarang $x \in \mathcal{P}$ dan sembarang $y \in \mathcal{C}$. Misalkan $k_{x,y}$ adalah kunci tunggal yang memenuhi $e_{k_{x,y}}(x) = y$.
+    Maka peluang bersyaratnya adalah:
+    \[
+    P(C = y \mid P = x) = P(K = k_{x,y}) = \frac{1}{|\mathcal{K}|}
+    \]
+    \item \textbf{Menghitung Peluang Marjinal Teks-Sandi $P(C = y)$:}
+    Berdasarkan hukum peluang total:
+    \[
+    P(C = y) = \sum_{x \in \mathcal{P}} P(P = x) \cdot P(C = y \mid P = x) = \sum_{x \in \mathcal{P}} P(P = x) \cdot \frac{1}{|\mathcal{K}|} = \frac{1}{|\mathcal{K}|} \sum_{x \in \mathcal{P}} P(P = x)
+    \]
+    Karena $\sum_{x \in \mathcal{P}} P(P = x) = 1$, maka:
+    \[
+    P(C = y) = \frac{1}{|\mathcal{K}|}
+    \]
+    \item \textbf{Mengaitkan dengan Ukuran Ruang Sandi $|\mathcal{C}|$:}
+    Karena diketahui $|\mathcal{K}| = |\mathcal{C}|$, substitusikan $|\mathcal{K}| = |\mathcal{C}|$ ke hasil di atas:
+    \[
+    P(C = y) = \frac{1}{|\mathcal{C}|}, \quad \forall y \in \mathcal{C}
+    \]
+    Terbukti bahwa setiap ciphertext memiliki peluang kemunculan yang identik dan berdistribusi seragam secara mutlak.
+\end{enumerate}
+\end{proof}
+\end{solusibox}
+
+\vspace{0.4cm}
+
+\begin{soalbox}{Soal 3.5: Perhitungan Jarak Unicity ($n_0$) Sandi Klasik}
+Redundansi bahasa Inggris didefinisikan sebagai $R = 1 - \frac{H_L}{\log_2 26} \approx 0.75$, dengan $R \log_2 26 \approx 3.53$ bit/huruf.
+Hitung nilai eksak jarak unicity ($n_0$) untuk:
+\begin{enumerate}[label=(\alph*)]
+    \item Sandi Geser.
+    \item Sandi Affine.
+    \item Sandi Substitusi Monofonik Umum.
+    \item Sandi Hill berdimensi $2 \times 2$.
+\end{enumerate}
+\end{soalbox}
+
+\begin{solusibox}{Pembahasan Soal 3.5}
+Formula Shannon untuk jarak unicity kriptosistem dengan distribusi kunci acak seragam:
+\[
+n_0 \approx \frac{H(K)}{R \log_2 |\mathcal{P}|} = \frac{\log_2 |\mathcal{K}|}{R \log_2 26} = \frac{\log_2 |\mathcal{K}|}{3.53}
+\]
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Sandi Geser:}
+    $|\mathcal{K}| = 26 \implies H(K) = \log_2 26 \approx 4.7004$ bit.
+    \[
+    n_0 = \frac{4.7004}{3.53} \approx 1.33 \approx \mathbf{2 \text{ karakter}}
+    \]
+    Artinya, mencegat minimal 2 huruf sandi sudah cukup bagi penyerang untuk memulihkan kunci sandi geser secara tunggal tanpa kunci palsu.
+    \item \textbf{Sandi Affine:}
+    $|\mathcal{K}| = 312 \implies H(K) = \log_2 312 \approx 8.2854$ bit.
+    \[
+    n_0 = \frac{8.2854}{3.53} \approx 2.35 \approx \mathbf{3 \text{ karakter}}
+    \]
+    Penyerang membutuhkan minimal 3 huruf ciphertext untuk memecahkan sandi affine secara unik.
+    \item \textbf{Sandi Substitusi Monofonik:}
+    $|\mathcal{K}| = 26! \approx 4.0329 \times 10^{26} \implies H(K) = \log_2(26!) \approx 88.38$ bit.
+    \[
+    n_0 = \frac{88.38}{3.53} \approx 25.04 \approx \mathbf{25 \text{ karakter}}
+    \]
+    Dibutuhkan sekitar 25 karakter ciphertext untuk memecahkan kunci substitusi umum.
+    \item \textbf{Sandi Hill $2 \times 2$:}
+    $|\mathcal{K}| = |GL(2, \mathbb{Z}_{26})| = 157.248 \implies H(K) = \log_2(157248) \approx 17.26$ bit.
+    \[
+    n_0 = \frac{17.26}{3.53} \approx 4.89 \approx \mathbf{5 \text{ karakter}}
+    \]
+\end{enumerate}
+\end{solusibox}
+
+\newpage
+% =========================================================================
+\section{Kategori 4: Block Cipher Modern (DES \& AES)}
+% =========================================================================
+
+\begin{soalbox}{Soal 4.1: Konsep Cipher Perkalian \& Arsitektur DES/AES (UTS 2024/2025 No 3)}
+\begin{enumerate}[label=(\alph*)]
+    \item Tuliskan dan jelaskan tahapan-tahapan yang dilakukan pada sistem kripto DES dan sistem kripto AES!
+    \item Jelaskan secara komprehensif mengapa sistem kripto DES dan AES disebut sebagai sistem kripto perkalian (\textit{product cipher})!
+\end{enumerate}
+\end{soalbox}
+
+\begin{solusibox}{Pembahasan Soal 4.1}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Tahapan Sistem Kripto DES \& AES:}
+    \begin{itemize}
+        \item \textbf{Tahapan DES (Ukuran Blok 64-bit, Kunci 56-bit, 16 Ronde Feistel):}
+        \begin{enumerate}
+            \item \textbf{Initial Permutation ($IP$):} Permutasi awal 64 bit plaintext menjadi dua paruh 32-bit: $(L_0, R_0)$.
+            \item \textbf{16 Ronde Feistel:} Untuk setiap ronde $i = 1, \dots, 16$:
+            \[
+            L_i = R_{i-1}, \qquad R_i = L_{i-1} \oplus F(R_{i-1}, K_i)
+            \]
+            Fungsi ronde $F$ melakukan 4 langkah: (1) \textit{Ekspansi E} ($32 \to 48$ bit); (2) XOR dengan subkunci $K_i$; (3) Substitusi non-linear oleh 8 S-box ($48 \to 32$ bit); (4) Permutasi linier $P$ ($32 \to 32$ bit).
+            \item \textbf{32-bit Swap \& Inverse Permutation ($IP^{-1}$):} Membalik paruh $(R_{16}, L_{16})$ dan menerapkan permutasi invers untuk menghasilkan ciphertext 64 bit.
+        \end{enumerate}
+        \item \textbf{Tahapan AES-128 (Ukuran Blok 128-bit, Matriks State $4 \times 4$ Byte, 10 Ronde SPN):}
+        \begin{enumerate}
+            \item \textbf{Ronde Awal (Ronde 0):} AddRoundKey tunggal dengan kunci awal $w_0 \dots w_3$.
+            \item \textbf{9 Ronde Standar (Ronde 1--9):} Melakukan 4 transformasi berurutan:
+            \begin{itemize}
+                \item \textbf{SubBytes:} Substitusi non-linear per byte menggunakan invers di $GF(2^8)$ + transformasi affine atas $\mathbb{F}_2$.
+                \item \textbf{ShiftRows:} Permutasi siklis byte ke kiri per baris (baris 0 geser 0, baris 1 geser 1, baris 2 geser 2, baris 3 geser 3 byte).
+                \item \textbf{MixColumns:} Difusi linier kolom melalui perkalian modulo $z^4 + 1$ dengan polinomial $\{03\}z^3 + \{01\}z^2 + \{01\}z + \{02\}$ atas $GF(2^8)$.
+                \item \textbf{AddRoundKey:} Bitwise XOR matriks state dengan subkunci ronde.
+            \end{itemize}
+            \item \textbf{Ronde Terakhir (Ronde 10):} Sama seperti ronde standar, tetapi transformasi \textbf{MixColumns ditiadakan} (SubBytes $\to$ ShiftRows $\to$ AddRoundKey).
+        \end{enumerate}
+    \end{itemize}
+    \item \textbf{Mengapa Disebut Sistem Kripto Perkalian (Product Cipher)?}
+    Dalam terminologi kriptografi Claude Shannon (1949), cipher perkalian didefinisikan sebagai komposisi fungsi atau perkalian operator aljabar dari dua atau lebih transformasi kriptografi dasar:
+    \[
+    \text{Cipher} = T_r \circ T_{r-1} \circ \dots \circ T_1
+    \]
+    DES dan AES disebut cipher perkalian karena menggabungkan dua jenis transformasi dasar secara bergantian berulang-kali (multi-ronde):
+    \begin{enumerate}
+        \item Transformasi \textbf{Substitusi} (S-box), yang berfungsi menciptakan \textbf{Konfusi} (\textit{confusion}), yaitu mengaburkan relasi statistik antara teks-sandi dan kunci rahasia.
+        \item Transformasi \textbf{Permutasi / Linier} (P-box pada DES, ShiftRows dan MixColumns pada AES), yang berfungsi menciptakan \textbf{Difusi} (\textit{diffusion}), yaitu menyebarkan redundansi dan ketergantungan bit plaintext ke seluruh blok ciphertext.
+    \end{enumerate}
+    Transformasi substitusi saja rentan analisis frekuensi, dan transformasi permutasi saja rentan analisis linier. Namun hasil perkalian (komposisi bergantian) keduanya secara berulang menghasilkan margin keamanan kriptografis yang sangat tinggi.
+\end{enumerate}
+\end{solusibox}
+
+\vspace{0.4cm}
+
+\begin{soalbox}{Soal 4.2: Aljabar $GF(2^8)$ \& Polinomial MixColumns AES (UTS 2020/2021 No 5)}
+Dalam perspektif aljabar, pada tahap MixColumns di algoritma AES, setiap kolom dari blok data yang dienkripsi dipandang sebagai sukubanyak modulo $(01 z^4 + 01)$ dan dikalikan dengan sebuah sukubanyak yang koefisiennya berada pada lapangan hingga $GF(2^8) \cong \mathbb{F}_2[x] / \langle x^8 + x^4 + x^3 + x + 1 \rangle$.
+Dalam representasi heksadesimal dari $GF(2^8)$, sukubanyak tersebut adalah ...
+\begin{enumerate}[label=(\alph*)]
+    \item $03 z^3 + 01 z^2 + 01 z + 02$
+    \item $01 z^3 + 02 z^2 + 03 z + 01$
+    \item $02 z^3 + 03 z^2 + 01 z + 01$
+    \item $01 z^3 + 01 z^2 + 02 z + 03$
+\end{enumerate}
+\end{soalbox}
+
+\begin{solusibox}{Pembahasan Soal 4.2}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Formulasi Matematis Transformasi MixColumns:}
+    Pada spesifikasi resmi NIST FIPS 197 (AES), setiap kolom dari matriks state $\mathbf{s} = [s_{0,c}, s_{1,c}, s_{2,c}, s_{3,c}]^T$ diperlakukan sebagai polinomial derajat 3:
+    \[
+    s(z) = s_{3,c} z^3 + s_{2,c} z^2 + s_{1,c} z + s_{0,c}
+    \]
+    Operasi MixColumns didefinisikan sebagai perkalian modulo $z^4 + 1$ dengan polinomial tetap $c(z)$:
+    \[
+    s'(z) = c(z) \otimes s(z) \pmod{z^4 + 1}
+    \]
+    di mana koefisien polinomial $c(z)$ adalah:
+    \[
+    c(z) = \{03\} z^3 + \{01\} z^2 + \{01\} z + \{02\}
+    \]
+    \item \textbf{Representasi Matriks Kolom yang Bersesuaian:}
+    Perkalian polinomial siklis modulo $z^4 + 1$ di atas ekuivalen dengan perkalian matriks sirkulan:
+    \[
+    \begin{bmatrix}
+    s'_{0,c} \\ s'_{1,c} \\ s'_{2,c} \\ s'_{3,c}
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+    02 & 03 & 01 & 01 \\
+    01 & 02 & 03 & 01 \\
+    01 & 01 & 02 & 03 \\
+    03 & 01 & 01 & 02
+    \end{bmatrix}
+    \begin{bmatrix}
+    s_{0,c} \\ s_{1,c} \\ s_{2,c} \\ s_{3,c}
+    \end{bmatrix}
+    \]
+    Perhatikan bahwa baris pertama matriks adalah $[02, 03, 01, 01]$, yang berkorespondensi tepat dengan koefisien konstanta $\{02\}$ hingga koefisien derajat tertinggi $\{03\}$.
+\end{enumerate}
+\textbf{Jawaban yang Benar: (a) $03 z^3 + 01 z^2 + 01 z + 02$.}
+\end{solusibox}
+
+\vspace{0.4cm}
+
+\begin{soalbox}{Soal 4.3: Pembuktian Sifat Komplementasi DES \& Implikasinya}
+Misalkan $P$ adalah blok teks-asal, $K$ adalah kunci, dan $C = \operatorname{DES}_K(P)$ adalah teks-sandi hasil enkripsi DES.
+Notasi $\bar{x}$ menyatakan komplemen bit demi bit dari $x$ ($\bar{x} = x \oplus \mathbf{1}$).
+\begin{enumerate}[label=(\alph*)]
+    \item Buktikan secara aljabar bahwa sistem kripto DES memiliki sifat komplementasi:
+    \[
+    \operatorname{DES}_{\bar{K}}(\bar{P}) = \overline{\operatorname{DES}_K(P)} = \bar{C}
+    \]
+    \item Jelaskan secara detail bagaimana seorang penyerang dapat memanfaatkan sifat ini untuk mengurangi ruang pencarian kunci (\textit{brute-force search}) dari $2^{56}$ menjadi $2^{55}$ uji kunci di bawah model penyerangan Chosen-Plaintext Attack (CPA).
+\end{enumerate}
+\end{soalbox}
+
+\begin{solusibox}{Pembahasan Soal 4.3}
+\begin{proof}
+Tinjau struktur fungsi ronde Feistel $F(R, K)$ pada DES:
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Lapisan Ekspansi $E$:} Karena ekspansi $E: \{0, 1\}^{32} \to \{0, 1\}^{48}$ hanyalah duplikasi bit (pemetaan linier), mengomplemenkan input akan mengomplemenkan output:
+    \[
+    E(\bar{R}) = \overline{E(R)} = E(R) \oplus \mathbf{1}_{48}
+    \]
+    \item \textbf{Penambahan Subkunci:} Jika subkunci juga dikomplemenkan ($\bar{K} = K \oplus \mathbf{1}_{48}$), maka pada operasi XOR:
+    \[
+    E(\bar{R}) \oplus \bar{K} = \big(E(R) \oplus \mathbf{1}_{48}\big) \oplus \big(K \oplus \mathbf{1}_{48}\big) = E(R) \oplus K \oplus (\mathbf{1}_{48} \oplus \mathbf{1}_{48}) = E(R) \oplus K
+    \]
+    Dua komplemen saling meniadakan secara aljabar!
+    \item \textbf{Keluaran S-Box \& Permutasi $P$:}
+    Karena input ke-8 S-box bernilai sama persis ($E(R) \oplus K$), maka keluaran S-box dan hasil permutasi $P$ tidak berubah sama sekali:
+    \[
+    F(\bar{R}, \bar{K}) = F(R, K)
+    \]
+    \item \textbf{Persamaan Ronde Feistel:}
+    Untuk paruh kiri pada ronde ke-$i$:
+    \[
+    \bar{L}_{i-1} \oplus F(\bar{R}_{i-1}, \bar{K}_i) = \big(L_{i-1} \oplus \mathbf{1}_{32}\big) \oplus F(R_{i-1}, K_i) = \overline{L_{i-1} \oplus F(R_{i-1}, K_i)} = \bar{R}_i
+    \]
+    Dan paruh kanan: $\bar{L}_i = \bar{R}_{i-1}$.
+    \item Karena sifat komplemen ini terpelihara di setiap 16 ronde dan permutasi $IP$ serta $IP^{-1}$ bersifat linier bitwise, maka terbukti secara induktif:
+    \[
+    \operatorname{DES}_{\bar{K}}(\bar{P}) = \overline{\operatorname{DES}_K(P)} = \bar{C}
+    \]
+\end{enumerate}
+\end{proof}
+
+\textbf{Pemanfaatan dalam Serangan Chosen-Plaintext Attack (CPA):}
+\begin{enumerate}[leftmargin=*]
+    \item Penyerang memilih plaintext sembarang $P$ dan meminta enkripsinya untuk mendapatkan $C = \operatorname{DES}_K(P)$. Penyerang juga meminta enkripsi dari komplemennya $\bar{P}$ untuk mendapatkan $C' = \operatorname{DES}_K(\bar{P})$.
+    \item Untuk mencari kunci rahasia $K$, penyerang menguji calon kunci $K_i$ hanya pada separuh ruang kunci ($2^{55}$ calon kunci pertama):
+    \begin{itemize}
+        \item Hitung $Y = \operatorname{DES}_{K_i}(P)$.
+        \item Jika $Y = C$, maka kunci rahasia adalah $K = K_i$.
+        \item Jika $\bar{Y} = C'$, maka berdasarkan sifat komplementasi $\operatorname{DES}_{\bar{K}_i}(\bar{P}) = \bar{Y} = C'$, yang berarti kunci rahasianya adalah $K = \bar{K}_i$!
+    \end{itemize}
+    \item Setiap 1 kali enkripsi uji coba mengevaluasi 2 kunci sekaligus ($K_i$ dan $\bar{K}_i$). Dengan demikian, kompleksitas pencarian kunci berkurang tepat separuhnya: dari $2^{56}$ menjadi $\mathbf{2^{55}}$ pengujian enkripsi.
+\end{enumerate}
+\end{solusibox}
+
+\vspace{0.4cm}
+
+\begin{soalbox}{Soal 4.4: Analisis Propagasi Galat Mode Operasi Cipher Blok (ECB, CBC, CTR)}
+Misalkan sebuah pesan teks dienkripsi menggunakan cipher blok berukuran blok 128 bit.
+Selama proses transmisi melalui saluran yang berderau, terjadi kesalahan transmisi tepat 1 bit pada blok teks-sandi ke-$i$ ($C_i$).
+Jelaskan dampak propagasi kesalahan transmisi tersebut pada hasil dekripsi blok-blok teks-asal ($P_{i-1}, P_i, P_{i+1}, P_{i+2}$) jika sistem menggunakan:
+\begin{enumerate}[label=(\alph*)]
+    \item Mode Electronic Codebook (ECB).
+    \item Mode Cipher Block Chaining (CBC).
+    \item Mode Counter (CTR).
+\end{enumerate}
+\end{soalbox}
+
+\begin{solusibox}{Pembahasan Soal 4.4}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Mode Electronic Codebook (ECB):}
+    \begin{itemize}
+        \item Persamaan dekripsi: $P_k = D_K(C_k)$ secara independen untuk setiap blok.
+        \item Kesalahan 1 bit pada $C_i$ menyebabkan input dekripsi ke fungsi $D_K$ berubah. Karena cipher blok memiliki efek longsoran (*avalanche effect*), maka **seluruh 128 bit pada blok $P_i$ akan rusak total secara acak** ($\approx 50\%$ bit salah).
+        \item Blok sebelum ($P_{i-1}$) dan blok sesudah ($P_{i+1}, P_{i+2}$) sama sekali tidak terpengaruh (kesalahan 0 bit).
+        \item \textbf{Propagasi galat:} Terisolasi pada 1 blok penuh ($P_i$).
+    \end{itemize}
+    \item \textbf{Mode Cipher Block Chaining (CBC):}
+    \begin{itemize}
+        \item Persamaan dekripsi: $P_k = D_K(C_k) \oplus C_{k-1}$.
+        \item Tinjau blok per blok:
+        \begin{enumerate}
+            \item Pada blok $P_{i-1}$: $P_{i-1} = D_K(C_{i-1}) \oplus C_{i-2}$ $\implies$ **tidak terpengaruh (benar 100\%)**.
+            \item Pada blok $P_i$: $P_i = D_K(C_i) \oplus C_{i-1}$. Karena $C_i$ salah 1 bit, output $D_K(C_i)$ rusak total secara acak $\implies$ **blok $P_i$ rusak total (50\% bit salah)**.
+            \item Pada blok $P_{i+1}$: $P_{i+1} = D_K(C_{i+1}) \oplus C_i$. Blok $C_{i+1}$ tidak salah, sehingga $D_K(C_{i+1})$ benar. Namun ia di-XOR dengan $C_i$ yang memiliki 1 bit salah $\implies$ **blok $P_{i+1}$ hanya mengalami tepat 1 bit kesalahan** pada posisi bit yang sama persis dengan bit yang rusak pada $C_i$!
+            \item Pada blok $P_{i+2}$: $P_{i+2} = D_K(C_{i+2}) \oplus C_{i+1}$ $\implies$ **pulih sempurna (0 bit salah)**.
+        \end{enumerate}
+        \item \textbf{Propagasi galat:} Terbatas pada 2 blok ($P_i$ rusak total, $P_{i+1}$ salah 1 bit, blok berikutnya pulih otomatis /\textit{self-synchronizing}).
+    \end{itemize}
+    \item \textbf{Mode Counter (CTR):}
+    \begin{itemize}
+        \item Persamaan dekripsi: $P_k = C_k \oplus E_K(\text{Nonce} \parallel k)$.
+        \item Aliran kunci $E_K(\text{Nonce} \parallel k)$ dibangkitkan secara independen dari teks sandi.
+        \item Pada blok $P_i = C_i \oplus E_K(\text{Nonce} \parallel i)$, karena operasi XOR bersifat bit-per-bit, maka kesalahan 1 bit pada $C_i$ hanya membalik **tepat 1 bit yang bersesuaian pada $P_i$**!
+        \item Seluruh blok lainnya ($P_{i-1}, P_{i+1}, P_{i+2}$) pulih sempurna dan benar 100\%.
+        \item \textbf{Propagasi galat:} Nol propagasi (1 bit ciphertext salah $\implies$ tepat 1 bit plaintext salah).
+    \end{itemize}
+\end{enumerate}
+\end{solusibox}
+
+\newpage
+% =========================================================================
+\section{Kategori 5: Pengantar Teori Bilangan (PTB) untuk Kriptografi}
+% =========================================================================
+
+\begin{soalbox}{Soal 5.1: Teorema Sisa Cina (CRT) Modulus Non-Koprima (UTS 2022/2023 \& 2023/2024 No 2)}
+Tentukan solusi bilangan bulat $x$ dalam modulo 210 dari sistem kongruensi linier simultan berikut:
+\[
+\begin{cases}
+2x \equiv 3 \pmod 5 \\
+2x \equiv 4 \pmod 6 \\
+3x \equiv 2 \pmod 7
+\end{cases}
+\]
+\end{soalbox}
+
+\begin{solusibox}{Pembahasan Soal 5.1}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Penyederhanaan Masing-Masing Kongruensi Linier:}
+    \begin{itemize}
+        \item Kongruensi 1: $2x \equiv 3 \pmod 5$.
+        Invers dari $2 \pmod 5$ adalah 3 (karena $2 \times 3 = 6 \equiv 1 \pmod 5$).
+        Kalikan kedua ruas dengan 3:
+        \[
+        x \equiv 3 \times 3 = 9 \equiv \mathbf{4 \pmod 5}
+        \]
+        \item Kongruensi 2: $2x \equiv 4 \pmod 6$.
+        Perhatikan bahwa $\gcd(2, 6) = 2 \mid 4$. Bagi seluruh persamaan (termasuk modulus) dengan 2:
+        \[
+        x \equiv 2 \pmod 3
+        \]
+        Dalam modulo 6, kongruensi ini menghasilkan dua residu unik:
+        \[
+        x \equiv 2 \pmod 6 \quad \text{atau} \quad x \equiv 2 + 3 = 5 \pmod 6
+        \]
+        (Uji: $2(2) = 4 \equiv 4 \pmod 6$ dan $2(5) = 10 \equiv 4 \pmod 6$. Keduanya valid).
+        \item Kongruensi 3: $3x \equiv 2 \pmod 7$.
+        Invers dari $3 \pmod 7$ adalah 5 (karena $3 \times 5 = 15 \equiv 1 \pmod 7$).
+        Kalikan kedua ruas dengan 5:
+        \[
+        x \equiv 2 \times 5 = 10 \equiv \mathbf{3 \pmod 7}
+        \]
+    \end{itemize}
+    \item \textbf{Penggabungan Modulo Koprima 5 dan 7 Menggunakan CRT:}
+    Tinjau subsistem:
+    \[
+    \begin{cases}
+    x \equiv 4 \pmod 5 \\
+    x \equiv 3 \pmod 7
+    \end{cases}
+    \]
+    Modulus $m_1 = 5, m_2 = 7$ saling prima ($\gcd(5, 7) = 1$). Modulus gabungan $M = 35$.
+    \begin{itemize}
+        \item $M_1 = 35 / 5 = 7 \implies 7 y_1 \equiv 1 \pmod 5 \implies 2 y_1 \equiv 1 \pmod 5 \implies y_1 = 3$.
+        \item $M_2 = 35 / 7 = 5 \implies 5 y_2 \equiv 1 \pmod 7 \implies y_2 = 3$.
+    \end{itemize}
+    Berdasarkan CRT:
+    \[
+    x \equiv a_1 M_1 y_1 + a_2 M_2 y_2 = 4(7)(3) + 3(5)(3) = 84 + 45 = 129 \equiv \mathbf{24 \pmod{35}}
+    \]
+    Bentuk umum solusi:
+    \[
+    x = 35k + 24, \quad k \in \mathbb{Z}
+    \]
+    \item \textbf{Mencocokkan Solusi dengan Kongruensi Modulo 6 ($x \equiv 2 \pmod 3$):}
+    Substitusikan $x = 35k + 24$ ke dalam syarat $x \equiv 2 \pmod 3$:
+    \begin{align*}
+    35k + 24 &\equiv 2 \pmod 3 \\
+    \implies 2k + 0 &\equiv 2 \pmod 3 \implies 2k \equiv 2 \pmod 3 \implies k \equiv 1 \pmod 3
+    \end{align*}
+    Karena kita mencari solusi dalam modulo $\operatorname{lcm}(5, 6, 7) = 210 = 35 \times 6$, maka $k$ berjalan pada rentang $\{0, 1, 2, 3, 4, 5\}$.
+    Nilai $k \in \{0, 1, 2, 3, 4, 5\}$ yang memenuhi $k \equiv 1 \pmod 3$ adalah:
+    \[
+    k = 1 \quad \text{dan} \quad k = 4
+    \]
+    \item \textbf{Menghitung Nilai Eksak Solusi Modulo 210:}
+    \begin{itemize}
+        \item Untuk $k = 1$:
+        \[
+        x_1 = 35(1) + 24 = \mathbf{59}
+        \]
+        Uji: $59 \equiv 4 \pmod 5$; $2(59) = 118 \equiv 4 \pmod 6$; $3(59) = 177 = 25(7) + 2 \equiv 2 \pmod 7$. (\textbf{Valid!})
+        \item Untuk $k = 4$:
+        \[
+        x_2 = 35(4) + 24 = 140 + 24 = \mathbf{164}
+        \]
+        Uji: $164 \equiv 4 \pmod 5$; $2(164) = 328 = 54(6) + 4 \equiv 4 \pmod 6$; $3(164) = 492 = 70(7) + 2 \equiv 2 \pmod 7$. (\textbf{Valid!})
+    \end{itemize}
+\end{enumerate}
+\textbf{Solusi Akhir:} Terdapat tepat dua solusi unik modulo 210, yaitu:
+\[
+\mathbf{x \equiv 59 \pmod{210} \quad \text{dan} \quad x \equiv 164 \pmod{210}}
+\]
+\end{solusibox}
+
+\vspace{0.4cm}
+
+\begin{soalbox}{Soal 5.2: Teorema Keterbagian $2^r \mid \varphi(n)$ (UTS 2024/2025 No 4)}
+Tunjukkan bahwa jika bilangan bulat positif $n$ memiliki $r$ buah faktor prima yang berbeda, maka:
+\[
+2^r \mid \varphi(n) \quad (\text{untuk prima ganjil berbeda})
+\]
+Secara umum, buktikan bahwa jika $n$ memiliki $r$ faktor prima ganjil berbeda, maka $2^r \mid \varphi(n)$!
+\end{soalbox}
+
+\begin{solusibox}{Pembahasan Soal 5.2}
+\begin{proof}
+Misalkan faktorisasi prima dari bilangan bulat positif $n$ adalah:
+\[
+n = 2^{k_0} p_1^{k_1} p_2^{k_2} \dots p_r^{k_r}
+\]
+di mana $p_1, p_2, \dots, p_r$ adalah $r$ buah bilangan prima ganjil yang berbeda ($p_i \ge 3$ untuk setiap $i = 1, \dots, r$), dengan $k_i \ge 1$ untuk $i = 1, \dots, r$, dan $k_0 \ge 0$ adalah pangkat dari faktor prima 2.
+\begin{enumerate}[leftmargin=*]
+    \item Berdasarkan sifat multiplikatif dari fungsi phi Euler:
+    \[
+    \varphi(n) = \varphi(2^{k_0}) \cdot \prod_{i=1}^r \varphi(p_i^{k_i})
+    \]
+    \item Menggunakan rumus nilai fungsi phi pada perpangkatan bilangan prima $\varphi(p^k) = p^{k-1}(p - 1)$:
+    \[
+    \varphi(n) = \varphi(2^{k_0}) \cdot \prod_{i=1}^r p_i^{k_i - 1} (p_i - 1)
+    \]
+    \item Tinjau faktor $(p_i - 1)$ untuk setiap $i = 1, 2, \dots, r$.
+    Karena setiap $p_i$ adalah bilangan prima ganjil, maka $p_i \equiv 1 \pmod 2$.
+    Akibatnya, $p_i - 1$ pastilah merupakan \textbf{bilangan bulat genap}:
+    \[
+    2 \mid (p_i - 1), \quad \forall i \in \{1, 2, \dots, r\}
+    \]
+    \item Karena terdapat $r$ buah suku bilangan genap yang saling dikalikan, maka perkalian suku-suku tersebut habis dibagi oleh $2^r$:
+    \[
+    2^r \;\Big|\; \prod_{i=1}^r (p_i - 1)
+    \]
+    \item Karena faktor-faktor lainnya ($\varphi(2^{k_0})$ dan $p_i^{k_i - 1}$) seluruhnya merupakan bilangan bulat positif, disimpulkan secara langsung bahwa:
+    \[
+    2^r \mid \varphi(n)
+    \]
+\end{enumerate}
+Terbukti secara formal.
+\end{proof}
+\end{solusibox}
+
+\vspace{0.4cm}
+
+\begin{soalbox}{Soal 5.3: Sifat Perkalian Fungsi Phi \& Kasus Kuadrat $\varphi(n^2) = n\varphi(n)$ (UTS 2025/2026 No 3)}
+\begin{enumerate}[label=(\alph*)]
+    \item Jika setiap faktor prima dari $n$ juga merupakan faktor prima dari $m$, perlihatkan bahwa:
+    \[
+    \varphi(mn) = n \varphi(m)
+    \]
+    \item Sebagai akibat khusus dari pernyataan di atas, buktikan bahwa untuk setiap bilangan bulat positif $n$, berlaku:
+    \[
+    \varphi(n^2) = n \varphi(n)
+    \]
+\end{enumerate}
+\end{soalbox}
+
+\begin{solusibox}{Pembahasan Soal 5.3}
+\begin{proof}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Pembuktian Bagian (a):}
+    Gunakan formula umum produk Euler untuk fungsi phi:
+    \[
+    \varphi(k) = k \prod_{p \mid k} \left(1 - \frac{1}{p}\right)
+    \]
+    di mana produk diambil atas seluruh himpunan pembagi prima berbeda dari $k$.
+    \begin{itemize}
+        \item Misalkan himpunan faktor prima dari $m$ adalah $\mathcal{P}_m = \{p : p \text{ prima dan } p \mid m\}$.
+        \item Misalkan himpunan faktor prima dari $n$ adalah $\mathcal{P}_n = \{p : p \text{ prima dan } p \mid n\}$.
+        \item Diketahui bahwa setiap faktor prima dari $n$ juga membagi $m$, yang berarti $\mathcal{P}_n \subseteq \mathcal{P}_m$.
+        \item Tinjau bilangan $mn$. Himpunan pembagi prima dari hasil kali $mn$ adalah gabungan pembagi prima keduanya:
+        \[
+        \mathcal{P}_{mn} = \mathcal{P}_m \cup \mathcal{P}_n
+        \]
+        Karena $\mathcal{P}_n \subseteq \mathcal{P}_m$, maka $\mathcal{P}_{mn} = \mathcal{P}_m$. Artinya, himpunan faktor prima unik dari $mn$ \textbf{sama persis} dengan himpunan faktor prima unik dari $m$!
+        \item Tuliskan rumus produk Euler untuk $\varphi(mn)$:
+        \[
+        \varphi(mn) = (mn) \prod_{p \mid mn} \left(1 - \frac{1}{p}\right) = (mn) \prod_{p \mid m} \left(1 - \frac{1}{p}\right) = n \cdot \left[ m \prod_{p \mid m} \left(1 - \frac{1}{p}\right) \right]
+        \]
+        Perhatikan bahwa suku di dalam tanda kurung siku tepat merupakan definisi dari $\varphi(m)$.
+        Oleh karena itu:
+        \[
+        \varphi(mn) = n \varphi(m)
+        \]
+        Terbukti.
+    \end{itemize}
+    \item \textbf{Pembuktian Bagian (b):}
+    Ambil $m = n$.
+    Jelas bahwa setiap faktor prima dari $n$ juga merupakan faktor prima dari $m = n$ (karena $\mathcal{P}_n \subseteq \mathcal{P}_n$ berlaku secara trivial).
+    Terapkan rumus dari bagian (a) dengan mensubstitusikan $m = n$:
+    \[
+    \varphi(n \cdot n) = n \varphi(n) \implies \mathbf{\varphi(n^2) = n \varphi(n)}
+    \]
+    Terbukti secara mutlak.
+\end{enumerate}
+\end{proof}
+\end{solusibox}
+
+\vspace{0.4cm}
+
+\begin{soalbox}{Soal 5.4: Lema Eksponensial B\'ezout \& Teorema Orde Fermat (UTS 2021/2022 Bagian B)}
+Diberikan lema berikut:
+\begin{quote}
+\textbf{Lema.} Misalkan $a \in \mathbb{Z}$ dan $u, v \in \mathbb{Z}^+$ dengan $\gcd(u, v) = d$. Jika $a^u \equiv 1 \pmod m$ dan $a^v \equiv 1 \pmod m$, maka:
+\[
+a^d \equiv 1 \pmod m
+\]
+\end{quote}
+\begin{enumerate}[label=(\alph*)]
+    \item Buktikan kebenaran Lema di atas menggunakan Identitas B\'ezout!
+    \item Dengan menggunakan Lema tersebut dan Teorema Fermat Kecil, buktikan pernyataan berikut:
+    \begin{quote}
+    Misalkan $p$ adalah bilangan prima dan $p \nmid a$. Andaikan $n$ adalah bilangan bulat positif \textbf{terkecil} sedemikian hingga $p \mid (a^n - 1)$ (bilangan $n$ tersebut ada berdasarkan Teorema Fermat). Buktikan bahwa:
+    \[
+    n \mid (p - 1)
+    \]
+    \end{quote}
+\end{enumerate}
+\end{soalbox}
+
+\begin{solusibox}{Pembahasan Soal 5.4}
+\begin{proof}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Pembuktian Lema Eksponensial B\'ezout:}
+    Berdasarkan Identitas B\'ezout, karena $\gcd(u, v) = d$, maka terdapat pasangan bilangan bulat $x, y \in \mathbb{Z}$ sedemikian hingga:
+    \[
+    u x + v y = d
+    \]
+    Salah satu dari $x$ atau $y$ mungkin bernilai negatif. Tanpa mengurangi perumuman, asumsikan $x \ge 0$ dan $y < 0$ (sehingga $-y > 0$).
+    Tuliskan identitas dalam bentuk bilangan positif:
+    \[
+    d + v(-y) = u x
+    \]
+    Pangkatkan basis $a$ pada kedua ruas:
+    \[
+    a^{d + v(-y)} = a^{ux} \implies a^d \cdot (a^v)^{-y} = (a^u)^x
+    \]
+    Tinjau relasi kongruensi modulo $m$. Diketahui bahwa $a^u \equiv 1 \pmod m$ dan $a^v \equiv 1 \pmod m$:
+    \[
+    a^d \cdot (1)^{-y} \equiv (1)^x \pmod m \implies a^d \cdot 1 \equiv 1 \pmod m \implies \mathbf{a^d \equiv 1 \pmod m}
+    \]
+    Lema terbukti.
+    \item \textbf{Pembuktian $n \mid (p - 1)$:}
+    \begin{itemize}
+        \item Diketahui bahwa $n$ adalah bilangan bulat positif \textbf{terkecil} yang memenuhi $p \mid (a^n - 1)$, yang ekuivalen dengan $a^n \equiv 1 \pmod p$.
+        \item Berdasarkan Teorema Fermat Kecil, karena $p$ prima dan $p \nmid a$, maka:
+        \[
+        a^{p-1} \equiv 1 \pmod p
+        \]
+        \item Definisikan $d = \gcd(n, p - 1)$.
+        Berdasarkan Lema yang telah dibuktikan pada bagian (a) dengan mengambil $u = n$ dan $v = p - 1$, maka:
+        \[
+        a^d \equiv 1 \pmod p \implies p \mid (a^d - 1)
+        \]
+        \item Karena $d$ adalah pembagi persekutuan terbesar dari $n$ dan $p - 1$, maka $d \le n$.
+        Namun, berdasarkan hipotesis soal, $n$ adalah bilangan bulat positif \textbf{terkecil} yang memenuhi $a^k \equiv 1 \pmod p$.
+        Karena $d$ juga memenuhi $a^d \equiv 1 \pmod p$ dan $d \le n$, satu-satunya kemungkinan adalah:
+        \[
+        d = n
+        \]
+        \item Karena $d = \gcd(n, p - 1)$ dan $d = n$, maka $n$ haruslah membagi $p - 1$:
+        \[
+        n \mid (p - 1)
+        \]
+    \end{itemize}
+\end{enumerate}
+Terbukti tuntas.
+\end{proof}
+\end{solusibox}
+
+\newpage
+% =========================================================================
+\section{Kategori 6: Kriptosistem RSA \& Titik Tetap (Fixed Points)}
+% =========================================================================
+
+\begin{soalbox}{Soal 6.1: Teorema Titik Tetap RSA (UTS 2022/2023 \& 2023/2024 No 3)}
+Suatu teks-asal $x \in \mathbb{Z}_n^*$ disebut \textbf{titik tetap} (\textit{fixed point} / tak berubah) jika hasil enkripsinya sama persis dengan teks asalnya:
+\[
+e_K(x) \equiv x^b \equiv x \pmod n
+\]
+Tunjukkan dan buktikan secara formal bahwa untuk sistem kripto RSA dengan modulus $n = pq$ ($p, q$ prima berbeda) dan kunci publik $b$, banyaknya teks-asal tetap $x \in \mathbb{Z}_n^*$ tepat sama dengan:
+\[
+N_{\text{tetap}} = \gcd(b - 1, p - 1) \cdot \gcd(b - 1, q - 1)
+\]
+\textit{[Petunjuk: Pandang sistem kekongruenan $e_K(x) \equiv x \pmod p$ dan $e_K(x) \equiv x \pmod q$.]}
+\end{soalbox}
+
+\begin{solusibox}{Pembahasan Soal 6.1}
+\begin{proof}
+Karena $x \in \mathbb{Z}_n^*$, maka $\gcd(x, n) = 1$, yang berakibat $x \not\equiv 0 \pmod p$ dan $x \not\equiv 0 \pmod q$.
+Berdasarkan Teorema Sisa Cina (karena $\gcd(p, q) = 1$):
+\[
+x^b \equiv x \pmod n \iff
+\begin{cases}
+x^b \equiv x \pmod p \\
+x^b \equiv x \pmod q
+\end{cases}
+\]
+Karena $x \not\equiv 0 \pmod p$ dan $x \not\equiv 0 \pmod q$, kita dapat mengalikan kedua ruas dengan invers perkalian $x^{-1}$, sehingga sistem ekuivalen dengan:
+\[
+\begin{cases}
+x^{b-1} \equiv 1 \pmod p \\
+x^{b-1} \equiv 1 \pmod q
+\end{cases}
+\]
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Menghitung Banyaknya Solusi Modulo $p$:}
+    Tinjau kongruensi $x^{b-1} \equiv 1 \pmod p$ di dalam grup perkalian $\mathbb{Z}_p^*$.
+    \begin{itemize}
+        \item Karena $p$ adalah bilangan prima, maka $\mathbb{Z}_p^*$ merupakan sebuah **grup siklis** berorde $|\mathbb{Z}_p^*| = p - 1$.
+        \item Misalkan $g$ adalah generator (akar primitif) dari grup $\mathbb{Z}_p^*$. Maka setiap elemen $x \in \mathbb{Z}_p^*$ dapat dinyatakan secara tunggal sebagai $x \equiv g^k \pmod p$ untuk suatu $k \in \{0, 1, \dots, p - 2\}$.
+        \item Substitusikan ke dalam persamaan:
+        \[
+        (g^k)^{b-1} \equiv g^{k(b-1)} \equiv 1 \equiv g^0 \pmod p
+        \]
+        \item Karena orde dari $g$ adalah $p - 1$, kongruensi di atas setara dengan:
+        \[
+        k(b - 1) \equiv 0 \pmod{p - 1}
+        \]
+        \item Ini adalah persamaan kongruensi linier standar untuk variabel $k$ dalam modulo $p - 1$. Berdasarkan teori kongruensi linier, banyaknya solusi untuk $k \in \{0, 1, \dots, p - 2\}$ tepat sama dengan:
+        \[
+        \gcd(b - 1, p - 1)
+        \]
+        Sehingga terdapat tepat $\gcd(b - 1, p - 1)$ buah nilai $x \in \mathbb{Z}_p^*$ yang memenuhi $x^{b-1} \equiv 1 \pmod p$.
+    \end{itemize}
+    \item \textbf{Menghitung Banyaknya Solusi Modulo $q$:}
+    Dengan penalaran yang persis sama pada grup siklis $\mathbb{Z}_q^*$ yang berorde $q - 1$, banyaknya solusi $x \in \mathbb{Z}_q^*$ yang memenuhi $x^{b-1} \equiv 1 \pmod q$ adalah tepat:
+    \[
+    \gcd(b - 1, q - 1)
+    \]
+    \item \textbf{Menggabungkan Solusi Menggunakan CRT:}
+    Berdasarkan Teorema Sisa Cina, pemetaan:
+    \[
+    \mathbb{Z}_n^* \to \mathbb{Z}_p^* \times \mathbb{Z}_q^*, \quad x \mapsto (x \bmod p, \; x \bmod q)
+    \]
+    merupakan sebuah isomorfisme grup yang bijektif.
+    Oleh karena itu, setiap pasangan solusi $(x_p, x_q) \in \mathbb{Z}_p^* \times \mathbb{Z}_q^*$ berkorespondensi satu-satu dengan tepat satu solusi unik $x \in \mathbb{Z}_n^*$.
+    Total banyaknya teks-asal tetap $x \in \mathbb{Z}_n^*$ adalah hasil kali banyaknya solusi masing-masing modulus:
+    \[
+    N_{\text{tetap}} = \gcd(b - 1, p - 1) \cdot \gcd(b - 1, q - 1)
+    \]
+\end{enumerate}
+Terbukti secara formal.
+\end{proof}
+\end{solusibox}
+
+\vspace{0.4cm}
+
+\begin{soalbox}{Soal 6.2: Komputasi Lengkap Kriptosistem RSA \& Algoritma Eksponensiasi Cepat}
+Diberikan parameter sistem kripto RSA dengan dua bilangan prima $p = 11$ dan $q = 13$, serta eksponen enkripsi publik $b = 7$.
+\begin{enumerate}[label=(\alph*)]
+    \item Hitung modulus publik $n$, fungsi totien Euler $\varphi(n)$, dan tentukan eksponen dekripsi privat $a$.
+    \item Enkripsikan pesan teks-asal $x = 9$ menggunakan algoritma kuadrat-dan-kali (*Square-and-Multiply*) untuk menghitung $y \equiv x^b \pmod n$.
+    \item Lakukan dekripsi pada ciphertext $y$ yang diperoleh untuk memverifikasi bahwa $d_K(y) = x$.
+    \item Tentukan banyaknya titik tetap (\textit{fixed points}) pada sistem RSA ini!
+\end{enumerate}
+\end{soalbox}
+
+\begin{solusibox}{Pembahasan Soal 6.2}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Pembangkitan Kunci RSA:}
+    \begin{itemize}
+        \item Modulus publik: $n = p \cdot q = 11 \times 13 = \mathbf{143}$.
+        \item Totien Euler: $\varphi(n) = (p - 1)(q - 1) = 10 \times 12 = \mathbf{120}$.
+        \item Eksponen privat $a$ adalah invers perkalian dari $b = 7$ modulo 120:
+        \[
+        7 a \equiv 1 \pmod{120}
+        \]
+        Gunakan Algoritma Euclidean Diperluas:
+        \[
+        120 = 17(7) + 1 \implies 1 = 120 - 17(7) \implies 7(-17) \equiv 1 \pmod{120}
+        \]
+        Karena $-17 \equiv 120 - 17 = 103 \pmod{120}$, maka diperoleh:
+        \[
+        a = \mathbf{103}
+        \]
+        (Periksa: $7 \times 103 = 721 = 6(120) + 1 \equiv 1 \pmod{120}$, valid).
+    \end{itemize}
+    \item \textbf{Enkripsi Pesan $x = 9$ dengan Algoritma Square-and-Multiply ($9^7 \pmod{143}$):}
+    Representasi biner dari eksponen $b = 7$ adalah $(111)_2$.
+    \begin{itemize}
+        \item Mulai dengan akumulator $A = 1$.
+        \item \textbf{Bit 1 (paling kiri):} $A = A^2 = 1^2 = 1$; karena bit bernilai 1: $A = (A \times 9) = 9$.
+        \item \textbf{Bit 2 (tengah):} $A = A^2 = 9^2 = 81 \pmod{143}$; karena bit bernilai 1:
+        \[
+        A = (81 \times 9) = 729 = 5(143) + 14 \equiv 14 \pmod{143}
+        \]
+        \item \textbf{Bit 3 (paling kanan):} $A = A^2 = 14^2 = 196 \equiv 196 - 143 = 53 \pmod{143}$; karena bit bernilai 1:
+        \[
+        A = (53 \times 9) = 477 = 3(143) + 48 \equiv \mathbf{48 \pmod{143}}
+        \]
+    \end{itemize}
+    Hasil enkripsi teks sandi adalah $y = \mathbf{48}$.
+    \item \textbf{Verifikasi Dekripsi ($48^{103} \pmod{143}$ Menggunakan CRT):}
+    Alih-alih menghitung modulo 143 langsung, kita gunakan Teorema Sisa Cina:
+    \begin{itemize}
+        \item Modulo $p = 11$: Berdasarkan Teorema Fermat Kecil ($48^{10} \equiv 1 \pmod{11}$):
+        $48 \equiv 4 \pmod{11}$, dan eksponen $103 \equiv 3 \pmod{10}$.
+        \[
+        x \equiv 4^3 = 64 = 5(11) + 9 \equiv \mathbf{9 \pmod{11}}
+        \]
+        \item Modulo $q = 13$: Berdasarkan Teorema Fermat Kecil ($48^{12} \equiv 1 \pmod{13}$):
+        $48 \equiv 9 \equiv -4 \pmod{13}$, dan eksponen $103 \equiv 7 \pmod{12}$.
+        \[
+        x \equiv 9^7 \equiv (-4)^7 = -16384 \equiv 9 \pmod{13}
+        \]
+        (Periksa: $9^2 = 81 \equiv 3$, $9^4 \equiv 9$, $9^6 \equiv 27 \equiv 1 \implies 9^7 \equiv 9 \pmod{13}$).
+    \end{itemize}
+    Karena $x \equiv 9 \pmod{11}$ dan $x \equiv 9 \pmod{13}$, maka menurut CRT:
+    \[
+    x \equiv \mathbf{9 \pmod{143}}
+    \]
+    Dekripsi berhasil sempurna memulihkan plaintext awal $x = 9$.
+    \item \textbf{Menghitung Banyaknya Titik Tetap:}
+    Berdasarkan Teorema Titik Tetap:
+    \[
+    N_{\text{tetap}} = \gcd(b - 1, p - 1) \cdot \gcd(b - 1, q - 1) = \gcd(7 - 1, 11 - 1) \cdot \gcd(7 - 1, 13 - 1)
+    \]
+    \[
+    N_{\text{tetap}} = \gcd(6, 10) \cdot \gcd(6, 12) = 2 \times 6 = \mathbf{12 \text{ buah titik tetap}}
+    \]
+\end{enumerate}
+\end{solusibox}
+
+\vspace{0.4cm}
+
+\begin{soalbox}{Soal 6.3: Jumlah Elemen Relatif Prima \& Aplikasi Teori Bilangan (UTS 2021/2022 No 7)}
+\begin{enumerate}[label=(\alph*)]
+    \item Buktikan bahwa jumlah semua bilangan bulat positif yang kurang dari $n$ dan relatif prima terhadap $n$ diberikan oleh:
+    \[
+    \sum_{\substack{1 \le k < n \\ \gcd(k, n) = 1}} k = \frac{1}{2} n \varphi(n)
+    \]
+    \item Gunakan hasil di atas untuk menghitung jumlah seluruh bilangan bulat positif yang kurang dari $231$ dan tidak habis dibagi oleh 3, 7, dan 11!
+\end{enumerate}
+\end{soalbox}
+
+\begin{solusibox}{Pembahasan Soal 6.3}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Pembuktian Rumus Penjumlahan Simetris:}
+    \begin{proof}
+    Perhatikan sifat keterbagian pembagi bersama terbesar:
+    \[
+    \gcd(k, n) = \gcd(n - k, n)
+    \]
+    Hal ini berarti jika $k$ relatif prima terhadap $n$, maka pasangannya $(n - k)$ juga pasti relatif prima terhadap $n$.
+    Himpunan bilangan yang relatif prima terhadap $n$ terdiri atas $\varphi(n)$ elemen.
+    Kita dapat memasangkan setiap elemen $k$ dengan $n - k$:
+    \[
+    S = \sum_{\substack{1 \le k < n \\ \gcd(k, n) = 1}} k
+    \]
+    Tuliskan jumlahan yang sama dalam urutan terbalik:
+    \[
+    S = \sum_{\substack{1 \le k < n \\ \gcd(k, n) = 1}} (n - k)
+    \]
+    Jumlahkan kedua persamaan:
+    \[
+    2S = \sum_{\substack{1 \le k < n \\ \gcd(k, n) = 1}} \big(k + (n - k)\big) = \sum_{\substack{1 \le k < n \\ \gcd(k, n) = 1}} n
+    \]
+    Karena terdapat tepat $\varphi(n)$ suku penjumlahan dan setiap suku bernilai $n$, maka:
+    \[
+    2S = n \cdot \varphi(n) \implies S = \mathbf{\frac{1}{2} n \varphi(n)}
+    \]
+    \end{proof}
+    \item \textbf{Aplikasi pada $n = 231$:}
+    Faktorisasi prima dari $n = 231$:
+    \[
+    231 = 3 \times 7 \times 11
+    \]
+    Bilangan bulat positif yang tidak habis dibagi oleh 3, 7, dan 11 adalah bilangan yang tidak memiliki faktor persekutuan dengan 231, yang berarti relatif prima terhadap 231 ($\gcd(k, 231) = 1$).
+    Hitung nilai $\varphi(231)$ menggunakan sifat multiplikatif:
+    \[
+    \varphi(231) = \varphi(3) \times \varphi(7) \times \varphi(11) = (3 - 1)(7 - 1)(11 - 1) = 2 \times 6 \times 10 = \mathbf{120}
+    \]
+    Maka jumlah seluruh bilangan tersebut dihitung langsung menggunakan rumus:
+    \[
+    S = \frac{1}{2} n \varphi(n) = \frac{1}{2} \times 231 \times 120 = 231 \times 60 = \mathbf{13.860}
+    \]
+\end{enumerate}
+\end{solusibox}
+
+\end{document}
