@@ -1,0 +1,1379 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\newenvironment{proof}{\noindent\textbf{Bukti.}}{\hfill$\blacksquare$\vspace{0.3em}}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!80!black,
+    citecolor=blue!80!black,
+    urlcolor=blue!80!black,
+    pdftitle={Review Materi Komprehensif Persiapan UTS MA4151 Kriptografi},
+    pdfauthor={MA4151 Kriptografi ITB}
+}
+
+% Header & Footer Settings
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\textbf{MA4151 Kriptografi}}
+\lhead{Review Komprehensif Persiapan UTS}
+\rfoot{Halaman \thepage}
+\setlength{\headheight}{14pt}
+
+% Color Definitions
+\definecolor{primary}{RGB}{20, 50, 130}       % Navy Blue
+\definecolor{accent}{RGB}{15, 110, 120}       % Deep Teal
+\definecolor{darkgreen}{RGB}{25, 110, 50}     % Emerald
+\definecolor{crimson}{RGB}{170, 30, 30}       % Deep Red / Alert
+\definecolor{darkgray}{RGB}{55, 65, 81}       % Slate Dark
+\definecolor{boxbg}{RGB}{248, 250, 252}       % Crisp light slate
+\definecolor{headerbg}{RGB}{235, 243, 253}
+\definecolor{thmback}{RGB}{244, 251, 252}
+\definecolor{rumusback}{RGB}{243, 250, 245}
+\definecolor{perhatianback}{RGB}{254, 245, 245}
+
+\tcbuselibrary{skins,breakable}
+
+\tcbset{
+    arc=2mm,
+    left=3.5mm,
+    right=3.5mm,
+    top=3mm,
+    bottom=3mm,
+    fonttitle=\bfseries,
+    breakable
+}
+
+% Custom TColorBoxes
+\newtcolorbox{teoribox}[1]{
+    colback=boxbg,
+    colframe=primary,
+    title={#1}
+}
+
+\newtcolorbox{thmbox}[1]{
+    colback=thmback,
+    colframe=accent,
+    title={#1}
+}
+
+\newtcolorbox{rumusbox}[1]{
+    colback=rumusback,
+    colframe=darkgreen,
+    title={#1}
+}
+
+\newtcolorbox{perhatianbox}[1]{
+    colback=perhatianback,
+    colframe=crimson,
+    title={#1}
+}
+
+% Section Title Formatting
+\titleformat{\section}{\large\bfseries\color{primary}}{\thesection}{1em}{}[\titlerule]
+\titleformat{\subsection}{\normalsize\bfseries\color{accent}}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\small\bfseries\color{darkgray}}{\thesubsubsection}{1em}{}
+
+\title{
+    \vspace{-1.5cm}
+    \textbf{\huge REVIEW MATERI KOMPREHENSIF PERSIAPAN UTS}\\[0.4cm]
+    \textbf{\Large Panduan Teori, Penurunan Rumus, Bukti Formal, \& Pola Soal Ujian}\\[0.2cm]
+    \large Mata Kuliah MA4151 Kriptografi -- Semester I Tahun Ajaran 2026/2027\\[0.1cm]
+    \large Institut Teknologi Bandung
+}
+\author{\textbf{Disusun Berdasarkan Silabus Resmi, Slide Dosen, \& Arsip Soal UTS ITB}}
+\date{Oktober 2026}
+
+\begin{document}
+
+\maketitle
+\vspace{-0.5cm}
+
+\begin{abstract}
+Dokumen ini disusun sebagai buku saku dan panduan belajar intensif komprehensif menjelang \textbf{Ujian Tengah Semester (UTS) MA4151 Kriptografi}. Dokumen ini merangkum seluruh materi perkuliahan dari pertemuan awal hingga menjelang UTS secara matematis, formal, dan terstruktur. Lingkup materi mencakup 6 domain utama: (1) \textbf{Kriptografi Klasik} (definisi kriptosistem 5-tupel, model serangan, sandi substitusi, affine, Hill, Vigen\`ere, permutasi, dan LFSR/stream cipher); (2) \textbf{Kriptoanalisis} (analisis frekuensi, pemecahan affine, serangan known-plaintext sandi Hill, uji Kasiski, indeks koinsidensi, dan mutual IC); (3) \textbf{Teori Shannon \& Teori Informasi} (keamanan sempurna, entropi Shannon, sifat-sifat entropi, aturan rantai, kunci palsu, jarak unicity, dan pengkodean Huffman); (4) \textbf{Block Cipher Modern (DES \& AES)} (prinsip difusi-konfusi, Feistel vs SPN, arsitektur 16-ronde DES, sifat komplementasi, meet-in-the-middle 2DES/3DES, arsitektur AES atas $GF(2^8)$, empat transformasi ronde, ekspansi kunci, serta mode operasi CBC/CTR/ECB dan analisis propagasi galat); (5) \textbf{Pengantar Teori Bilangan (PTB)} (algoritma Euclidean \& EEA, kongruensi linier, Teorema Sisa Cina/CRT, fungsi phi Euler $\varphi(n)$ beserta bukti sifat-sifat eksaknya, Teorema Fermat Kecil \& Teorema Euler, orde elemen, dan residu kuadratik); serta (6) \textbf{Pengantar Kriptosistem RSA} (pembangkitan parameter, pembuktian kebenaran via CRT, dan teorema titik tetap/fixed points $\gcd(b-1, p-1)\gcd(b-1, q-1)$). Dokumen diakhiri dengan \textbf{Cheat Sheet Rangkuman Rumus Cepat \& Peta Tipologi Soal UTS ITB}.
+\end{abstract}
+
+\vspace{0.2cm}
+\hrule
+\vspace{0.3cm}
+
+\tableofcontents
+\newpage
+
+% =========================================================================
+\section{Bab 1: Kriptografi Klasik \& Model Penyerangan}
+% =========================================================================
+
+\subsection{Definisi Formal Kriptosistem}
+Secara formal dalam teori matematika kriptografi, suatu \textbf{kriptosistem} (sistem kripto) didefinisikan sebagai 5-tupel:
+\[
+(\mathcal{P}, \mathcal{C}, \mathcal{K}, \mathcal{E}, \mathcal{D})
+\]
+yang memenuhi kondisi-kondisi aksiomatis berikut:
+\begin{enumerate}[leftmargin=*]
+    \item $\mathcal{P}$ adalah himpunan berhingga dari teks-asal (\textit{plaintext}).
+    \item $\mathcal{C}$ adalah himpunan berhingga dari teks-sandi (\textit{ciphertext}).
+    \item $\mathcal{K}$ adalah himpunan berhingga dari kunci (\textit{keyspace}).
+    \item Untuk setiap $k \in \mathcal{K}$, terdapat aturan enkripsi $e_k \in \mathcal{E}$ berupa fungsi injektif $e_k: \mathcal{P} \to \mathcal{C}$ dan aturan dekripsi $d_k \in \mathcal{D}$ berupa fungsi $d_k: \mathcal{C} \to \mathcal{P}$ sedemikian hingga berlaku aksioma konsistensi:
+    \[
+    \forall x \in \mathcal{P}, \quad d_k(e_k(x)) = x
+    \]
+\end{enumerate}
+
+\subsection{Model Penyerangan Kriptoanalisis (Attack Models)}
+Tingkat kekuatan dan skenario penyerangan terhadap sistem kripto diklasifikasikan berdasarkan kapasitas informasi yang dimiliki penyerang (\textit{adversary}):
+\begin{teoribox}{4 Model Penyerangan Standar Kriptografi}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Ciphertext-Only Attack (COA):} Penyerang hanya mencegat dan memiliki akses terhadap teks sandi $y \in \mathcal{C}$. Model paling realistis, di mana penyerang memanfaatkan pola statistik dan redundansi bahasa asal.
+    \item \textbf{Known-Plaintext Attack (KPA):} Penyerang memiliki sejumlah pasangan plaintext dan ciphertext yang berkorespondensi:
+    \[
+    (x_1, y_1), (x_2, y_2), \dots, (x_m, y_m) \quad \text{dengan } y_i = e_k(x_i)
+    \]
+    yang dienkripsi menggunakan kunci rahasia $k$ yang sama.
+    \item \textbf{Chosen-Plaintext Attack (CPA):} Penyerang memiliki akses interaktif ke mesin enkripsi (\textit{encryption oracle}), sehingga dapat memilih sembarang teks-asal $x$ dan memperoleh hasil enkripsi $y = e_k(x)$.
+    \item \textbf{Chosen-Ciphertext Attack (CCA):} Penyerang memiliki akses interaktif ke mesin dekripsi (\textit{decryption oracle}), sehingga bebas memilih ciphertext $y$ dan memperoleh hasil dekripsi $x = d_k(y)$ (kecuali ciphertext target yang ingin dipecahkan).
+\end{enumerate}
+\end{teoribox}
+
+\subsection{Sandi Geser (Shift Cipher / Caesar Cipher)}
+Sandi Geser memetakan alfabet Latin melalui translasi aditif modulo 26:
+\[
+e_k(x) \equiv x + k \pmod{26}, \qquad d_k(y) \equiv y - k \pmod{26}
+\]
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Ruang Pesan ($\mathcal{P}$):} $\mathcal{P} = \mathbb{Z}_{26} = \{0, 1, \dots, 25\}$ untuk 1 karakter ($|\mathcal{P}| = 26$), atau $\mathcal{P} = \mathbb{Z}_{26}^n$ untuk teks berpanjang $n$ huruf ($|\mathcal{P}| = 26^n$).
+    \item \textbf{Ruang Teks Sandi ($\mathcal{C}$):} $\mathcal{C} = \mathbb{Z}_{26}$ ($|\mathcal{C}| = 26$) untuk 1 karakter, atau $\mathcal{C} = \mathbb{Z}_{26}^n$ ($|\mathcal{C}| = 26^n$).
+    \item \textbf{Ruang Kunci ($\mathcal{K}$):} $\mathcal{K} = \mathbb{Z}_{26}$, dengan ukuran ruang kunci $|\mathcal{K}| = 26$.
+    \item \textbf{Struktur Aljabar:} Himpunan operasi enkripsi $\{e_k : k \in \mathbb{Z}_{26}\}$ membentuk grup siklis berorde 26 yang isomorfik terhadap grup aditif $(\mathbb{Z}_{26}, +)$.
+    \item \textbf{Analisis Keamanan Sempurna (Perfect Secrecy):}
+    \begin{itemize}
+        \item \textbf{Kasus 1 Karakter ($n = 1$): AMAN SEMPURNA.} Jika kunci $k$ dipilih secara acak seragam ($P(K = k) = \frac{1}{26}$), maka untuk setiap pasangan $x \in \mathcal{P}$ dan $y \in \mathcal{C}$, terdapat tepat satu kunci $k = (y - x) \bmod 26$. Akibatnya:
+        \[
+        P(C = y \mid P = x) = P(K = (y - x) \bmod 26) = \frac{1}{26} = P(C = y) \implies P(P = x \mid C = y) = P(P = x)
+        \]
+        Kondisi Teorema Shannon terpenuhi karena $|\mathcal{K}| = |\mathcal{C}| = |\mathcal{P}| = 26$.
+        \item \textbf{Kasus Teks Berpanjang $n \ge 2$: TIDAK AMAN SEMPURNA.} Jika kunci yang sama $k$ digunakan berulang untuk mengenkripsi seluruh karakter $x_1, x_2, \dots, x_n$, ukuran ruang pesan menjadi $|\mathcal{P}| = 26^n$, sementara ukuran kunci tetap $|\mathcal{K}| = 26$. Berdasarkan Teorema Batas Fundamental Shannon, syarat mutlak keamanan sempurna adalah $|\mathcal{K}| \ge |\mathcal{P}|$. Karena $26 < 26^n$ untuk $n \ge 2$, keamanan sempurna langsung runtuh. Informasi selisih karakter $y_i - y_j \equiv x_i - x_j \pmod{26}$ bocor secara deterministik.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Sandi Substitusi Monofonik (Permutasi Alfabet)}
+Pada sandi substitusi monofonik umum, aturan enkripsi ditentukan oleh suatu permutasi satu-satu $\pi \in S_{26}$:
+\[
+e_\pi(x) = \pi(x), \qquad d_\pi(y) = \pi^{-1}(y)
+\]
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Ruang Pesan ($\mathcal{P}$):} $\mathcal{P} = \mathbb{Z}_{26}$ ($|\mathcal{P}| = 26$) untuk 1 karakter, atau $\mathcal{P} = \mathbb{Z}_{26}^n$ ($|\mathcal{P}| = 26^n$).
+    \item \textbf{Ruang Teks Sandi ($\mathcal{C}$):} $\mathcal{C} = \mathbb{Z}_{26}$ ($|\mathcal{C}| = 26$) untuk 1 karakter, atau $\mathcal{C} = \mathbb{Z}_{26}^n$ ($|\mathcal{C}| = 26^n$).
+    \item \textbf{Ruang Kunci ($\mathcal{K}$):} $\mathcal{K} = S_{26}$ (seluruh permutasi atas 26 huruf), dengan ukuran ruang kunci masif:
+    \[
+    |\mathcal{K}| = 26! \approx 4.0329 \times 10^{26} \approx 2^{88.38}
+    \]
+    \item \textbf{Analisis Keamanan Sempurna (Perfect Secrecy):}
+    \begin{itemize}
+        \item \textbf{Kasus 1 Karakter ($n = 1$): AMAN SEMPURNA.} Jika permutasi dipilih seragam dari $S_{26}$, setiap huruf dapat dipetakan ke sembarang huruf lain dengan peluang sama $\frac{25!}{26!} = \frac{1}{26}$.
+        \item \textbf{Kasus Teks Berpanjang $n \ge 2$: TIDAK AMAN SEMPURNA.} Meskipun ruang kuncinya masif ($26!$), untuk teks berpanjang $n \ge 21$ berlaku $|\mathcal{P}| = 26^n > 26! = |\mathcal{K}|$, melanggar batas Shannon. Secara fundamental, substitusi monofonik memetakan huruf yang sama ke sandi yang sama ($x_i = x_j \implies y_i = y_j$), sehingga distribusi frekuensi unigram dan digram bahasa asli terpelihara utuh pada teks sandi. Oleh karena itu, $P(P = x \mid C = y) \neq P(P = x)$, sandi dapat dipecahkan tuntas dengan analisis frekuensi statistik.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Sandi Affine}
+Sandi Affine menggabungkan transformasi perkalian modular dan pergeseran aditif pada $\mathbb{Z}_{26}$.
+\begin{thmbox}{Formulasi Sandi Affine, Ruang Sistem, \& Syarat Invertibilitas}
+Aturan enkripsi dan dekripsi didefinisikan sebagai:
+\[
+e_K(x) \equiv ax + b \pmod{26}, \qquad d_K(y) \equiv a^{-1}(y - b) \pmod{26}
+\]
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Ruang Pesan ($\mathcal{P}$):} $\mathcal{P} = \mathbb{Z}_{26}$ ($|\mathcal{P}| = 26$), atau $\mathcal{P} = \mathbb{Z}_{26}^n$ ($|\mathcal{P}| = 26^n$).
+    \item \textbf{Ruang Teks Sandi ($\mathcal{C}$):} $\mathcal{C} = \mathbb{Z}_{26}$ ($|\mathcal{C}| = 26$), atau $\mathcal{C} = \mathbb{Z}_{26}^n$ ($|\mathcal{C}| = 26^n$).
+    \item \textbf{Ruang Kunci ($\mathcal{K}$):} $\mathcal{K} = \{(a, b) \in \mathbb{Z}_{26} \times \mathbb{Z}_{26} : \gcd(a, 26) = 1\}$.
+    \[
+    |\mathcal{K}| = \varphi(26) \times 26 = 12 \times 26 = 312
+    \]
+    di mana $a \in \mathbb{Z}_{26}^* = \{1, 3, 5, 7, 9, 11, 15, 17, 19, 21, 23, 25\}$ dan $b \in \mathbb{Z}_{26}$.
+    \item \textbf{Syarat Invertibilitas:} Transformasi bersifat satu-satu (injektif dan bijektif pada himpunan hingga) jika dan hanya jika $a$ memiliki invers perkalian modulo 26, yaitu $\gcd(a, 26) = 1$.
+    \item \textbf{Analisis Keamanan Sempurna (Perfect Secrecy):}
+    \begin{itemize}
+        \item \textbf{Kasus 1 Karakter ($n = 1$): AMAN SEMPURNA.} Jika kunci $(a, b)$ dipilih secara acak seragam dari 312 kemungkinan ($P(K = (a, b)) = \frac{1}{312}$), maka untuk setiap pasangan $x, y \in \mathbb{Z}_{26}$, terdapat tepat 12 pasangan $(a, b)$ yang memenuhi $ax + b \equiv y \pmod{26}$ (sebab untuk setiap dari 12 pilihan $a \in \mathbb{Z}_{26}^*$, nilai $b \equiv y - ax \pmod{26}$ unik). Dengan demikian:
+        \[
+        P(C = y \mid P = x) = \sum_{a \in \mathbb{Z}_{26}^*} P(K = (a, y - ax \bmod 26)) = 12 \times \frac{1}{312} = \frac{12}{312} = \frac{1}{26} = P(C = y)
+        \]
+        Karena $P(C = y \mid P = x) = P(C = y)$, Teorema Shannon terpenuhi secara eksak!
+        \item \textbf{Kasus Teks Berpanjang $n \ge 2$: TIDAK AMAN SEMPURNA.} Karena $|\mathcal{K}| = 312 < 26^n = |\mathcal{P}|$ untuk seluruh $n \ge 2$, batas Shannon terlanggar. Hubungan linier $y_1 - y_2 \equiv a(x_1 - x_2) \pmod{26}$ membocorkan parameter kunci secara langsung melalui 2 huruf pasangan (KPA).
+    \end{itemize}
+\end{itemize}
+\end{thmbox}
+
+\subsection{Sandi Vigen\`ere \& Sandi Autokey}
+Sandi Vigen\`ere adalah sandi polialfabetik periodik dengan kunci berupa vektor kata kunci berpanjang $m$: $\mathbf{k} = (k_0, k_1, \dots, k_{m-1}) \in \mathbb{Z}_{26}^m$.
+\[
+y_i \equiv x_i + k_{i \bmod m} \pmod{26}, \qquad x_i \equiv y_i - k_{i \bmod m} \pmod{26}
+\]
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Ruang Pesan ($\mathcal{P}$):} $\mathcal{P} = \mathbb{Z}_{26}^m$ per blok periode ($|\mathcal{P}| = 26^m$), atau $\mathcal{P} = \mathbb{Z}_{26}^n$ untuk teks $n$ huruf ($|\mathcal{P}| = 26^n$).
+    \item \textbf{Ruang Teks Sandi ($\mathcal{C}$):} $\mathcal{C} = \mathbb{Z}_{26}^m$ ($|\mathcal{C}| = 26^m$), atau $\mathcal{C} = \mathbb{Z}_{26}^n$ ($|\mathcal{C}| = 26^n$).
+    \item \textbf{Ruang Kunci ($\mathcal{K}$):} $\mathcal{K} = \mathbb{Z}_{26}^m$, dengan ukuran ruang kunci $|\mathcal{K}| = 26^m$.
+    \item \textbf{Analisis Keamanan Sempurna (Perfect Secrecy):}
+    \begin{itemize}
+        \item \textbf{Kasus Panjang Teks $n = m$ (Kunci Satu Kali Pakai): AMAN SEMPURNA.} Jika panjang teks persis sama dengan panjang kunci ($n = m$) dan kunci dipilih secara acak murni seragam serta hanya digunakan sekali, maka sandi ini merupakan representasi alfabetik dari One-Time Pad. Memenuhi $|\mathcal{K}| = |\mathcal{C}| = |\mathcal{P}| = 26^m$ dan setiap pasangan memiliki kunci unik $k_i \equiv y_i - x_i \pmod{26}$.
+        \item \textbf{Kasus Teks Berulang $n > m$: TIDAK AMAN SEMPURNA.} Karena kunci diulang secara periodik modulo $m$, ukuran ruang kunci tetap $|\mathcal{K}| = 26^m$, sedangkan ukuran ruang pesan membengkak menjadi $|\mathcal{P}| = 26^n \gg 26^m$. Ini melanggar batas Shannon $|\mathcal{K}| \ge |\mathcal{P}|$. Periodisitas kunci memungkinkan pemulihan panjang kunci via Uji Kasiski dan Indeks Koinsidensi Friedman.
+    \end{itemize}
+\end{itemize}
+
+\textbf{Sandi Autokey:} Untuk mengatasi cacat periodisitas kunci berulang, sandi autokey membangkitkan aliran kunci berikutnya secara adaptif dari teks:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Plaintext Autokey:} Kunci awal $k_0 \in \mathbb{Z}_{26}$, aliran kunci berikutnya adalah teks-asal: $k_i = x_{i-1}$ untuk $i \ge 1$. Persamaan: $y_0 \equiv x_0 + k_0$, dan $y_i \equiv x_i + x_{i-1} \pmod{26}$.
+    \item \textbf{Ciphertext Autokey:} Aliran kunci berikutnya adalah teks-sandi: $k_i = y_{i-1}$.
+    \item \textbf{Ruang Kunci \& Keamanan Sempurna:} Kunci rahasia awal hanyalah $k_0 \in \mathbb{Z}_{26}$ (atau vektor kecil berpanjang $m$), sehingga $|\mathcal{K}| = 26^m \ll 26^n = |\mathcal{P}|$. Oleh karena itu, Sandi Autokey \textbf{TIDAK AMAN SEMPURNA}. Ketergantungan deterministik antar-karakter tetap membocorkan informasi redundansi bahasa.
+\end{itemize}
+
+\subsection{Sandi Hill \texorpdfstring{($m \times m$)}{(m x m)}}
+Pesan dibagi menjadi blok-blok vektor kolom berdimensi $m$: $\mathbf{x} = (x_1, \dots, x_m)^T \in \mathbb{Z}_{26}^m$. Kunci berupa matriks persegi $K \in \mathcal{M}_{m \times m}(\mathbb{Z}_{26})$.
+\[
+\mathbf{y} \equiv K \mathbf{x} \pmod{26}, \qquad \mathbf{x} \equiv K^{-1} \mathbf{y} \pmod{26}
+\]
+\begin{thmbox}{Karakteristik Ruang \& Invertibilitas Matriks Sandi Hill}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Ruang Pesan ($\mathcal{P}$) \& Teks Sandi ($\mathcal{C}$):} $\mathcal{P} = \mathcal{C} = \mathbb{Z}_{26}^m$ per blok ($|\mathcal{P}| = |\mathcal{C}| = 26^m$). Untuk teks berpanjang $N$ blok ($n = mN$ karakter), $|\mathcal{P}| = |\mathcal{C}| = 26^{mN}$.
+    \item \textbf{Ruang Kunci ($\mathcal{K}$):} Himpunan seluruh matriks berukuran $m \times m$ yang memiliki invers di $\mathbb{Z}_{26}$, yaitu grup linier umum $GL(m, \mathbb{Z}_{26})$. Berdasarkan Teorema Sisa Cina:
+    \[
+    GL(m, \mathbb{Z}_{26}) \cong GL(m, \mathbb{F}_2) \times GL(m, \mathbb{F}_{13})
+    \]
+    Rumus ukuran eksak ruang kunci Sandi Hill:
+    \[
+    |\mathcal{K}| = |GL(m, \mathbb{Z}_{26})| = \left(\prod_{i=0}^{m-1} (2^m - 2^i)\right) \times \left(\prod_{i=0}^{m-1} (13^m - 13^i)\right)
+    \]
+    \begin{itemize}
+        \item Untuk $m = 2$: $|\mathcal{K}| = (4-1)(4-2) \times (169-1)(169-13) = 6 \times 168 \times 156 = \mathbf{157.248}$.
+        \item Untuk $m = 3$: $|\mathcal{K}| = (8-1)(8-2)(8-4) \times (2197-1)(2197-13)(2197-169) \approx \mathbf{1.628 \times 10^{12}}$.
+    \end{itemize}
+    \item \textbf{Syarat Invertibilitas Matriks:} $\gcd(\det(K), 26) = 1 \iff \det(K) \not\equiv 0 \pmod 2 \quad \text{dan} \quad \det(K) \not\equiv 0 \pmod{13}$.
+    Invers dihitung via: $K^{-1} \equiv (\det K)^{-1} \cdot \operatorname{adj}(K) \pmod{26}$.
+    \item \textbf{Analisis Keamanan Sempurna (Perfect Secrecy): TIDAK AMAN SEMPURNA (Bahkan untuk 1 Blok!).}
+    \begin{itemize}
+        \item Meskipun untuk $m = 2$ ukuran kunci $|\mathcal{K}| = 157.248 \ge |\mathcal{P}| = 26^2 = 676$, Sandi Hill \textbf{tidak pernah aman sempurna}.
+        \item \textbf{Bukti Formal Cacat Shannon:} Transformasi $\mathbf{y} \equiv K\mathbf{x} \pmod{26}$ adalah transformasi linier homogen. Jika vektor plaintext adalah vektor nol $\mathbf{x} = \mathbf{0} = (0, \dots, 0)^T$, maka untuk \textbf{setiap} matriks kunci $K \in GL(m, \mathbb{Z}_{26})$, hasil enkripsinya pasti:
+        \[
+        \mathbf{y} = K \cdot \mathbf{0} \equiv \mathbf{0} \pmod{26}
+        \]
+        Akibatnya, peluang bersyarat $P(C = \mathbf{0} \mid P = \mathbf{0}) = 1$. Padahal peluang a priori ciphertext bernilai nol pada distribusi seragam adalah $P(C = \mathbf{0}) = \frac{1}{26^m}$.
+        Karena $P(C = \mathbf{0} \mid P = \mathbf{0}) = 1 \neq \frac{1}{26^m} = P(C = \mathbf{0})$, maka menurut Teorema Shannon kriptosistem ini \textbf{gagal memenuhi keamanan sempurna}.
+    \end{itemize}
+\end{itemize}
+\end{thmbox}
+
+\begin{perhatianbox}{Konsekuensi Matriks Hill Non-Invertible (Pola Soal UTS 2021-2022)}
+Jika $\gcd(\det(K), 26) = d > 1$, transformasi linier $\mathbf{x} \mapsto K\mathbf{x} \pmod{26}$ tidak bersifat injektif. Akibatnya, terdapat vektor tak-nol $\mathbf{v} \in \mathbb{Z}_{26}^m$ sedemikian hingga $K\mathbf{v} \equiv \mathbf{0} \pmod{26}$. Ini menyebabkan \textbf{tabrakan teks-sandi} (\textit{ciphertext collision}): dua plaintext berbeda $\mathbf{x}_1 \neq \mathbf{x}_2$ dengan $\mathbf{x}_1 - \mathbf{x}_2 = \mathbf{v}$ akan menghasilkan ciphertext yang sama:
+\[
+K\mathbf{x}_1 \equiv K(\mathbf{x}_2 + \mathbf{v}) \equiv K\mathbf{x}_2 + \mathbf{0} \equiv K\mathbf{x}_2 \pmod{26}
+\]
+\end{perhatianbox}
+
+\subsection{Sandi Permutasi (Transposisi) \& Kunci Involusi}
+Sandi Permutasi tidak mengubah alfabet huruf, melainkan mengacak posisinya di dalam blok berukuran $m$. Kunci berupa permutasi $\pi \in S_m$ pada himpunan indeks $\{1, 2, \dots, m\}$:
+\[
+e_\pi(x_1, x_2, \dots, x_m) = (x_{\pi(1)}, x_{\pi(2)}, \dots, x_{\pi(m)})
+\]
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Ruang Pesan ($\mathcal{P}$) \& Teks Sandi ($\mathcal{C}$):} $\mathcal{P} = \mathcal{C} = \mathbb{Z}_{26}^m$ per blok ($|\mathcal{P}| = |\mathcal{C}| = 26^m$), atau $\mathbb{Z}_{26}^{mN}$ untuk teks utuh.
+    \item \textbf{Ruang Kunci ($\mathcal{K}$):} $\mathcal{K} = S_m$, dengan ukuran ruang kunci $|\mathcal{K}| = m!$.
+    \item \textbf{Analisis Keamanan Sempurna (Perfect Secrecy): TIDAK AMAN SEMPURNA.}
+    \begin{itemize}
+        \item \textbf{Alasan Matematis:} Permutasi posisi mempertahankan multiset frekuensi huruf di dalam blok secara sempurna. Ciphertext $\mathbf{y}$ adalah anagram eksak dari plaintext $\mathbf{x}$. Jika $\mathbf{y}$ memuat huruf yang tidak ada pada $\mathbf{x}$, maka:
+        \[
+        P(C = \mathbf{y} \mid P = \mathbf{x}) = 0 \neq P(C = \mathbf{y})
+        \]
+        Mengamati teks sandi langsung memberikan kepastian 100\% mengenai huruf-huruf apa saja yang ada pada teks asal. Syarat Shannon $P(x \mid y) = P(x)$ terlanggar secara ekstrem.
+    \end{itemize}
+\end{itemize}
+
+\begin{thmbox}{Teorema Kunci Involusi Sandi Permutasi (Pola Soal UTS 2020-2021)}
+Suatu kunci sandi disebut \textbf{kunci involusi} jika aturan enkripsi identik dengan aturan dekripsi: $e_k = d_k$. Pada sandi permutasi, kunci $\pi \in S_m$ merupakan kunci involusi jika dan hanya jika untuk setiap $i, j \in \{1, 2, \dots, m\}$:
+\[
+\pi(i) = j \implies \pi(j) = i \quad (\text{ekuivalen dengan } \pi = \pi^{-1} \text{ atau } \pi^2 = \operatorname{id})
+\]
+\begin{proof}
+$(\implies)$ Misalkan $\pi$ adalah kunci involusi. Berdasarkan definisi, $e_\pi = d_\pi$, yang berarti permutasi invers $\pi^{-1}$ sama persis dengan $\pi$ ($\pi = \pi^{-1}$). Ambil sembarang $i \in \{1, \dots, m\}$ dan misalkan $\pi(i) = j$. Dengan menerapkan $\pi^{-1}$ pada kedua ruas, diperoleh $i = \pi^{-1}(j)$. Karena $\pi^{-1} = \pi$, maka diperoleh $\pi(j) = i$.\\
+$(\impliedby)$ Sebaliknya, asumsikan bahwa $\pi(i) = j \implies \pi(j) = i$ untuk semua $i$. Terapkan komposisi $\pi(\pi(i)) = \pi(j) = i = \operatorname{id}(i)$. Karena berlaku untuk setiap $i$, maka $\pi^2 = \pi \circ \pi = \operatorname{id}$, yang berakibat $\pi^{-1} = \pi$. Sehingga aturan dekripsi $d_\pi = e_{\pi^{-1}} = e_\pi$, terbukti $\pi$ adalah kunci involusi.
+\end{proof}
+\end{thmbox}
+
+\subsection{Sandi Alir (Stream Cipher) \& LFSR}
+Sandi alir mengenkripsi plaintext bit demi bit dengan operasi XOR bersama aliran kunci semu (\textit{keystream}) $z_1, z_2, \dots$:
+\[
+y_i = x_i \oplus z_i, \qquad x_i = y_i \oplus z_i
+\]
+Pembangkit aliran kunci standar adalah \textbf{Linear Feedback Shift Register (LFSR)} berderajat $m$.
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Ruang Pesan ($\mathcal{P}$) \& Teks Sandi ($\mathcal{C}$):} $\mathcal{P} = \mathcal{C} = \mathbb{F}_2^n$ untuk aliran $n$ bit ($|\mathcal{P}| = |\mathcal{C}| = 2^n$).
+    \item \textbf{Ruang Kunci ($\mathcal{K}$):} Status register awal (seed) bukan-nol $(s_0, \dots, s_{m-1}) \in \mathbb{F}_2^m \setminus \{\mathbf{0}\}$. Ukuran ruang kunci:
+    \[
+    |\mathcal{K}| = 2^m - 1
+    \]
+    (Atau jika polinomial koneksi dirahasiakan, dikalikan dengan banyaknya polinomial primitif berderajat $m$, yaitu $\frac{\varphi(2^m - 1)}{m}$).
+    \item \textbf{Relasi Rekurensi Linier Modulo 2:}
+    \[
+    s_{i+m} \equiv \sum_{j=1}^m c_j s_{i+m-j} \equiv c_1 s_{i+m-1} \oplus c_2 s_{i+m-2} \oplus \dots \oplus c_m s_i \pmod 2
+    \]
+    \item \textbf{Periode Maksimum (m-sequence):} $T = 2^m - 1$, tercapai jika dan hanya jika polinomial karakteristik $C(D) = 1 + \sum_{j=1}^m c_j D^j$ adalah polinomial primitif atas $\mathbb{F}_2$.
+    \item \textbf{Analisis Keamanan Sempurna (Perfect Secrecy): TIDAK AMAN SEMPURNA.}
+    \begin{itemize}
+        \item Pada praktiknya panjang pesan jauh melampaui ukuran memori internal register ($n \gg m$). Akibatnya:
+        \[
+        |\mathcal{K}| = 2^m - 1 \ll 2^n = |\mathcal{P}|
+        \]
+        Karena melanggar Teorema Batas Fundamental Shannon $|\mathcal{K}| \ge |\mathcal{P}|$, sandi alir berbasis LFSR \textbf{tidak aman sempurna}. Sistem ini hanya mengejar keamanan komputasional semu (\textit{pseudo-randomness}) dan sangat mudah dipecahkan menggunakan eliminasi Gauss atau Algoritma Berlekamp-Massey pada $2m$ bit keystream.
+    \end{itemize}
+\end{itemize}
+
+\subsection{One-Time Pad (Sandi Vernam: Standar Emas Keamanan Sempurna)}
+One-Time Pad (ditemukan Gilbert Vernam, 1917; dibuktikan oleh Claude Shannon, 1949) adalah satu-satunya kriptosistem praktis yang mencapai keamanan sempurna teoritis tanpa syarat.
+\begin{thmbox}{Spesifikasi \& Teorema Keamanan Sempurna Vernam}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Ruang Pesan ($\mathcal{P}$):} $\mathcal{P} = \{0, 1\}^n$, dengan $|\mathcal{P}| = 2^n$.
+    \item \textbf{Ruang Teks Sandi ($\mathcal{C}$):} $\mathcal{C} = \{0, 1\}^n$, dengan $|\mathcal{C}| = 2^n$.
+    \item \textbf{Ruang Kunci ($\mathcal{K}$):} $\mathcal{K} = \{0, 1\}^n$, dengan $|\mathcal{K}| = 2^n$.
+    \item \textbf{Aturan Enkripsi \& Dekripsi:}
+    \[
+    y = e_k(x) = x \oplus k, \qquad x = d_k(y) = y \oplus k
+    \]
+    \item \textbf{Analisis Keamanan Sempurna: AMAN SEMPURNA MUTLAK (PERFECT SECRECY).}
+    \begin{proof}
+    Asumsikan kunci $k$ dipilih secara seragam dari $\{0, 1\}^n$, sehingga $P(K = k) = \frac{1}{2^n}$ untuk setiap $k$. Ambil sembarang plaintext $x \in \{0, 1\}^n$ dan sembarang ciphertext $y \in \{0, 1\}^n$. Enkripsi menghasilkan $y$ jika dan hanya jika $k = x \oplus y$. Karena operasi XOR membentuk grup abel elementer di mana $x \oplus y$ adalah elemen tunggal unik di $\{0, 1\}^n$, maka terdapat tepat satu kunci $k$ yang menghubungkan $x$ dan $y$.
+    Oleh karena itu:
+    \[
+    P(C = y \mid P = x) = P(K = x \oplus y) = \frac{1}{2^n}
+    \]
+    Peluang marjinal teks sandi adalah:
+    \[
+    P(C = y) = \sum_{x \in \mathcal{P}} P(P = x) P(C = y \mid P = x) = \sum_{x \in \mathcal{P}} P(P = x) \cdot \frac{1}{2^n} = \frac{1}{2^n} \sum_{x \in \mathcal{P}} P(P = x) = \frac{1}{2^n}
+    \]
+    Karena $P(C = y \mid P = x) = \frac{1}{2^n} = P(C = y)$, Teorema Karakterisasi Shannon terpenuhi secara mutlak:
+    \[
+    P(P = x \mid C = y) = \frac{P(C = y \mid P = x) P(P = x)}{P(C = y)} = P(P = x)
+    \]
+    \end{proof}
+    \textbf{Tiga Syarat Mutlak Keamanan Sempurna OTP:}
+    \begin{enumerate}
+        \item Kunci harus dipilih secara acak murni (\textit{truly random uniform}).
+        \item Panjang kunci harus sama persis dengan panjang pesan ($|k| = |x|$).
+        \item Kunci \textbf{tidak boleh digunakan lebih dari satu kali} (\textit{one-time}). Jika kunci dipakai ulang: $y_1 \oplus y_2 = (x_1 \oplus k) \oplus (x_2 \oplus k) = x_1 \oplus x_2$, keamanan sempurna langsung hancur total!
+    \end{enumerate}
+\end{itemize}
+\end{thmbox}
+
+\subsection{Tabel Komparasi Ruang Sistem \& Status Keamanan Sempurna Sandi Klasik}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{p{3.2cm} p{2.2cm} p{2.2cm} p{3.2cm} p{2.4cm} p{2.8cm}}
+\toprule
+\textbf{Sistem Kripto} & \textbf{Ruang $\mathcal{P}$ ($|\mathcal{P}|$)} & \textbf{Ruang $\mathcal{C}$ ($|\mathcal{C}|$)} & \textbf{Ruang Kunci $\mathcal{K}$ ($|\mathcal{K}|$)} & \textbf{Aman Sempurna?} & \textbf{Alasan / Cacat Shannon} \\
+\midrule
+\textbf{Sandi Geser} (1 Karakter) & $\mathbb{Z}_{26}$ ($26$) & $\mathbb{Z}_{26}$ ($26$) & $\mathbb{Z}_{26}$ ($26$) & \textbf{YA} & $|\mathcal{K}|=|\mathcal{C}|=|\mathcal{P}|=26$, kunci acak seragam. \\
+\midrule
+\textbf{Sandi Geser} (Teks $n \ge 2$) & $\mathbb{Z}_{26}^n$ ($26^n$) & $\mathbb{Z}_{26}^n$ ($26^n$) & $\mathbb{Z}_{26}$ ($26$) & \textbf{TIDAK} & $|\mathcal{K}| = 26 < 26^n$, melanggar batas Shannon. \\
+\midrule
+\textbf{Sandi Substitusi} (1 Karakter) & $\mathbb{Z}_{26}$ ($26$) & $\mathbb{Z}_{26}$ ($26$) & $S_{26}$ ($26!$) & \textbf{YA} & Setiap huruf dipetakan seragam dengan peluang $1/26$. \\
+\midrule
+\textbf{Sandi Substitusi} (Teks $n \ge 2$) & $\mathbb{Z}_{26}^n$ ($26^n$) & $\mathbb{Z}_{26}^n$ ($26^n$) & $S_{26}$ ($26! \approx 4 \times 10^{26}$) & \textbf{TIDAK} & Untuk $n \ge 21$, $|\mathcal{K}| < |\mathcal{P}|$; frekuensi unigram utuh. \\
+\midrule
+\textbf{Sandi Affine} (1 Karakter) & $\mathbb{Z}_{26}$ ($26$) & $\mathbb{Z}_{26}$ ($26$) & $\mathbb{Z}_{26}^* \times \mathbb{Z}_{26}$ ($312$) & \textbf{YA} & Tepat 12 kunci per pasangan $\implies P(y|x) = 1/26$. \\
+\midrule
+\textbf{Sandi Affine} (Teks $n \ge 2$) & $\mathbb{Z}_{26}^n$ ($26^n$) & $\mathbb{Z}_{26}^n$ ($26^n$) & $\mathbb{Z}_{26}^* \times \mathbb{Z}_{26}$ ($312$) & \textbf{TIDAK} & $|\mathcal{K}| = 312 \ll 26^n$; rentan KPA 2 huruf. \\
+\midrule
+\textbf{Sandi Vigen\`ere} ($n = m$) & $\mathbb{Z}_{26}^m$ ($26^m$) & $\mathbb{Z}_{26}^m$ ($26^m$) & $\mathbb{Z}_{26}^m$ ($26^m$) & \textbf{YA} & Varian modular OTP pada blok panjang $m$. \\
+\midrule
+\textbf{Sandi Vigen\`ere} ($n > m$) & $\mathbb{Z}_{26}^n$ ($26^n$) & $\mathbb{Z}_{26}^n$ ($26^n$) & $\mathbb{Z}_{26}^m$ ($26^m$) & \textbf{TIDAK} & $|\mathcal{K}| = 26^m < 26^n$; kunci periodik bocor via Kasiski/IC. \\
+\midrule
+\textbf{Sandi Autokey} & $\mathbb{Z}_{26}^n$ ($26^n$) & $\mathbb{Z}_{26}^n$ ($26^n$) & $\mathbb{Z}_{26}^m$ ($26^m$) & \textbf{TIDAK} & $|\mathcal{K}| \ll |\mathcal{P}|$; relasi deterministik teks bocor. \\
+\midrule
+\textbf{Sandi Hill} ($m \times m$) & $\mathbb{Z}_{26}^m$ ($26^m$) & $\mathbb{Z}_{26}^m$ ($26^m$) & $GL(m, \mathbb{Z}_{26})$ \newline ($m=2: 157.248$) & \textbf{TIDAK} & Homogenitas linier: $K \cdot \mathbf{0} = \mathbf{0} \implies P(\mathbf{0}|\mathbf{0})=1 \neq 1/26^m$. \\
+\midrule
+\textbf{Sandi Permutasi} & $\mathbb{Z}_{26}^m$ ($26^m$) & $\mathbb{Z}_{26}^m$ ($26^m$) & $S_m$ ($m!$) & \textbf{TIDAK} & Multiset frekuensi huruf tidak berubah (anagram). \\
+\midrule
+\textbf{LFSR / Stream} & $\mathbb{F}_2^n$ ($2^n$) & $\mathbb{F}_2^n$ ($2^n$) & $\mathbb{F}_2^m \setminus \{\mathbf{0}\}$ ($2^m - 1$) & \textbf{TIDAK} & $|\mathcal{K}| = 2^m - 1 \ll 2^n$; linier modulo 2. \\
+\midrule
+\textbf{One-Time Pad} & $\mathbb{F}_2^n$ ($2^n$) & $\mathbb{F}_2^n$ ($2^n$) & $\mathbb{F}_2^n$ ($2^n$) & \textbf{YA (MUTLAK)} & $|\mathcal{K}|=|\mathcal{C}|=|\mathcal{P}|=2^n$, kunci acak, 1x pakai. \\
+\bottomrule
+\end{tabular}
+\caption{Rangkuman Komparasi Ruang Sistem \& Status Keamanan Sempurna Sandi Klasik}
+\end{table}
+
+\subsection{Sistem Kripto Perkalian (Product Cipher)}
+Jika $S = (\mathcal{P}, \mathcal{P}, \mathcal{K}_1, \mathcal{E}_1, \mathcal{D}_1)$ dan $T = (\mathcal{P}, \mathcal{P}, \mathcal{K}_2, \mathcal{E}_2, \mathcal{D}_2)$ adalah dua sistem kripto dengan ruang pesan dan sandi yang sama, sistem kripto perkalian (komposisi) $S \times T$ didefinisikan dengan ruang kunci $\mathcal{K}_1 \times \mathcal{K}_2$ dan aturan enkripsi:
+\[
+e_{(k_1, k_2)}(x) = e_{k_2}(e_{k_1}(x))
+\]
+\begin{perhatianbox}{Contoh Soal UTS 2020-2021 No 1}
+Bila $S$ adalah Sandi Geser ($\mathcal{K}_1 = \mathbb{Z}_{26}$, $|\mathcal{K}_1| = 26$) dan $T$ adalah Sandi Perkalian $e_a(x) \equiv ax \pmod{26}$ ($\mathcal{K}_2 = \mathbb{Z}_{26}^*$, $|\mathcal{K}_2| = \varphi(26) = 12$). Banyaknya kunci pasangan yang mungkin dibuat dari $S \times T$ adalah:
+\[
+|\mathcal{K}| = |\mathcal{K}_1| \times |\mathcal{K}_2| = 26 \times 12 = 312
+\]
+\end{perhatianbox}
+
+\newpage
+% =========================================================================
+\section{Bab 2: Kriptoanalisis Sandi Klasik \& Alir}
+% =========================================================================
+
+\subsection{Distribusi Frekuensi Statistik Teks}
+Analisis frekuensi bertumpu pada kenyataan bahwa pada bahasa alami, kemunculan setiap huruf tidak seragam.
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Bahasa Inggris:} Huruf frekuensi tertinggi berturut-turut adalah \textbf{E} ($\approx 12.7\%$), \textbf{T} ($\approx 9.1\%$), \textbf{A} ($\approx 8.2\%$), \textbf{O} ($\approx 7.5\%$), \textbf{I} ($\approx 7.0\%$), \textbf{N} ($\approx 6.7\%$). Huruf paling jarang: \textbf{J, K, Q, X, Z}.
+    \item \textbf{Bahasa Indonesia:} Huruf frekuensi tertinggi berturut-turut adalah \textbf{A} ($\approx 19.3\%$), \textbf{N} ($\approx 9.6\%$), \textbf{E} ($\approx 8.6\%$), \textbf{I} ($\approx 7.9\%$), \textbf{T} ($\approx 6.0\%$), \textbf{U} ($\approx 5.8\%$).
+\end{itemize}
+
+\subsection{Kriptoanalisis Sandi Affine}
+Karena sandi affine $y \equiv ax + b \pmod{26}$ mempertahankan urutan frekuensi relatif satu-satu, dua huruf berfrekuensi tertinggi pada ciphertext dipetakan ke dua huruf berfrekuensi tertinggi pada bahasa asli (misal teks Inggris: $E \mapsto 4$ dan $T \mapsto 19$).
+\begin{enumerate}[leftmargin=*]
+    \item Misalkan huruf $y_1$ diduga hasil enkripsi dari $x_1$, dan $y_2$ dari $x_2$. Susun sistem kongruensi:
+    \[
+    \begin{cases}
+    a x_1 + b \equiv y_1 \pmod{26} \\
+    a x_2 + b \equiv y_2 \pmod{26}
+    \end{cases}
+    \]
+    \item Kurangkan kedua persamaan:
+    \[
+    a(x_1 - x_2) \equiv (y_1 - y_2) \pmod{26}
+    \]
+    \item Jika $\gcd(x_1 - x_2, 26) = 1$, kalikan dengan inversnya untuk memperoleh $a$:
+    \[
+    a \equiv (y_1 - y_2)(x_1 - x_2)^{-1} \pmod{26}
+    \]
+    \item Substitusi $a$ kembali ke salah satu persamaan untuk mendapatkan $b \equiv y_1 - ax_1 \pmod{26}$. Pastikan $\gcd(a, 26) = 1$.
+\end{enumerate}
+
+\subsection{Kriptoanalisis Sandi Hill (Known-Plaintext Attack)}
+Untuk sandi Hill ukuran $m \times m$, penyerang yang mengetahui $m$ pasang vektor plaintext-ciphertext:
+\[
+\mathbf{y}_j \equiv K \mathbf{x}_j \pmod{26}, \quad j = 1, 2, \dots, m
+\]
+dapat membentuk matriks bujursangkar $X = [\mathbf{x}_1 \mid \mathbf{x}_2 \mid \dots \mid \mathbf{x}_m]$ dan $Y = [\mathbf{y}_1 \mid \mathbf{y}_2 \mid \dots \mid \mathbf{y}_m]$ berukuran $m \times m$ sedemikian hingga:
+\[
+Y \equiv K X \pmod{26}
+\]
+Jika vektor-vektor plaintext bebas linier modulo 26, yaitu $\gcd(\det(X), 26) = 1$, maka matriks $X$ dapat dibalik:
+\[
+K \equiv Y \cdot X^{-1} \pmod{26}
+\]
+Kunci rahasia $K$ berhasil dipulihkan secara deterministik.
+
+\subsection{Kriptoanalisis Sandi Vigen\`ere}
+
+\subsubsection{1. Uji Kasiski (Kasiski Test)}
+Metode penentuan panjang kunci $m$ berbasis pengamatan bahwa pengulangan kata pada teks-asal yang kebetulan berjarak kelipatan dari panjang kunci $m$ akan dienkripsi dengan huruf-huruf kunci yang persis sama, menghasilkan substring berulang pada ciphertext.
+\begin{rumusbox}{Prosedur Uji Kasiski (Pola Soal UTS 2024-2025 No 5)}
+\begin{enumerate}[leftmargin=*]
+    \item Cari seluruh substring berulang berpanjang $\ge 3$ pada teks-sandi.
+    \item Catat indeks posisi kemunculan setiap substring: $p_1, p_2, \dots, p_k$.
+    \item Hitung jarak (selisih posisi) antar kemunculan: $d_i = p_{i+1} - p_i$.
+    \item Dugaan panjang kunci $m$ adalah pembagi bersama atau pembagi terbesar:
+    \[
+    m \mid \gcd(d_1, d_2, \dots, d_k)
+    \]
+\end{enumerate}
+\end{rumusbox}
+
+\subsubsection{2. Indeks Koinsidensi (Index of Coincidence - $I_c$ / $IK$)}
+Indeks koinsidensi dari string $x$ berpanjang $N$ didefinisikan sebagai probabilitas bahwa dua huruf yang dipilih secara acak dari string tersebut (tanpa pengembalian) adalah huruf yang identik:
+\[
+I_c(x) = \frac{\sum_{i=0}^{25} f_i (f_i - 1)}{N(N - 1)}
+\]
+di mana $f_i$ menyatakan frekuensi kemunculan huruf ke-$i$ ($A \dots Z$) di dalam teks.
+\begin{itemize}[leftmargin=*]
+    \item Untuk teks acak sempurna (\textit{uniform}): $\kappa_r \approx \sum_{i=0}^{25} \left(\frac{1}{26}\right)^2 = \frac{1}{26} \approx 0.0385$.
+    \item Untuk bahasa Inggris alami: $\kappa_p \approx \sum_{i=0}^{25} p_i^2 \approx 0.065 - 0.067$.
+    \item Untuk bahasa Indonesia alami: $\kappa_p \approx 0.078 - 0.081$.
+\end{itemize}
+
+\begin{thmbox}{Formula Pendugaan Panjang Kunci Friedman}
+Berdasarkan kenyataan bahwa teks Vigen\`ere terdistribusi pada $m$ kolom dengan masing-masing kolom memiliki indeks koinsidensi $\approx \kappa_p$ sedangkan antar-kolom berbeda $\approx \kappa_r$, panjang kunci dapat diestimasi:
+\[
+m \approx \frac{\kappa_p - \kappa_r}{I_c - \kappa_r + \frac{1}{N}(\kappa_p - I_c)} \approx \frac{0.027}{(I_c - 0.038) + \frac{0.027}{N}} \quad (\text{untuk Bhs Inggris})
+\]
+\end{thmbox}
+
+\begin{perhatianbox}{Indeks Koinsidensi Tak Lengkap (Pola Soal UTS 2021-2022 No 4)}
+Bila suatu teks $x$ berpanjang $N = 120$ hanya memuat huruf dari A hingga X dengan $I_c = \frac{\sum_{i=A}^X f_i(f_i-1)}{120 \times 119} = \frac{4}{119}$, maka diperoleh $\sum_{i=A}^X f_i(f_i-1) = 4 \times 120 = 480$.\\
+Ketika ditambahkan 10 huruf baru yang terdiri dari $y$ buah huruf Y dan $z$ buah huruf Z (dengan $y + z = 10$), panjang teks menjadi $N' = 130$ ($130 \times 129 = 16770$), dan indeks koinsidensi baru menjadi $\frac{522}{16770}$. Maka:
+\[
+\sum_{i=A}^Z f'_i(f'_i-1) = 480 + y(y-1) + z(z-1) = 522 \implies y(y-1) + z(z-1) = 42
+\]
+Substitusi $z = 10 - y$:
+\[
+y^2 - y + (10-y)^2 - (10-y) = 2y^2 - 20y + 90 = 42 \implies 2y^2 - 20y + 48 = 0 \implies y^2 - 10y + 24 = 0
+\]
+Faktorisasi $(y - 6)(y - 4) = 0 \implies y = 6, z = 4$ (atau sebaliknya $y = 4, z = 6$).
+\end{perhatianbox}
+
+\subsubsection{3. Indeks Koinsidensi Bersama (Mutual Index of Coincidence - $MI_c$)}
+Setelah panjang kunci $m$ diketahui, ciphertext dipartisi ke dalam $m$ coset/kolom: $\mathbf{y}_1, \mathbf{y}_2, \dots, \mathbf{y}_m$. Indeks koinsidensi bersama antara coset $i$ dan $j$ dengan pergeseran relatif $s \in \mathbb{Z}_{26}$ didefinisikan sebagai:
+\[
+MI_c(\mathbf{y}_i, \mathbf{y}_j; s) = \frac{\sum_{k=0}^{25} f_k^{(i)} \cdot f_{(k + s) \bmod 26}^{(j)}}{N_i \cdot N_j}
+\]
+Nilai $s$ yang menghasilkan lonjakan $MI_c \approx 0.065$ menandakan bahwa $k_i - k_j \equiv s \pmod{26}$. Dengan menetapkan satu huruf referensi (misal $k_1 = 0$), seluruh pergeseran relatif antar-kolom dapat diselesaikan.
+
+\subsection{Kriptoanalisis LFSR (Known-Keystream Attack)}
+Karena relasi umpan balik LFSR sepenuhnya bersifat linier modulo 2, penyerang yang mengetahui $2m$ bit aliran kunci berturut-turut $s_0, s_1, \dots, s_{2m-1}$ dapat menyusun sistem persamaan linier matriks Hankel:
+\[
+\begin{bmatrix}
+s_0 & s_1 & \dots & s_{m-1} \\
+s_1 & s_2 & \dots & s_m \\
+\vdots & \vdots & \ddots & \vdots \\
+s_{m-1} & s_m & \dots & s_{2m-2}
+\end{bmatrix}
+\begin{bmatrix}
+c_m \\ c_{m-1} \\ \vdots \\ c_1
+\end{bmatrix}
+\equiv
+\begin{bmatrix}
+s_m \\ s_{m+1} \\ \vdots \\ s_{2m-1}
+\end{bmatrix} \pmod 2
+\]
+Matriks koefisien di atas dijamin invertible jika status awal bukan nol dan deret berderajat $m$. Sistem dapat diselesaikan melalui eliminasi Gauss atas $\mathbb{F}_2$ dalam waktu $O(m^3)$, atau secara optimal menggunakan \textbf{Algoritma Berlekamp-Massey} dalam waktu $O(m^2)$. Oleh karena itu, LFSR tunggal tidak pernah boleh digunakan secara langsung sebagai cipher aliran tanpa filter non-linear!
+
+\newpage
+% =========================================================================
+\section{Bab 3: Teori Shannon \& Teori Informasi}
+% =========================================================================
+
+\subsection{Keamanan Sempurna (Perfect Secrecy)}
+Konsep keamanan tak bersyarat (\textit{information-theoretic security}) diperkenalkan oleh Claude Shannon (1949).
+\begin{thmbox}{Definisi Shannon: Keamanan Sempurna}
+Suatu sistem kripto $(\mathcal{P}, \mathcal{C}, \mathcal{K}, \mathcal{E}, \mathcal{D})$ dikatakan memiliki \textbf{keamanan sempurna} (\textit{perfect secrecy}) jika untuk setiap $x \in \mathcal{P}$ dan setiap $y \in \mathcal{C}$ dengan $P(C = y) > 0$ berlaku:
+\[
+P(P = x \mid C = y) = P(P = x)
+\]
+Artinya, mengamati teks-sandi $y$ sama sekali tidak memberikan informasi tambahan apa pun mengenai teks-asal $x$. Peluang a posteriori sama persis dengan peluang a priori.
+\end{thmbox}
+
+\begin{thmbox}{Teorema Ekuivalensi Karakterisasi Keamanan Sempurna}
+Kriptosistem aman sempurna jika dan hanya jika untuk setiap $x \in \mathcal{P}$ dan $y \in \mathcal{C}$ berlaku:
+\[
+P(C = y \mid P = x) = P(C = y)
+\]
+\begin{proof}
+Berdasarkan Teorema Bayes:
+\[
+P(P = x \mid C = y) = \frac{P(C = y \mid P = x) P(P = x)}{P(C = y)}
+\]
+Maka $P(P = x \mid C = y) = P(P = x) \iff \frac{P(C = y \mid P = x)}{P(C = y)} = 1 \iff P(C = y \mid P = x) = P(C = y)$.
+\end{proof}
+\end{thmbox}
+
+\begin{thmbox}{Teorema Batas Fundamental Shannon \& Karakterisasi Kunci Minimum}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Batas Ukuran Kunci:} Jika suatu kriptosistem memiliki keamanan sempurna, maka:
+    \[
+    |\mathcal{K}| \ge |\mathcal{C}| \ge |\mathcal{P}|
+    \]
+    \item \textbf{Karakterisasi Kunci Optimal ($|\mathcal{K}| = |\mathcal{C}| = |\mathcal{P}|$):} Kriptosistem dengan $|\mathcal{K}| = |\mathcal{C}| = |\mathcal{P}|$ aman sempurna jika dan hanya jika:
+    \begin{enumerate}
+        \item Kunci berdistribusi seragam: $P(K = k) = \frac{1}{|\mathcal{K}|}$ untuk setiap $k \in \mathcal{K}$.
+        \item Untuk setiap pasangan plaintext $x \in \mathcal{P}$ dan ciphertext $y \in \mathcal{C}$, terdapat \textbf{tepat satu} kunci $k \in \mathcal{K}$ sedemikian hingga $e_k(x) = y$.
+    \end{enumerate}
+\end{enumerate}
+\end{thmbox}
+
+\begin{rumusbox}{Contoh Sistem Kripto Aman Sempurna}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Sandi Geser 1 Karakter:} Bila teks asal terdiri dari 1 huruf dan kunci dipilih seragam dari $\mathbb{Z}_{26}$ ($P(K = k) = 1/26$), maka sandi geser aman sempurna. Namun bila digunakan untuk mengenkripsi 2 huruf berturut-turut, keamanan sempurna langsung runtuh!
+    \item \textbf{One-Time Pad (Sandi Vernam):} Plaintext $x \in \{0, 1\}^n$, kunci $k \in \{0, 1\}^n$ dipilih seragam dan acak murni, $y = x \oplus k$. Memenuhi $|\mathcal{K}| = |\mathcal{P}| = 2^n$ dan setiap pasangan memiliki kunci unik $k = x \oplus y$. Aman sempurna. Syarat mutlak: kunci tidak boleh digunakan ulang (\textit{one-time}).
+\end{itemize}
+\end{rumusbox}
+
+\subsection{Entropi Shannon}
+Entropi Shannon mengukur tingkat ketidakpastian rata-rata atau kandungan informasi dari variabel acak diskret $X$ dengan ruang sampel $\mathcal{X}$ dan fungsi peluang $p(x) = P(X = x)$:
+\[
+H(X) = -\sum_{x \in \mathcal{X}} p(x) \log_2 p(x) \quad (\text{satuan: bit})
+\]
+Konvensi standar: $0 \log_2 0 = \lim_{p \to 0^+} p \log_2 p = 0$.
+
+\begin{thmbox}{Sifat-Sifat Utama Entropi Shannon}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Non-negatif:} $H(X) \ge 0$, dengan $H(X) = 0$ jika dan hanya jika terdapat $x_0$ sedemikian hingga $p(x_0) = 1$ (kejadian pasti/deterministik).
+    \item \textbf{Batas Atas Maksimum:} $H(X) \le \log_2 |\mathcal{X}|$, dengan kesamaan berlaku jika dan hanya jika distribusi peluang $X$ seragam (\textit{uniform}), yaitu $p(x) = \frac{1}{|\mathcal{X}|}$ untuk semua $x \in \mathcal{X}$.
+\end{enumerate}
+\begin{proof}[Bukti Batas Maksimum via Ketaksamaan Jensen]
+Fungsi $f(t) = \log_2 t$ adalah fungsi cekung (\textit{strictly concave}) pada $(0, \infty)$ karena $f''(t) = -\frac{1}{t^2 \ln 2} < 0$. Berdasarkan Ketaksamaan Jensen: $\sum_x p(x) \log_2 g(x) \le \log_2 \left(\sum_x p(x) g(x)\right)$. Ambil $g(x) = \frac{1}{p(x)|\mathcal{X}|}$:
+\[
+\sum_{x} p(x) \log_2 \frac{1}{p(x)|\mathcal{X}|} \le \log_2 \left(\sum_{x} p(x) \frac{1}{p(x)|\mathcal{X}|}\right) = \log_2 \left(\frac{1}{|\mathcal{X}|} \sum_{x} 1\right) = \log_2(1) = 0
+\]
+Ruas kiri dapat diuraikan:
+\[
+\sum_x p(x) \left(-\log_2 p(x) - \log_2 |\mathcal{X}|\right) = H(X) - \log_2 |\mathcal{X}| \le 0 \implies H(X) \le \log_2 |\mathcal{X}|
+\]
+Kesamaan tercapai jika dan hanya jika $g(x)$ konstan, yaitu $p(x) = \frac{1}{|\mathcal{X}|}$.
+\end{proof}
+\end{thmbox}
+
+\subsection{Entropi Gabungan, Bersyarat, \& Aturan Rantai (Chain Rule)}
+Diberikan dua variabel acak diskret $X$ dan $Y$ dengan distribusi gabungan $p(x, y)$:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Entropi Gabungan:}
+    \[
+    H(X, Y) = -\sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x, y) \log_2 p(x, y)
+    \]
+    \item \textbf{Entropi Bersyarat:}
+    \[
+    H(X \mid Y) = \sum_{y \in \mathcal{Y}} p(y) H(X \mid Y = y) = -\sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x, y) \log_2 p(x \mid y)
+    \]
+\end{itemize}
+
+\begin{thmbox}{Teorema Aturan Rantai Entropi (Pola Soal UTS 2024-2025 No 2)}
+Untuk sembarang dua variabel acak diskret berhingga $X$ dan $Y$, berlaku:
+\[
+H(X, Y) = H(Y) + H(X \mid Y) = H(X) + H(Y \mid X)
+\]
+\begin{proof}
+Gunakan hubungan probabilitas bersyarat $p(x, y) = p(y) \cdot p(x \mid y)$:
+\begin{align*}
+H(X, Y) &= -\sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x, y) \log_2 p(x, y) \\
+&= -\sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x, y) \log_2 \big(p(y) \cdot p(x \mid y)\big) \\
+&= -\sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x, y) \left(\log_2 p(y) + \log_2 p(x \mid y)\right) \\
+&= -\sum_{y \in \mathcal{Y}} \left(\sum_{x \in \mathcal{X}} p(x, y)\right) \log_2 p(y) - \sum_{x \in \mathcal{X}} \sum_{y \in \mathcal{Y}} p(x, y) \log_2 p(x \mid y)
+\end{align*}
+Karena $\sum_{x \in \mathcal{X}} p(x, y) = p(y)$, suku pertama tepat sama dengan $H(Y)$, dan suku kedua adalah definisi $H(X \mid Y)$. Sehingga terbukti:
+\[
+H(X, Y) = H(Y) + H(X \mid Y)
+\]
+\end{proof}
+\end{thmbox}
+
+\begin{thmbox}{Sifat Kondisional Mengurangi Entropi \& Informasi Bersama}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Pengondisian tidak pernah menambah entropi:}
+    \[
+    H(X \mid Y) \le H(X)
+    \]
+    dengan kesamaan berlaku jika dan hanya jika $X$ dan $Y$ saling bebas stokastik ($p(x, y) = p(x)p(y)$).
+    \item \textbf{Sub-aditivitas Entropi:}
+    \[
+    H(X, Y) \le H(X) + H(Y)
+    \]
+    \item \textbf{Informasi Bersama (Mutual Information):}
+    \[
+    I(X; Y) = H(X) - H(X \mid Y) = H(Y) - H(Y \mid X) = H(X) + H(Y) - H(X, Y) \ge 0
+    \]
+\end{enumerate}
+\end{thmbox}
+
+\subsection{Entropi dalam Kriptosistem}
+Jika kunci $K$ dan plaintext $P$ dipilih secara independen, maka:
+\[
+H(K, P) = H(K) + H(P)
+\]
+Karena $C = e_K(P)$ dan $P = d_K(C)$ bersifat deterministik jika kunci diketahui, maka $H(C \mid K, P) = 0$ dan $H(P \mid K, C) = 0$. Dari aturan rantai diperoleh identitas fundamental:
+\[
+H(K \mid C) = H(K) + H(P) - H(C)
+\]
+\textbf{Karakterisasi Keamanan Sempurna:} Kriptosistem aman sempurna jika dan hanya jika:
+\[
+H(P \mid C) = H(P) \iff I(P; C) = 0
+\]
+
+\subsection{Kunci Palsu (Spurious Keys) \& Jarak Unicity (Unicity Distance)}
+Misalkan ciphertext berpanjang $n$ yang dicegat adalah $y^n \in \mathcal{C}^n$.
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Himpunan Kunci Konsisten:}
+    \[
+    \mathcal{K}(y^n) = \{k \in \mathcal{K} : \exists x^n \in \mathcal{P}^n \text{ dengan } d_k(y^n) = x^n \text{ dan } P(x^n) > 0\}
+    \]
+    \item \textbf{Kunci Palsu (Spurious Keys):} Kunci konsisten yang bukan merupakan kunci enkripsi sebenarnya:
+    \[
+    s_n(y^n) = |\mathcal{K}(y^n)| - 1
+    \]
+    \item \textbf{Jarak Unicity ($n_0$):} Panjang minimum teks-sandi $n$ yang diperlukan oleh penyerang komputasi tak terbatas sehingga nilai harapan kunci palsu mendekati nol ($\bar{s}_n \approx 0$), yang berarti kunci rahasia dapat ditentukan secara tunggal.
+\end{itemize}
+
+\begin{rumusbox}{Penurunan Formula Jarak Unicity Shannon}
+Redundansi bahasa alami berordo-$L$ didefinisikan sebagai:
+\[
+R_L = 1 - \frac{H_L}{\log_2 |\mathcal{P}|}
+\]
+di mana $H_L = \lim_{n \to \infty} \frac{H(P^n)}{n}$ adalah laju entropi bahasa ($\approx 1.0 - 1.5$ bit/huruf untuk bahasa Inggris; $\log_2 26 \approx 4.70$ bit $\implies R \approx 0.75 - 0.79$).\\
+Berdasarkan pendekatan Shannon, jarak unicity memenuhi:
+\[
+n_0 \approx \frac{H(K)}{R_L \log_2 |\mathcal{P}|} = \frac{\log_2 |\mathcal{K}|}{R \log_2 26} \quad (\text{jika kunci berdistribusi seragam})
+\]
+\textbf{Contoh Jarak Unicity Sandi Klasik (asumsi $R \approx 0.75$, $R \log_2 26 \approx 3.53$):}
+\begin{enumerate}
+    \item \textbf{Sandi Geser:} $|\mathcal{K}| = 26 \implies H(K) = \log_2 26 \approx 4.70 \implies n_0 \approx \frac{4.70}{3.53} \approx 1.33 \approx 2$ huruf.
+    \item \textbf{Sandi Affine:} $|\mathcal{K}| = 312 \implies H(K) = \log_2 312 \approx 8.29 \implies n_0 \approx \frac{8.29}{3.53} \approx 2.35 \approx 3$ huruf.
+    \item \textbf{Sandi Substitusi Umum:} $|\mathcal{K}| = 26! \implies H(K) = \log_2(26!) \approx 88.4 \implies n_0 \approx \frac{88.4}{3.53} \approx 25$ huruf.
+    \item \textbf{Sandi Hill ($m \times m$):} $H(K) \approx m^2 \log_2 26 \implies n_0 \approx \frac{m^2 \log_2 26}{R \log_2 26} = \frac{m^2}{R} \approx 1.33 m^2$ huruf.
+\end{enumerate}
+\end{rumusbox}
+
+\subsection{Pengkodean Huffman (Huffman Coding)}
+Soal pengkodean Huffman dan perbandingannya dengan entropi $H(X)$ merupakan topik yang \textbf{selalu keluar di UTS MA4151 ITB (2021, 2022, 2023, 2024)}.
+\begin{rumusbox}{Algoritma Pengkodean Huffman \& Metrik Evaluasi}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Algoritma:}
+    \begin{enumerate}
+        \item Urutkan simbol $x_i \in \mathcal{X}$ berdasarkan probabilitas menaik.
+        \item Gabungkan dua simbol dengan probabilitas terkecil menjadi simpul baru dengan probabilitas gabungan. Beri label cabang 0 dan 1.
+        \item Ulangi proses hingga tersisa satu akar pohon (probabilitas 1.0).
+        \item Kata sandi (\textit{codeword}) setiap simbol diperoleh dengan menelusuri lintasan dari akar ke daun.
+    \end{enumerate}
+    \item \textbf{Panjang Rata-rata Ekspektasi:}
+    \[
+    L(X) = \sum_{i=1}^n p(x_i) \cdot \ell(x_i) \quad (\text{satuan: bit/simbol})
+    \]
+    di mana $\ell(x_i)$ adalah panjang bit kata sandi untuk simbol $x_i$.
+    \item \textbf{Teorema Pengkodean Sumber Tanpa Derau Shannon (Noiseless Coding Theorem):}
+    \[
+    H(X) \le L(X) < H(X) + 1
+    \]
+    \item \textbf{Efisiensi Pengkodean ($\eta$) \& Redundansi ($\bar{R}$):}
+    \[
+    \eta = \frac{H(X)}{L(X)} \times 100\%, \qquad \bar{R} = L(X) - H(X)
+    \]
+\end{enumerate}
+\end{rumusbox}
+
+\begin{thmbox}{Contoh Rekonstruksi Ujian UTS (Soal UTS 2022-2023 \& 2023-2024 No 4)}
+Diberikan distribusi peluang $X = \{a, b, c, d, e\}$ dengan $p(a) = 0.35, p(b) = 0.25, p(c) = 0.20, p(d) = 0.12, p(e) = 0.08$.
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Penggabungan Huffman:}
+    \begin{itemize}
+        \item Dua terkecil: $e(0.08)$ dan $d(0.12) \implies v_1(0.20)$.
+        \item Urutan terkini: $v_1(0.20), c(0.20), b(0.25), a(0.35)$.
+        \item Dua terkecil: $v_1(0.20)$ dan $c(0.20) \implies v_2(0.40)$.
+        \item Urutan terkini: $b(0.25), a(0.35), v_2(0.40)$.
+        \item Dua terkecil: $b(0.25)$ dan $a(0.35) \implies v_3(0.60)$.
+        \item Gabungkan $v_2(0.40)$ dan $v_3(0.60) \implies \text{Akar}(1.00)$.
+    \end{itemize}
+    \item \textbf{Penetapan Codeword \& Panjang:}
+    \begin{itemize}
+        \item $a$: lintasan $v_3 \to 1 \implies \text{panjang } \ell(a) = 2$ bit (misal `11').
+        \item $b$: lintasan $v_3 \to 0 \implies \text{panjang } \ell(b) = 2$ bit (misal `10').
+        \item $c$: lintasan $v_2 \to 1 \implies \text{panjang } \ell(c) = 2$ bit (misal `01').
+        \item $d$: lintasan $v_2 \to v_1 \to 1 \implies \text{panjang } \ell(d) = 3$ bit (misal `001').
+        \item $e$: lintasan $v_2 \to v_1 \to 0 \implies \text{panjang } \ell(e) = 3$ bit (misal `000').
+    \end{itemize}
+    \item \textbf{Panjang Rata-rata Ekspektasi $L(X)$:}
+    \[
+    L(X) = 0.35(2) + 0.25(2) + 0.20(2) + 0.12(3) + 0.08(3) = 0.70 + 0.50 + 0.40 + 0.36 + 0.24 = 2.20 \text{ bit/simbol}
+    \]
+    \item \textbf{Entropi $H(X)$:}
+    \begin{align*}
+    H(X) &= -\big(0.35 \log_2 0.35 + 0.25 \log_2 0.25 + 0.20 \log_2 0.20 + 0.12 \log_2 0.12 + 0.08 \log_2 0.08\big) \\
+    &= -\big(0.35(-1.5146) + 0.25(-2.0000) + 0.20(-2.3219) + 0.12(-3.0589) + 0.08(-3.6439)\big) \\
+    &= 0.5301 + 0.5000 + 0.4644 + 0.3671 + 0.2915 = 2.1531 \text{ bit/simbol}
+    \end{align*}
+    \item \textbf{Perbandingan:} $H(X) = 2.1531 \le L(X) = 2.20 < H(X) + 1 = 3.1531$. Redundansi $\bar{R} = 2.20 - 2.1531 = 0.0469$ bit, efisiensi $\eta = \frac{2.1531}{2.20} \approx 97.87\%$.
+\end{enumerate}
+\end{thmbox}
+
+\newpage
+% =========================================================================
+\section{Bab 4: Block Cipher Modern (DES \& AES)}
+% =========================================================================
+
+\subsection{Prinsip Desain Cipher Blok Modern}
+Claude Shannon mengemukakan dua kriteria fundamental yang wajib dipenuhi oleh kriptosistem yang tangguh:
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Difusi (\textit{Diffusion}):} Setiap bit plaintext maupun bit kunci harus mempengaruhi banyak bit ciphertext. Jika 1 bit plaintext diubah, rata-rata separuh bit ciphertext harus berubah secara acak (\textit{avalanche effect} / efek longsoran salju). Difusi dicapai melalui operasi permutasi dan transformasi linier kolom.
+    \item \textbf{Konfusi (\textit{Confusion}):} Hubungan statistik antara kunci rahasia dan teks sandi harus dibuat serumit dan seacak mungkin (\textit{complex \& non-linear}). Konfusi dicapai melalui kotak substitusi (S-box) nonlinier.
+\end{enumerate}
+
+\begin{thmbox}{Mengapa AES dan DES Disebut Sistem Kripto Perkalian? (Pola Soal UTS 2024-2025 No 3b)}
+DES dan AES disebut sebagai \textbf{sistem kripto perkalian} (\textit{product cipher}) karena cipher tersebut mengimplementasikan komposisi aljabar (perkalian fungsi) dari dua atau lebih transformasi kriptografi dasar yang berbeda secara bergantian:
+\[
+\text{Cipher} = T_r \circ \dots \circ T_2 \circ T_1
+\]
+di mana setiap transformasi ronde $T_i$ merupakan perpaduan antara \textbf{substitusi} (pemetaan non-linear yang memberikan konfusi) dan \textbf{permutasi / pencampuran linier} (pemetaan yang memberikan difusi). Secara individual, transformasi substitusi atau permutasi mudah diserang; namun hasil kali (komposisi berulang / iterasi multi-ronde) dari substitusi dan permutasi menghasilkan kriptosistem yang jauh lebih kuat daripada komponen-komponen penyusunnya secara mandiri.
+\end{thmbox}
+
+\subsection{Perbandingan Paradigma Arsitektur: Feistel vs SPN}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{p{4.2cm} p{5.5cm} p{5.5cm}}
+\toprule
+\textbf{Karakteristik} & \textbf{Jaringan Feistel (Feistel Network)} & \textbf{Substitution-Permutation Network (SPN)} \\
+\midrule
+\textbf{Contoh Cipher} & DES, Triple DES, Blowfish, Twofish & AES (Rijndael), Serpent, SAFER \\
+\textbf{Pembagian Blok} & Blok dibagi dua bagian sama panjang $(L_i, R_i)$ & Seluruh blok diproses bersamaan (state matrix) \\
+\textbf{Persamaan Ronde} & $L_i = R_{i-1}$, \quad $R_i = L_{i-1} \oplus F(R_{i-1}, K_i)$ & SubBytes $\to$ ShiftRows $\to$ MixColumns $\to$ AddRoundKey \\
+\textbf{Invertibilitas Fungsi Ronde} & Fungsi $F$ \textbf{tidak perlu} invertible & Seluruh lapisan (S-box, MixColumns) \textbf{wajib} invertible \\
+\textbf{Sirkuit Enkripsi vs Dekripsi} & Identik (hanya urutan subkunci dibalik) & Berbeda (membutuhkan modul transformasi invers) \\
+\textbf{Tingkat Difusi per Ronde} & Separuh blok per ronde ($\approx 1/2$ state) & Seluruh state diproses serentak setiap ronde \\
+\bottomrule
+\end{tabular}
+\caption{Perbandingan Fundamental Jaringan Feistel dan SPN}
+\end{table}
+
+\subsection{Data Encryption Standard (DES)}
+
+\subsubsection{1. Spesifikasi Global DES}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Ukuran Blok:} 64 bit.
+    \item \textbf{Ukuran Kunci:} 64 bit, terdiri dari 56 bit kunci efektif dan 8 bit paritas (bit ke-8, 16, 24, 32, 40, 48, 56, 64 digunakan untuk deteksi kesalahan paritas ganjil, tidak memberikan kontribusi keamanan).
+    \item \textbf{Struktur:} 16 ronde Jaringan Feistel diawali Permutasi Awal ($IP$) dan diakhiri Permutasi Akhir ($IP^{-1}$).
+\end{itemize}
+
+\subsubsection{2. Fungsi Ronde Feistel $F(R_{i-1}, K_i)$}
+Fungsi $F$ menerima masukan $R_{i-1}$ (32 bit) dan subkunci $K_i$ (48 bit), menghasilkan keluaran 32 bit melalui 4 tahapan berurutan:
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Ekspansi $E$ ($32 \to 48$ bit):} Membagi 32 bit menjadi 8 kelompok 4-bit, lalu menambahkan 2 bit tetangga pada masing-masing kelompok sehingga menjadi 48 bit.
+    \item \textbf{Kombinasi Kunci:} Hasil ekspansi di-XOR dengan subkunci ronde: $E(R_{i-1}) \oplus K_i$ (48 bit).
+    \item \textbf{Kotak Substitusi ($S$-Box, $48 \to 32$ bit):} Blok 48 bit dibagi menjadi 8 kelompok 6-bit $B = (B_1, \dots, B_8)$. Setiap $B_j = (b_1 b_2 b_3 b_4 b_5 b_6)$ disubstitusi oleh S-box $S_j$:
+    \begin{itemize}
+        \item Bit pertama dan keenam $(b_1 b_6)_2$ menentukan indeks \textbf{baris} $r \in \{0, 1, 2, 3\}$.
+        \item Bit kedua hingga kelima $(b_2 b_3 b_4 b_5)_2$ menentukan indeks \textbf{kolom} $c \in \{0, 1, \dots, 15\}$.
+        \item Nilai sel $S_j(r, c)$ adalah integer 4-bit yang dikonversi ke biner.
+        \item S-box adalah satu-satunya komponen non-linear pada DES.
+    \end{itemize}
+    \item \textbf{Permutasi $P$ ($32 \to 32$ bit):} Mengacak urutan 32 bit keluaran S-box untuk mendistribusikan difusi ke seluruh blok pada ronde berikutnya.
+\end{enumerate}
+
+\subsubsection{3. Key Schedule DES}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Permuted Choice 1 (PC-1):} Membuang 8 bit paritas dan mengacak 56 bit tersisa, membaginya menjadi dua register 28-bit: $C_0$ dan $D_0$.
+    \item \textbf{Pergeseran Kiri Sirkuler (\textit{Circular Left Shift}):} Pada setiap ronde $i$, register $C_{i-1}$ dan $D_{i-1}$ digeser sirkuler ke kiri:
+    \begin{itemize}
+        \item Geser \textbf{1 bit} pada ronde $i \in \{1, 2, 9, 16\}$.
+        \item Geser \textbf{2 bit} pada 12 ronde lainnya.
+    \end{itemize}
+    \item \textbf{Permuted Choice 2 (PC-2):} Memilih 48 bit dari gabungan 56-bit $(C_i, D_i)$ untuk membentuk subkunci ronde $K_i$.
+\end{enumerate}
+
+\subsubsection{4. Sifat Komplementasi DES (DES Complementation Property)}
+\begin{thmbox}{Teorema Sifat Komplementasi DES}
+Misalkan $P$ adalah plaintext, $K$ adalah kunci, dan $C = \operatorname{DES}_K(P)$ adalah ciphertext. Jika $\bar{x}$ menyatakan komplemen bit-per-bit dari $x$ ($\bar{x} = x \oplus 11\dots1$), maka berlaku:
+\[
+\operatorname{DES}_{\bar{K}}(\bar{P}) = \overline{\operatorname{DES}_K(P)} = \bar{C}
+\]
+\begin{proof}
+Tinjau operasi pada fungsi ronde Feistel ketika input adalah $\bar{R}$ dan subkunci adalah $\bar{K}$:
+\begin{enumerate}
+    \item Lapisan ekspansi bersifat linear: $E(\bar{R}) = \overline{E(R)}$.
+    \item Pada tahap XOR dengan subkunci: $E(\bar{R}) \oplus \bar{K} = \overline{E(R)} \oplus \bar{K} = (E(R) \oplus \mathbf{1}) \oplus (K \oplus \mathbf{1}) = E(R) \oplus K$. Dua komplemen saling meniadakan!
+    \item Akibatnya, input ke seluruh S-box \textbf{identik}: $S_j(E(\bar{R}) \oplus \bar{K}) = S_j(E(R) \oplus K)$.
+    \item Keluaran fungsi ronde tidak berubah: $F(\bar{R}, \bar{K}) = F(R, K)$.
+    \item Maka pada bagian kiri Feistel: $\bar{L} \oplus F(\bar{R}, \bar{K}) = \bar{L} \oplus F(R, K) = \overline{L \oplus F(R, K)}$.
+\end{enumerate}
+Karena sifat ini terpelihara di setiap ronde dan permutasi $IP$ serta $IP^{-1}$ bersifat linier, maka $\operatorname{DES}_{\bar{K}}(\bar{P}) = \bar{C}$.
+\end{proof}
+\textbf{Konsekuensi Kriptoanalisis:} Ruang pencarian kunci brute-force berkurang setengahnya: dari $2^{56}$ menjadi $2^{55}$ uji kunci di bawah model Chosen-Plaintext Attack.
+\end{thmbox}
+
+\subsubsection{5. Double DES \& Serangan Meet-in-the-Middle}
+Enkripsi ganda $C = e_{K_2}(e_{K_1}(P))$ dengan panjang kunci efektif $56 + 56 = 112$ bit tidak memberikan keamanan $2^{112}$ karena rentan terhadap \textbf{Meet-in-the-Middle Attack}:
+\[
+e_{K_1}(P) = d_{K_2}(C) = M
+\]
+\begin{enumerate}[leftmargin=*]
+    \item Penyerang mengenkripsi $P$ dengan semua kemungkinan $2^{56}$ nilai $K_1$, menyimpan pasangan $(e_{K_1}(P), K_1)$ dalam tabel pencarian terindeks hash.
+    \item Penyerang mendekripsi $C$ dengan semua kemungkinan $2^{56}$ nilai $K_2$, lalu mencocokkan apakah $d_{K_2}(C)$ ada di dalam tabel.
+    \item Kompleksitas waktu berkurang drastis menjadi $2^{56} + 2^{56} = 2^{57}$ operasi enkripsi, dengan kebutuhan memori $2^{56} \times 8$ byte.
+\end{enumerate}
+
+\subsubsection{6. Triple DES (3DES)}
+Untuk mengatasi serangan meet-in-the-middle, NIST menetapkan Triple DES dengan mode \textbf{EDE (Encrypt-Decrypt-Encrypt)}:
+\[
+C = e_{K_3}(d_{K_2}(e_{K_1}(P)))
+\]
+\begin{itemize}[leftmargin=*]
+    \item \textbf{3DES-EDE3:} Menggunakan 3 kunci independen $(K_1, K_2, K_3)$, panjang kunci 168 bit, kekuatan keamanan efektif 112 bit terhadap meet-in-the-middle.
+    \item \textbf{3DES-EDE2:} Menetapkan $K_3 = K_1$, panjang kunci 112 bit, keamanan efektif 80 bit.
+    \item \textbf{Alasan Penggunaan Operasi Dekripsi di Tengah:} Memberikan \textbf{kompatibilitas mundur} (\textit{backward compatibility}) dengan Single DES: jika ditetapkan $K_1 = K_2 = K_3 = K$, maka:
+    \[
+    C = e_K(d_K(e_K(P))) = e_K(P)
+    \]
+\end{itemize}
+
+\subsection{Advanced Encryption Standard (AES / Rijndael)}
+
+\subsubsection{1. Parameter Global AES}
+AES memproses blok data 128 bit yang disusun sebagai \textbf{matriks state} $4 \times 4$ byte:
+\[
+S = \begin{bmatrix}
+s_{0,0} & s_{0,1} & s_{0,2} & s_{0,3} \\
+s_{1,0} & s_{1,1} & s_{1,2} & s_{1,3} \\
+s_{2,0} & s_{2,1} & s_{2,2} & s_{2,3} \\
+s_{3,0} & s_{3,1} & s_{3,2} & s_{3,3}
+\end{bmatrix}
+\]
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{l c c c}
+\toprule
+\textbf{Varian AES} & \textbf{Panjang Kunci ($N_k$ word)} & \textbf{Ukuran Blok ($N_b$ word)} & \textbf{Jumlah Ronde ($N_r$)} \\
+\midrule
+AES-128 & 128 bit (4 word) & 128 bit (4 word) & \textbf{10 ronde} \\
+AES-192 & 192 bit (6 word) & 128 bit (4 word) & \textbf{12 ronde} \\
+AES-256 & 256 bit (8 word) & 128 bit (4 word) & \textbf{14 ronde} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{2. Aljabar Medan Hingga $GF(2^8)$}
+Setiap byte pada AES diperlakukan sebagai elemen lapangan Galois $GF(2^8) \cong \mathbb{F}_2[x] / \langle m(x) \rangle$ dengan \textbf{polinomial tak tereduksi} (\textit{irreducible polynomial}):
+\[
+m(x) = x^8 + x^4 + x^3 + x + 1 \quad (\text{dalam heksadesimal: } \mathtt{0x11B})
+\]
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Penjumlahan:} Operasi bitwise XOR ($\oplus$).
+    \item \textbf{Perkalian dengan $x$ ($\mathtt{0x02}$, operasi `xtime`):} Geser bit ke kiri 1 posisi ($b \ll 1$). Jika terjadi luapan (bit ke-7 bernilai 1), lakukan XOR dengan $\mathtt{0x1B}$.
+    \item \textbf{Perkalian dengan $\mathtt{0x03}$:} Ditulis sebagai $(02 \oplus 01) \cdot b = \operatorname{xtime}(b) \oplus b$.
+\end{itemize}
+
+\subsubsection{3. Empat Transformasi Ronde AES}
+Setiap ronde standar pada AES (ronde 1 hingga $N_r - 1$) terdiri atas 4 transformasi:
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{SubBytes (Substitusi Non-linear):} Setiap byte $s_{i,j}$ dipetakan ke $s'_{i,j}$ melalui dua langkah:
+    \begin{enumerate}
+        \item Ambil invers multiplikatif di $GF(2^8)$: $a = s_{i,j}^{-1}$ (dengan kesepakatan $0^{-1} = 0$).
+        \item Terapkan transformasi affine atas $\mathbb{F}_2$: $s'_k = a_k \oplus a_{(k+4)\bmod 8} \oplus a_{(k+5)\bmod 8} \oplus a_{(k+6)\bmod 8} \oplus a_{(k+7)\bmod 8} \oplus c_k$ dengan konstanta $c = \mathtt{0x63}$.
+    \end{enumerate}
+    \item \textbf{ShiftRows (Permutasi Siklis Baris):} Memberikan difusi antar-kolom dengan menggeser baris-baris matriks state secara siklis ke kiri:
+    \begin{itemize}
+        \item Baris 0: tidak bergeser (geser 0 byte).
+        \item Baris 1: geser sirkuler ke kiri \textbf{1 byte}.
+        \item Baris 2: geser sirkuler ke kiri \textbf{2 byte}.
+        \item Baris 3: geser sirkuler ke kiri \textbf{3 byte}.
+    \end{itemize}
+    \item \textbf{MixColumns (Difusi Linier Kolom):} Setiap kolom dari matriks state dipandang sebagai polinomial derajat 3 atas $GF(2^8)$ dan dikalikan modulo $z^4 + 1$ dengan polinomial tetap:
+    \[
+    c(z) = \{03\}z^3 + \{01\}z^2 + \{01\}z + \{02\}
+    \]
+    \begin{thmbox}{Representasi Matriks Perkalian MixColumns (Pola Soal UTS 2020-2021 No 5)}
+    Untuk setiap kolom $c \in \{0, 1, 2, 3\}$, transformasi kolom memenuhi:
+    \[
+    \begin{bmatrix}
+    s'_{0,c} \\ s'_{1,c} \\ s'_{2,c} \\ s'_{3,c}
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+    02 & 03 & 01 & 01 \\
+    01 & 02 & 03 & 01 \\
+    01 & 01 & 02 & 03 \\
+    03 & 01 & 01 & 02
+    \end{bmatrix}
+    \begin{bmatrix}
+    s_{0,c} \\ s_{1,c} \\ s_{2,c} \\ s_{3,c}
+    \end{bmatrix}
+    \]
+    \textbf{Catatan Krusial:} Pada ronde terakhir (ronde 10 pada AES-128), transformasi \textbf{MixColumns ditiadakan}!
+    \end{thmbox}
+    \item \textbf{AddRoundKey:} Setiap kolom matriks state di-XOR dengan word dari subkunci ronde yang bersesuaian ($128 \text{ bit} \oplus 128 \text{ bit}$).
+\end{enumerate}
+
+\subsubsection{4. Key Expansion AES}
+Kunci 128 bit (4 word: $w_0, w_1, w_2, w_3$) diperluas menjadi 44 word ($w_0, \dots, w_{43}$) untuk melayani ronde awal $+ 10$ ronde.
+\[
+w_i = \begin{cases}
+w_{i-4} \oplus g(w_{i-1}), & \text{jika } i \equiv 0 \pmod 4 \\
+w_{i-4} \oplus w_{i-1}, & \text{lainnya}
+\end{cases}
+\]
+Fungsi $g(w)$ melakukan: (1) \textbf{RotWord} (geser siklis byte kiri 1 posisi); (2) \textbf{SubWord} (aplikasi S-box pada 4 byte); (3) XOR dengan konstanta ronde: $Rcon[j] = [RC[j], 00, 00, 00]$ di mana $RC[1] = \mathtt{0x01}$, $RC[j] = 2 \cdot RC[j-1]$ di $GF(2^8)$.
+
+\subsection{Mode Operasi Cipher Blok \& Propagasi Galat}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{ECB (Electronic Codebook):} $C_i = e_K(P_i)$. Setiap blok dienkripsi independen.
+    \begin{itemize}
+        \item \textit{Kelemahan fatal:} Blok plaintext identik menghasilkan ciphertext identik. Membocorkan pola statistik dan bentuk citra (ECB Penguin). Tidak aman untuk data $> 1$ blok!
+    \end{itemize}
+    \item \textbf{CBC (Cipher Block Chaining):} $C_i = e_K(P_i \oplus C_{i-1})$ dengan $C_0 = IV$ (\textit{Initialization Vector}).
+    \begin{itemize}
+        \item Dekripsi: $P_i = d_K(C_i) \oplus C_{i-1}$.
+        \item \textbf{Propagasi Galat (Error Propagation):} Jika terjadi galat transmisi 1 bit pada ciphertext $C_i$:
+        \begin{enumerate}
+            \item Blok $P_i$ akan \textbf{rusak total} secara acak setelah didekripsi oleh $d_K$.
+            \item Blok $P_{i+1}$ hanya mengalami \textbf{1 bit kesalahan} pada posisi yang persis sama dengan letak kesalahan $C_i$.
+            \item Blok $P_{i+2}$ dan seterusnya \textbf{tidak terpengaruh sama sekali} (\textit{self-synchronizing}).
+        \end{enumerate}
+    \end{itemize}
+    \item \textbf{CTR (Counter Mode):} $C_i = P_i \oplus e_K(Nonce \parallel i)$.
+    \begin{itemize}
+        \item Mengubah block cipher menjadi stream cipher.
+        \item \textit{Keunggulan utama:} Enkripsi dan dekripsi dapat diparalelkan penuh; mendukung akses acak (\textit{random access}) ke sembarang blok; fungsi dekripsi $d_K$ tidak perlu dibuat (hanya fungsi $e_K$).
+    \end{itemize}
+\end{enumerate}
+
+\newpage
+% =========================================================================
+\section{Bab 5: Pengantar Teori Bilangan (PTB) untuk Kriptografi}
+% =========================================================================
+
+\subsection{Keterbagian \& Algoritma Euclidean}
+\begin{thmbox}{Identitas B\'ezout \& Algoritma Euclidean Diperluas (EEA)}
+Untuk setiap pasangan bilangan bulat $a, b \in \mathbb{Z}$ yang tidak keduanya nol, terdapat bilangan bulat $x, y \in \mathbb{Z}$ sedemikian hingga:
+\[
+a x + b y = \gcd(a, b)
+\]
+\textbf{Invers Modular:} Invers perkalian $a^{-1} \pmod m$ ada jika dan hanya jika $\gcd(a, m) = 1$. Dengan EEA, diperoleh $ax + my = 1 \implies ax \equiv 1 \pmod m$, sehingga $a^{-1} \equiv x \pmod m$.
+\end{thmbox}
+
+\begin{thmbox}{Sifat Skalar FPB (Pola Soal UTS 2021-2022 No 6)}
+Untuk sembarang bilangan bulat $a, b \in \mathbb{Z}$ dan sembarang bilangan bulat $c \in \mathbb{Z} \setminus \{0\}$, berlaku:
+\[
+\gcd(ca, cb) = |c| \gcd(a, b)
+\]
+Khususnya, pernyataan ini berlaku untuk setiap bilangan bulat ganjil $c \neq 0$ (nilai kebenaran: \textbf{TRUE}).
+\end{thmbox}
+
+\subsection{Kongruensi Linier}
+Persamaan kongruensi linier $ax \equiv b \pmod m$ memiliki solusi jika dan hanya jika $d = \gcd(a, m) \mid b$.
+Jika kondisi keterbagian tersebut terpenuhi, maka terdapat tepat $d$ buah solusi unik yang saling tidak kongruen modulo $m$. Solusi-solusi tersebut berbentuk:
+\[
+x_k \equiv x_0 + k \cdot \frac{m}{d} \pmod m, \quad k = 0, 1, \dots, d - 1
+\]
+di mana $x_0$ adalah solusi tunggal dari persamaan tereduksi $\left(\frac{a}{d}\right) x \equiv \left(\frac{b}{d}\right) \pmod{\frac{m}{d}}$.
+
+\subsection{Teorema Sisa Cina (Chinese Remainder Theorem - CRT)}
+\begin{thmbox}{Teorema Sisa Cina (Modulus Saling Prima)}
+Diberikan sistem kongruensi simultan:
+\[
+\begin{cases}
+x \equiv a_1 \pmod{m_1} \\
+x \equiv a_2 \pmod{m_2} \\
+\vdots \\
+x \equiv a_r \pmod{m_r}
+\end{cases}
+\]
+dengan $\gcd(m_i, m_j) = 1$ untuk setiap $i \neq j$. Sistem ini memiliki solusi tunggal modulo $M = \prod_{i=1}^r m_i$ yang diberikan secara eksplisit oleh:
+\[
+x \equiv \sum_{i=1}^r a_i M_i y_i \pmod M
+\]
+di mana $M_i = \frac{M}{m_i}$ dan $y_i \equiv M_i^{-1} \pmod{m_i}$.
+\end{thmbox}
+
+\begin{rumusbox}{Penyelesaian CRT dengan Modulus Tidak Relatif Prima (UTS 2022-2023 \& 2023-2024 No 2)}
+Tentukan solusi modulo 210 dari sistem:
+\[
+\text{(1) } 2x \equiv 3 \pmod 5, \qquad \text{(2) } 2x \equiv 4 \pmod 6, \qquad \text{(3) } 3x \equiv 2 \pmod 7
+\]
+\textbf{Langkah 1: Sederhanakan masing-masing kongruensi}
+\begin{enumerate}
+    \item $2x \equiv 3 \pmod 5$: Kalikan dengan $2^{-1} \equiv 3 \pmod 5 \implies x \equiv 9 \equiv 4 \pmod 5$.
+    \item $2x \equiv 4 \pmod 6$: Karena $\gcd(2, 6) = 2 \mid 4$, bagi seluruh persamaan dengan 2: $x \equiv 2 \pmod 3$. Kongruensi ini menghasilkan dua residu modulo 6, yaitu $x \equiv 2 \pmod 6$ atau $x \equiv 5 \pmod 6$. Namun, dari $2x \equiv 4 \pmod 6$, kedua nilai memenuhi. Catat bentuk dasarnya: $x \equiv 2 \pmod 3$ dan $x \equiv 0 \pmod 2 \implies x \equiv 2 \pmod 6$ atau $x \equiv 4 \pmod 6$ (periksa: $2(2)=4 \equiv 4$, $2(5)=10 \equiv 4 \implies x \equiv 2 \text{ atau } 5 \pmod 6$).
+    \item $3x \equiv 2 \pmod 7$: Kalikan dengan $3^{-1} \equiv 5 \pmod 7 \implies x \equiv 10 \equiv 3 \pmod 7$.
+\end{enumerate}
+\textbf{Langkah 2: Rekonstruksi Solusi Tunggal Modulo $\operatorname{lcm}(5, 6, 7) = 210$}
+\begin{itemize}
+    \item Dari $x \equiv 4 \pmod 5$ dan $x \equiv 3 \pmod 7$, gunakan CRT pada modulo 35:
+    $M_1 = 7, y_1 = 7^{-1} \equiv 3 \pmod 5$; $M_2 = 5, y_2 = 5^{-1} \equiv 3 \pmod 7$.
+    \[
+    x \equiv 4(7)(3) + 3(5)(3) = 84 + 45 = 129 \equiv 24 \pmod{35}
+    \]
+    Bentuk umum: $x = 35k + 24$.
+    \item Uji nilai $k$ modulo 6 agar memenuhi $2x \equiv 4 \pmod 6 \iff x \equiv 2 \pmod 3$:
+    \[
+    35k + 24 \equiv 2 \pmod 3 \implies 2k + 0 \equiv 2 \pmod 3 \implies 2k \equiv 2 \pmod 3 \implies k \equiv 1 \pmod 3
+    \]
+    Nilai $k \in \{0, 1, 2, 3, 4, 5\}$ yang memenuhi $k \equiv 1 \pmod 3$ adalah $k = 1$ dan $k = 4$.
+    \begin{itemize}
+        \item Untuk $k = 1$: $x = 35(1) + 24 = 59$. Uji: $2(59) = 118 = 19(6) + 4 \equiv 4 \pmod 6$ (\textbf{Memenuhi!}).
+        \item Untuk $k = 4$: $x = 35(4) + 24 = 164$. Uji: $2(164) = 328 = 54(6) + 4 \equiv 4 \pmod 6$ (\textbf{Memenuhi!}).
+    \end{itemize}
+\end{itemize}
+\textbf{Kesimpulan:} Terdapat 2 solusi unik modulo 210, yaitu $x \equiv 59 \pmod{210}$ dan $x \equiv 164 \pmod{210}$.
+\end{rumusbox}
+
+\subsection{Fungsi Phi Euler \texorpdfstring{$\varphi(n)$}{Phi(n)} \& Teorema-Teorema Kuncinya}
+\begin{thmbox}{Definisi \& Rumus Produk Euler}
+Untuk setiap bilangan bulat positif $n \ge 1$, $\varphi(n)$ didefinisikan sebagai banyaknya bilangan bulat positif $1 \le k \le n$ yang relatif prima terhadap $n$:
+\[
+\varphi(n) = |\{k \in \mathbb{Z} : 1 \le k \le n \text{ dan } \gcd(k, n) = 1\}|
+\]
+\textbf{Sifat Multiplikatif:} Jika $\gcd(m, n) = 1$, maka $\varphi(m n) = \varphi(m) \varphi(n)$.\\
+\textbf{Rumus Produk Euler:} Jika faktorisasi prima dari $n$ adalah $n = p_1^{k_1} p_2^{k_2} \dots p_r^{k_r}$, maka:
+\[
+\varphi(n) = n \left(1 - \frac{1}{p_1}\right) \left(1 - \frac{1}{p_2}\right) \dots \left(1 - \frac{1}{p_r}\right) = \prod_{i=1}^r p_i^{k_i - 1}(p_i - 1)
+\]
+\end{thmbox}
+
+\begin{thmbox}{Teorema Keterbagian $2^r \mid \varphi(n)$ (Pola Soal UTS 2024-2025 No 4)}
+Jika bilangan bulat $n$ memiliki $r$ buah faktor prima ganjil yang berbeda, maka $2^r \mid \varphi(n)$.
+\begin{proof}
+Tulis faktorisasi prima dari $n$ sebagai $n = 2^{k_0} p_1^{k_1} p_2^{k_2} \dots p_r^{k_r}$, di mana $p_1, p_2, \dots, p_r$ adalah bilangan prima ganjil berbeda dan $k_i \ge 1$ untuk $i = 1, \dots, r$ (dengan $k_0 \ge 0$).\\
+Berdasarkan sifat multiplikatif fungsi phi:
+\[
+\varphi(n) = \varphi(2^{k_0}) \cdot \prod_{i=1}^r \varphi(p_i^{k_i}) = \varphi(2^{k_0}) \cdot \prod_{i=1}^r p_i^{k_i - 1}(p_i - 1)
+\]
+Perhatikan suku $(p_i - 1)$ untuk setiap $i = 1, 2, \dots, r$. Karena setiap $p_i$ adalah bilangan prima ganjil, maka $p_i - 1$ pastilah merupakan \textbf{bilangan genap}, sehingga $2 \mid (p_i - 1)$.\\
+Dengan demikian, terdapat faktor 2 pada setiap suku dari perkalian $r$ buah bilangan prima ganjil tersebut:
+\[
+2^r \;\Big|\; \prod_{i=1}^r (p_i - 1)
+\]
+Karena $\varphi(2^{k_0})$ dan $p_i^{k_i - 1}$ adalah bilangan bulat positif, maka secara langsung disimpulkan bahwa $2^r \mid \varphi(n)$.
+\end{proof}
+\end{thmbox}
+
+\begin{thmbox}{Teorema Gauss \& Teorema Jumlah Elemen Relatif Prima}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Teorema Gauss:} Untuk setiap bilangan bulat positif $n \ge 1$:
+    \[
+    \sum_{d \mid n} \varphi(d) = n
+    \]
+    \item \textbf{Jumlah Elemen Relatif Prima (Pola Soal UTS 2021-2022 No 7):} Jumlah seluruh bilangan bulat positif yang kurang dari $n$ dan relatif prima terhadap $n$ adalah:
+    \[
+    \sum_{\substack{1 \le k < n \\ \gcd(k, n) = 1}} k = \frac{1}{2} n \varphi(n)
+    \]
+    \begin{proof}
+    Perhatikan bahwa $\gcd(k, n) = 1 \iff \gcd(n - k, n) = 1$. Pasangkan setiap elemen $k$ dengan $n - k$. Jumlah setiap pasangan adalah $k + (n - k) = n$. Karena terdapat tepat $\varphi(n)$ elemen, maka terdapat $\frac{\varphi(n)}{2}$ pasangan dengan jumlah $n$, sehingga total jumlahnya adalah $\frac{1}{2} n \varphi(n)$.
+    \end{proof}
+\end{enumerate}
+\end{thmbox}
+
+\subsection{Teorema Fermat Kecil, Teorema Euler, \& Orde Elemen}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Teorema Fermat Kecil:} Jika $p$ adalah bilangan prima dan $p \nmid a$, maka:
+    \[
+    a^{p-1} \equiv 1 \pmod p
+    \]
+    \item \textbf{Teorema Euler:} Jika $n \ge 1$ dan $\gcd(a, n) = 1$, maka:
+    \[
+    a^{\varphi(n)} \equiv 1 \pmod n
+    \]
+    \item \textbf{Orde Elemen:} $\operatorname{ord}_n(a)$ adalah bilangan bulat positif terkecil $k$ sedemikian hingga $a^k \equiv 1 \pmod n$. Berdasarkan Teorema Lagrange, $\operatorname{ord}_n(a) \mid \varphi(n)$. Lebih lanjut, $a^m \equiv 1 \pmod n \iff \operatorname{ord}_n(a) \mid m$.
+\end{itemize}
+
+\begin{thmbox}{Lema Eksponensial B\'ezout \& Bukti Ujian (Pola Soal UTS 2021-2022 Bagian B)}
+\textbf{Lema:} Misalkan $a \in \mathbb{Z}$, $u, v \in \mathbb{Z}^+$ dengan $\gcd(u, v) = d$. Jika $a^u \equiv 1 \pmod m$ dan $a^v \equiv 1 \pmod m$, maka:
+\[
+a^d \equiv 1 \pmod m
+\]
+\begin{proof}
+Berdasarkan Identitas B\'ezout, terdapat bilangan bulat $x, y \in \mathbb{Z}$ sedemikian hingga $u x + v y = d$. Tanpa mengurangi perumuman, asumsikan $x \ge 0$ dan $y < 0$ (sehingga $-y > 0$). Maka $d + v(-y) = ux$, yang berarti:
+\[
+a^d \cdot (a^v)^{-y} = (a^u)^x
+\]
+Substitusikan kongruensi $a^u \equiv 1 \pmod m$ dan $a^v \equiv 1 \pmod m$:
+\[
+a^d \cdot (1)^{-y} \equiv (1)^x \pmod m \implies a^d \equiv 1 \pmod m
+\]
+\end{proof}
+\textbf{Aplikasi Teorema Fermat:} Jika $p$ prima, $p \nmid a$, dan $n$ adalah bilangan bulat positif terkecil sedemikian hingga $p \mid (a^n - 1)$ (yaitu $n = \operatorname{ord}_p(a)$), buktikan bahwa $n \mid (p - 1)$.\\
+\textit{Bukti:} Berdasarkan Teorema Fermat, $a^{p-1} \equiv 1 \pmod p$. Misalkan $d = \gcd(n, p-1)$. Berdasarkan Lema di atas, $a^d \equiv 1 \pmod p$. Karena $d \mid n$ dan $n$ adalah bilangan bulat positif \textbf{terkecil} yang memenuhi $a^n \equiv 1 \pmod p$, maka haruslah $d \ge n$. Tetapi $d = \gcd(n, p-1) \le n$, sehingga terpaksa $d = n$. Karena $d \mid (p - 1)$, disimpulkan $n \mid (p - 1)$.
+\end{thmbox}
+
+\newpage
+% =========================================================================
+\section{Bab 6: Kriptosistem Kunci Publik RSA \& Titik Tetap}
+% =========================================================================
+
+\subsection{Skema Pembangkitan Parameter RSA}
+\begin{enumerate}[leftmargin=*]
+    \item Pilih dua bilangan prima besar rahasia $p$ dan $q$ ($p \neq q$).
+    \item Hitung modulus publik: $n = p \cdot q$.
+    \item Hitung fungsi totien Euler: $\varphi(n) = (p - 1)(q - 1)$.
+    \item Pilih eksponen enkripsi publik $b$ sedemikian hingga:
+    \[
+    1 < b < \varphi(n) \quad \text{dan} \quad \gcd(b, \varphi(n)) = 1
+    \]
+    \item Hitung eksponen dekripsi privat $a$ menggunakan Algoritma Euclidean Diperluas:
+    \[
+    a \cdot b \equiv 1 \pmod{\varphi(n)} \iff a \equiv b^{-1} \pmod{\varphi(n)}
+    \]
+    \item \textbf{Kunci Publik:} $(n, b)$. \textbf{Kunci Privat:} $(p, q, a)$.
+    \item \textbf{Enkripsi:} $y \equiv e_K(x) \equiv x^b \pmod n$, untuk $x \in \mathbb{Z}_n$.
+    \item \textbf{Dekripsi:} $x \equiv d_K(y) \equiv y^a \pmod n$.
+\end{enumerate}
+
+\subsection{Pembuktian Formal Kebenaran RSA Menggunakan CRT}
+\begin{thmbox}{Teorema Kebenaran Dekripsi RSA}
+Untuk setiap pesan $x \in \mathbb{Z}_n$, berlaku $d_K(e_K(x)) \equiv (x^b)^a \equiv x^{ab} \equiv x \pmod n$.
+\begin{proof}
+Karena $ab \equiv 1 \pmod{\varphi(n)}$, terdapat bilangan bulat $k$ sedemikian hingga $ab = 1 + k(p - 1)(q - 1)$.
+Kita buktikan kongruensi modulo $p$ dan modulo $q$ secara terpisah:
+\begin{enumerate}
+    \item \textbf{Modulo $p$:}
+    \begin{itemize}
+        \item Jika $x \equiv 0 \pmod p$, maka $x^{ab} \equiv 0 \equiv x \pmod p$.
+        \item Jika $x \not\equiv 0 \pmod p$, berdasarkan Teorema Fermat Kecil $x^{p-1} \equiv 1 \pmod p$:
+        \[
+        x^{ab} = x^{1 + k(p-1)(q-1)} = x \cdot (x^{p-1})^{k(q-1)} \equiv x \cdot (1)^{k(q-1)} \equiv x \pmod p
+        \]
+    \end{itemize}
+    Sehingga untuk semua kasus berlaku $x^{ab} \equiv x \pmod p$, yang berarti $p \mid (x^{ab} - x)$.
+    \item \textbf{Modulo $q$:} Dengan argumen yang persis simetris, diperoleh $q \mid (x^{ab} - x)$.
+\end{enumerate}
+Karena $p$ dan $q$ prima berbeda, maka $\gcd(p, q) = 1$. Berdasarkan sifat keterbagian:
+\[
+p \cdot q \mid (x^{ab} - x) \implies x^{ab} \equiv x \pmod n
+\]
+\end{proof}
+\end{thmbox}
+
+\subsection{Teorema Titik Tetap (Fixed Points) pada RSA}
+Suatu teks-asal $x \in \mathbb{Z}_n^*$ disebut \textbf{titik tetap} (\textit{fixed point} / tidak berubah) jika hasil enkripsinya sama persis dengan teks asalnya:
+\[
+e_K(x) \equiv x^b \equiv x \pmod n
+\]
+\begin{thmbox}{Teorema Jumlah Titik Tetap RSA (Pola Soal UTS 2022-2023 \& 2023-2024 No 3)}
+Untuk sistem kripto RSA dengan modulus $n = pq$ ($p, q$ prima) dan kunci publik $b$, banyaknya teks-asal $x \in \mathbb{Z}_n^*$ yang tetap sama dengan:
+\[
+N_{\text{tetap}} = \gcd(b - 1, p - 1) \cdot \gcd(b - 1, q - 1)
+\]
+\begin{proof}
+Karena $\gcd(x, n) = 1$, maka $x \in \mathbb{Z}_n^* \implies x \not\equiv 0 \pmod p$ dan $x \not\equiv 0 \pmod q$. Berdasarkan Teorema Sisa Cina:
+\[
+x^b \equiv x \pmod n \iff
+\begin{cases}
+x^b \equiv x \pmod p \\
+x^b \equiv x \pmod q
+\end{cases}
+\iff
+\begin{cases}
+x^{b-1} \equiv 1 \pmod p \\
+x^{b-1} \equiv 1 \pmod q
+\end{cases}
+\]
+Tinjau kongruensi pertama: $x^{b-1} \equiv 1 \pmod p$ di dalam grup siklis $\mathbb{Z}_p^*$.
+\begin{enumerate}
+    \item Grup $\mathbb{Z}_p^*$ adalah grup siklis berorde $p - 1$.
+    \item Misalkan $g$ adalah generator (akar primitif) dari $\mathbb{Z}_p^*$, sehingga setiap $x \in \mathbb{Z}_p^*$ dapat dinyatakan secara tunggal sebagai $x \equiv g^k \pmod p$ untuk suatu $k \in \{0, 1, \dots, p - 2\}$.
+    \item Persamaan menjadi:
+    \[
+    (g^k)^{b-1} \equiv g^{k(b-1)} \equiv 1 \equiv g^0 \pmod p
+    \]
+    \item Karena $g$ berorde $p - 1$, kongruensi di atas setara dengan:
+    \[
+    k(b - 1) \equiv 0 \pmod{p - 1}
+    \]
+    \item Ini adalah persamaan kongruensi linier untuk variabel $k$ dalam modulo $p - 1$. Berdasarkan teori kongruensi linier, banyaknya solusi untuk $k \in \{0, 1, \dots, p - 2\}$ tepat sama dengan:
+    \[
+    \gcd(b - 1, p - 1)
+    \]
+    Sehingga terdapat tepat $\gcd(b - 1, p - 1)$ nilai $x \in \mathbb{Z}_p^*$ yang memenuhi $x^{b-1} \equiv 1 \pmod p$.
+\end{enumerate}
+Dengan penalaran yang persis sama pada grup siklis $\mathbb{Z}_q^*$, terdapat tepat $\gcd(b - 1, q - 1)$ nilai $x \in \mathbb{Z}_q^*$ yang memenuhi $x^{b-1} \equiv 1 \pmod q$.\\
+Berdasarkan Teorema Sisa Cina, setiap pasangan solusi $(x_p, x_q) \in \mathbb{Z}_p^* \times \mathbb{Z}_q^*$ berkorespondensi satu-satu dengan tepat satu solusi $x \in \mathbb{Z}_n^*$. Oleh karena itu, total banyaknya teks asal tetap $x \in \mathbb{Z}_n^*$ adalah:
+\[
+N_{\text{tetap}} = \gcd(b - 1, p - 1) \cdot \gcd(b - 1, q - 1)
+\]
+\end{proof}
+\end{thmbox}
+
+\newpage
+% =========================================================================
+\section{Bab 7: Lembar Rangkuman Rumus Cepat \& Peta Tipologi Soal UTS}
+% =========================================================================
+
+\subsection{Tabel Ringkasan Rumus Cepat Kriptosistem Klasik \& Kriptoanalisis}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{p{3.2cm} p{4.2cm} p{4.2cm} p{3.8cm}}
+\toprule
+\textbf{Sistem Kripto} & \textbf{Aturan Enkripsi / Dekripsi} & \textbf{Syarat Kunci \& Ruang Kunci} & \textbf{Metode Serangan Efektif} \\
+\midrule
+\textbf{Sandi Geser} & $y \equiv x + k \pmod{26}$ \newline $x \equiv y - k \pmod{26}$ & $k \in \mathbb{Z}_{26}$ \newline $|\mathcal{K}| = 26$ & Brute force tuntas (26 kunci) \\
+\midrule
+\textbf{Sandi Affine} & $y \equiv ax + b \pmod{26}$ \newline $x \equiv a^{-1}(y - b) \pmod{26}$ & $\gcd(a, 26) = 1$, $b \in \mathbb{Z}_{26}$ \newline $|\mathcal{K}| = 12 \times 26 = 312$ & Analisis frekuensi 2 huruf teratas (sistem 2 kongruensi) \\
+\midrule
+\textbf{Sandi Hill} & $\mathbf{y} \equiv K\mathbf{x} \pmod{26}$ \newline $\mathbf{x} \equiv K^{-1}\mathbf{y} \pmod{26}$ & $\gcd(\det K, 26) = 1$ \newline $\det K \not\equiv 0 \pmod{2, 13}$ & Known-Plaintext Attack: $K \equiv Y X^{-1} \pmod{26}$ \\
+\midrule
+\textbf{Sandi Vigen\`ere} & $y_i \equiv x_i + k_{i \bmod m} \pmod{26}$ & $\mathbf{k} \in \mathbb{Z}_{26}^m$, periode $m$ & Uji Kasiski ($\gcd$ jarak) $\to$ $I_c$ Friedman $\to$ Mutual $I_c$ \\
+\midrule
+\textbf{Sandi Permutasi} & $e_\pi(\mathbf{x}) = (x_{\pi(1)}, \dots, x_{\pi(m)})$ \newline $d_\pi(\mathbf{y}) = (y_{\pi^{-1}(1)}, \dots)$ & $\pi \in S_m$, $|\mathcal{K}| = m!$ \newline Involusi: $\pi(i) = j \implies \pi(j) = i$ & Analisis anagram, digram/trigram terlarang \\
+\midrule
+\textbf{LFSR / Stream} & $y_i = x_i \oplus z_i$, $z_i \in \mathbb{F}_2$ \newline $s_{i+m} \equiv \sum c_j s_{i+m-j}$ & $C(D)$ polinomial primitif $\implies$ periode maks $2^m - 1$ & Matriks Hankel dari $2m$ bit aliran kunci (Berlekamp-Massey) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Tabel Rumus Teori Shannon \& Teori Informasi}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{p{4.5cm} p{7.5cm} p{3.5cm}}
+\toprule
+\textbf{Besaran / Teorema} & \textbf{Formula Matematis} & \textbf{Kondisi / Interpretasi} \\
+\midrule
+\textbf{Entropi Shannon} & $H(X) = -\sum_{x} p(x) \log_2 p(x)$ & $0 \le H(X) \le \log_2 |\mathcal{X}|$ \\
+\midrule
+\textbf{Aturan Rantai Entropi} & $H(X, Y) = H(Y) + H(X \mid Y) = H(X) + H(Y \mid X)$ & Selalu berlaku \\
+\midrule
+\textbf{Kondisional Mengurangi $H$} & $H(X \mid Y) \le H(X)$ & Sama jika $X, Y$ independen \\
+\midrule
+\textbf{Keamanan Sempurna} & $P(x \mid y) = P(x) \iff P(y \mid x) = P(y)$ \newline $|\mathcal{K}| \ge |\mathcal{C}| \ge |\mathcal{P}|$ & $H(P \mid C) = H(P)$ \\
+\midrule
+\textbf{Jarak Unicity} & $n_0 \approx \frac{H(K)}{R_L \log_2 |\mathcal{P}|} = \frac{\log_2 |\mathcal{K}|}{R \log_2 26}$ & Redundansi $R = 1 - \frac{H_L}{\log_2 26}$ \\
+\midrule
+\textbf{Efisiensi Huffman} & $L(X) = \sum p(x_i) \ell(x_i)$, \quad $\eta = \frac{H(X)}{L(X)}$ & $H(X) \le L(X) < H(X) + 1$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Tabel Perbandingan DES vs AES}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{p{3.8cm} p{5.8cm} p{5.8cm}}
+\toprule
+\textbf{Fitur} & \textbf{DES (Data Encryption Standard)} & \textbf{AES (Advanced Encryption Standard)} \\
+\midrule
+\textbf{Ukuran Blok} & 64 bit & 128 bit \\
+\textbf{Panjang Kunci} & 56 bit (aktif) + 8 bit paritas & 128 bit (10 ronde), 192 (12), 256 (14) \\
+\textbf{Arsitektur} & Feistel Network (16 ronde) & SPN (Substitution-Permutation Network) \\
+\textbf{Operasi Nonlinier} & 8 S-box ($6 \to 4$ bit) & SubBytes ($8 \to 8$ bit, invers $GF(2^8) +$ affine) \\
+\textbf{Operasi Difusi} & Permutasi P (32 bit) & ShiftRows (baris) + MixColumns (kolom) \\
+\textbf{MixColumns Polinomial} & -- & $c(z) = \{03\}z^3 + \{01\}z^2 + \{01\}z + \{02\}$ \\
+\textbf{Sifat Khusus} & Komplementasi: $\operatorname{DES}_{\bar{K}}(\bar{P}) = \overline{\operatorname{DES}_K(P)}$ & MixColumns dihilangkan pada ronde terakhir \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Peta Tipologi \& Pola Soal UTS MA4151 ITB}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Tipe Soal 1: Sandi Klasik \& Invertibilitas (Hill / Affine / Permutasi)}
+    \begin{itemize}
+        \item \textit{Bentuk Ujian:} Menentukan matriks enkripsi dari pasangan plaintext-ciphertext; menyelidiki alasan matriks tidak dapat digunakan (tabrakan ciphertext); membuktikan sifat kunci involusi $\pi(i) = j \implies \pi(j) = i$.
+        \item \textit{Strategi:} Cek $\gcd(\det K, 26) = 1$. Hitung adjoin dan invers determinan. Untuk matriks non-invertible, cari null space modulo 26.
+    \end{itemize}
+    \item \textbf{Tipe Soal 2: Kriptoanalisis Vigen\`ere (Kasiski \& Indeks Koinsidensi)}
+    \begin{itemize}
+        \item \textit{Bentuk Ujian:} Diberikan teks sandi panjang, hitung jarak substring berulang dan tentukan periode $m$; menghitung variasi indeks koinsidensi jika ditambahkan huruf tertentu.
+        \item \textit{Strategi:} Tabulasi selisih posisi, cari $\gcd$. Gunakan rumus kombinatorik $\sum f_i(f_i-1) / N(N-1)$.
+    \end{itemize}
+    \item \textbf{Tipe Soal 3: Teori Informasi \& Pohon Huffman (Wajib Tiap Tahun)}
+    \begin{itemize}
+        \item \textit{Bentuk Ujian:} Diberikan distribusi peluang 5 simbol, konstruksikan pohon Huffman, cari panjang kata sandi, hitung panjang rata-rata $L(X)$, dan bandingkan dengan entropi $H(X)$.
+        \item \textit{Strategi:} Gabungkan 2 probabilitas terkecil secara berurutan. Hitung $H(X) = -\sum p_i \log_2 p_i$. Tulis kesimpulan $H(X) \le L(X) < H(X) + 1$.
+    \end{itemize}
+    \item \textbf{Tipe Soal 4: Pembuktian Formal Entropi \& Teori Shannon}
+    \begin{itemize}
+        \item \textit{Bentuk Ujian:} Buktikan aturan rantai $H(X, Y) = H(Y) + H(X \mid Y)$; buktikan sifat keamanan sempurna; turunkan jarak unicity.
+        \item \textit{Strategi:} Mulai dari definisi jumlah logaritma peluang bersama $p(x, y) = p(y) p(x \mid y)$. Uraikan $\log(ab) = \log a + \log b$.
+    \end{itemize}
+    \item \textbf{Tipe Soal 5: Konseptual Block Cipher DES \& AES}
+    \begin{itemize}
+        \item \textit{Bentuk Ujian:} Jelaskan tahapan ronde DES/AES; jelaskan mengapa disebut cipher perkalian; identifikasi polinomial MixColumns $\{03\}z^3 + \{01\}z^2 + \{01\}z + \{02\}$; analisis propagasi galat CBC vs CTR.
+        \item \textit{Strategi:} Jelaskan perpaduan substitusi (konfusi) dan permutasi (difusi). Sebutkan sifat nonlinier S-box dan operasi $GF(2^8)$.
+    \end{itemize}
+    \item \textbf{Tipe Soal 6: Teori Bilangan \& Sifat Fungsi Phi Euler}
+    \begin{itemize}
+        \item \textit{Bentuk Ujian:} Buktikan $2^r \mid \varphi(n)$; selesaikan sistem kongruensi non-koprima dengan CRT; hitung jumlah bilangan relatif prima $\frac{1}{2}n\varphi(n)$; buktikan lema orde $a^d \equiv 1 \pmod m$.
+        \item \textit{Strategi:} Faktorisasi prima prima ganjil $\implies 2 \mid (p_i - 1)$. Gunakan Identitas B\'ezout $ux + vy = d$.
+    \end{itemize}
+    \item \textbf{Tipe Soal 7: Pengantar RSA \& Titik Tetap (Fixed Points)}
+    \begin{itemize}
+        \item \textit{Bentuk Ujian:} Tunjukkan bahwa banyaknya pesan tetap $x^b \equiv x \pmod n$ adalah $\gcd(b-1, p-1) \cdot \gcd(b-1, q-1)$.
+        \item \textit{Strategi:} Pisahkan menjadi sistem kongruensi modulo $p$ dan modulo $q$. Gunakan sifat generator grup siklis $\mathbb{Z}_p^*$ dan CRT.
+    \end{itemize}
+\end{enumerate}
+
+\end{document}
