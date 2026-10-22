@@ -1,0 +1,553 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[margin=1.8cm, top=2.2cm, bottom=2.2cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\newenvironment{proof}{\noindent\textbf{Bukti.}}{\hfill$\blacksquare$\vspace{0.2em}}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!80!black,
+    citecolor=blue!80!black,
+    urlcolor=blue!80!black,
+    pdftitle={Pembahasan Tugas Kriptografi: Residu Kuadrat, Kriteria Euler, dan Simbol Legendre},
+    pdfauthor={MA4151 Kriptografi ITB}
+}
+
+% Header & Footer Settings
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\textbf{MA4151 Kriptografi}}
+\lhead{Pembahasan Tugas: Residu Kuadrat \& Kriteria Euler}
+\rfoot{Halaman \thepage}
+\setlength{\headheight}{14pt}
+
+% Color Definitions
+\definecolor{primary}{RGB}{20, 50, 130}       % Navy Blue
+\definecolor{accent}{RGB}{15, 110, 120}       % Deep Teal
+\definecolor{darkgreen}{RGB}{25, 110, 50}     % Emerald
+\definecolor{crimson}{RGB}{170, 30, 30}       % Deep Red / Alert
+\definecolor{boxbg}{RGB}{248, 250, 252}       % Crisp light slate
+\definecolor{solbg}{RGB}{252, 253, 255}
+\definecolor{tipbg}{RGB}{243, 250, 245}
+
+\tcbuselibrary{skins,breakable}
+
+\tcbset{
+    arc=2mm,
+    left=3.5mm,
+    right=3.5mm,
+    top=2.5mm,
+    bottom=2.5mm,
+    fonttitle=\bfseries,
+    breakable
+}
+
+% Custom TColorBoxes
+\newtcolorbox{soalbox}[1]{
+    colback=boxbg,
+    colframe=primary,
+    title={#1}
+}
+
+\newtcolorbox{solusibox}[1]{
+    colback=solbg,
+    colframe=accent,
+    title={#1}
+}
+
+\newtcolorbox{tipsbox}[1]{
+    colback=tipbg,
+    colframe=darkgreen,
+    title={#1}
+}
+
+% Section Title Formatting
+\titleformat{\section}{\large\bfseries\color{primary}}{\thesection}{1em}{}[\titlerule]
+\titleformat{\subsection}{\normalsize\bfseries\color{accent}}{\thesubsection}{1em}{}
+
+% Compact list settings
+\setlist{topsep=2pt, itemsep=1.5pt, parsep=1.5pt}
+
+\title{
+    \vspace{-1.2cm}
+    \textbf{\huge PEMBAHASAN TUGAS RESMI}\\[0.2cm]
+    \textbf{\Large RESIDU KUADRAT, KRITERIA EULER, \& SIMBOL LEGENDRE}\\[0.3cm]
+    \large Mata Kuliah MA4151 Kriptografi -- Semester I Tahun Ajaran 2026/2027\\[0.1cm]
+    \large Institut Teknologi Bandung
+}
+\author{\textbf{Solusi Lengkap \& Rinci Model Pengerjaan PR}}
+\date{22 Oktober 2026}
+
+\begin{document}
+
+\maketitle
+\vspace{-0.4cm}
+
+\begin{abstract}
+Dokumen ini memuat pembahasan lengkap, deduktif, dan terstruktur untuk \textbf{Tugas Kriptografi (22 Oktober 2026)}. Topik bahasan mencakup: (1) Verifikasi status residu kuadrat menggunakan Kriteria Euler; (2) Teknik kuadrat berulang (\textit{repeated squaring}) modulo $p$; (3) Algoritma pencarian akar kuadrat modular untuk kasus prima $p \equiv 3 \pmod 4$; (4) Karakterisasi $-1$ sebagai kuadrat modular (Hukum Resiprositas Kuadrat Pertama); (5) Pembuktian formal Teorema Kriteria Euler berbasis Teorema Kecil Fermat dan Teorema Lagrange atas lapangan $\mathbb{Z}_p$; serta (6) Sifat perkalian Simbol Legendre beserta akibat-akibat kombinasinya dan contoh konkret atas $\mathbb{Z}_7$.
+\end{abstract}
+
+\vspace{0.1cm}
+\hrule
+\vspace{0.2cm}
+
+\tableofcontents
+\newpage
+
+% =========================================================================
+\section{Ringkasan Teori \& Notasi Fundamental}
+% =========================================================================
+
+\begin{tipsbox}{Definisi 1: Residu Kuadrat (Quadratic Residue)}
+Misalkan $p$ adalah bilangan prima ganjil dan $a \in \mathbb{Z}$ dengan $\gcd(a, p) = 1$. Bilangan $a$ disebut \textbf{residu kuadrat (QR)} modulo $p$ jika kongruensi:
+\[
+x^2 \equiv a \pmod p
+\]
+memiliki solusi bilangan bulat $x$. Jika kongruensi tersebut tidak memiliki solusi, maka $a$ disebut \textbf{bukan residu kuadrat (QNR)} modulo $p$.
+\end{tipsbox}
+
+\begin{tipsbox}{Definisi 2: Simbol Legendre}
+Untuk bilangan prima ganjil $p$ dan sembarang bilangan bulat $a$, simbol Legendre $\left(\frac{a}{p}\right)$ didefinisikan sebagai:
+\[
+\left(\frac{a}{p}\right) = \begin{cases} 
+1, & \text{jika } a \text{ adalah residu kuadrat modulo } p \text{ dan } p \nmid a, \\
+-1, & \text{jika } a \text{ bukan residu kuadrat modulo } p, \\
+0, & \text{jika } p \mid a.
+\end{cases}
+\]
+\end{tipsbox}
+
+\begin{tipsbox}{Teorema 1: Kriteria Euler (Euler's Criterion)}
+Misalkan $p$ adalah bilangan prima ganjil dan $\gcd(a, p) = 1$. Maka berlaku:
+\[
+\left(\frac{a}{p}\right) \equiv a^{\frac{p-1}{2}} \pmod p
+\]
+Secara spesifik:
+\begin{itemize}[leftmargin=*]
+    \item $a$ adalah residu kuadrat modulo $p \iff a^{\frac{p-1}{2}} \equiv 1 \pmod p$.
+    \item $a$ bukan residu kuadrat modulo $p \iff a^{\frac{p-1}{2}} \equiv -1 \pmod p$.
+\end{itemize}
+\end{tipsbox}
+
+\vspace{0.2cm}
+
+% =========================================================================
+\section{Pembahasan Soal 1 sampai 9}
+% =========================================================================
+
+% --- SOAL 1 ---
+\begin{soalbox}{Soal 1: Kriteria Euler \& Akar Kuadrat Modulo 11}
+Gunakan kriteria Euler untuk menentukan apakah $5$ residu kuadrat modulo $11$. Jika ya, tentukan semua $x$ dengan $x^2 \equiv 5 \pmod{11}$.
+\end{soalbox}
+
+\begin{solusibox}{Solusi Soal 1}
+\textbf{Langkah 1: Menentukan status residu kuadrat dengan Kriteria Euler.} \\
+Diketahui $p = 11$ (prima ganjil) dan $a = 5$. Eksponen kriteria Euler:
+\[
+\frac{p-1}{2} = \frac{11 - 1}{2} = 5
+\]
+Hitung nilai $5^5 \pmod{11}$ secara bertahap:
+\begin{align*}
+5^1 &\equiv 5 \pmod{11} \\
+5^2 &= 25 = 2 \times 11 + 3 \equiv 3 \pmod{11} \\
+5^4 &= (5^2)^2 \equiv 3^2 = 9 \equiv -2 \pmod{11} \\
+5^5 &= 5^4 \times 5^1 \equiv (-2) \times 5 = -10 \equiv 1 \pmod{11}
+\end{align*}
+Karena $5^{\frac{11-1}{2}} = 5^5 \equiv 1 \pmod{11}$, menurut kriteria Euler:
+\[
+\left(\frac{5}{11}\right) = 1 \implies \mathbf{5 \text{ adalah residu kuadrat modulo } 11.}
+\]
+
+\textbf{Langkah 2: Menentukan seluruh solusi dari $x^2 \equiv 5 \pmod{11}$.} \\
+Uji nilai $x \in \{1, 2, \ldots, 10\}$:
+$4^2 = 16 = 11 + 5 \equiv 5 \pmod{11} \implies x_1 = 4$.  
+Karena $\mathbb{Z}_{11}$ adalah lapangan dan $x^2 \equiv (-x)^2 \pmod{11}$, akar kedua adalah invers aditifnya:
+\[
+x_2 \equiv -x_1 \equiv -4 \equiv 11 - 4 = 7 \pmod{11}
+\]
+\textit{Verifikasi:} $7^2 = 49 = 4 \times 11 + 5 \equiv 5 \pmod{11} \quad \checkmark$.
+
+\vspace{0.1cm}
+\textbf{Kesimpulan Akhir:} $5$ adalah residu kuadrat modulo $11$, dengan semua akarnya:
+\[
+\mathbf{x \equiv 4 \pmod{11} \quad \text{dan} \quad x \equiv 7 \pmod{11}}
+\]
+\end{solusibox}
+
+\newpage
+
+% --- SOAL 2 ---
+\begin{soalbox}{Soal 2: Kriteria Euler \& Akar Kuadrat Modulo 19}
+Tentukan apakah $7$ residu kuadrat modulo $19$. (\textit{Petunjuk: hitung $7^3 \bmod 19$ lebih dulu.}) Jika ya, carilah akarnya.
+\end{soalbox}
+
+\begin{solusibox}{Solusi Soal 2}
+\textbf{Langkah 1: Menghitung $7^3 \pmod{19}$ sesuai petunjuk.}
+\begin{align*}
+7^1 &\equiv 7 \pmod{19} \\
+7^2 &= 49 = 2 \times 19 + 11 \equiv 11 \equiv -8 \pmod{19} \\
+7^3 &= 7^2 \times 7 \equiv 11 \times 7 = 77 = 4 \times 19 + 1 \equiv \mathbf{1 \pmod{19}}
+\end{align*}
+
+\textbf{Langkah 2: Menguji status residu kuadrat dengan Kriteria Euler.} \\
+Untuk $p = 19$, eksponen kriteria Euler adalah $\frac{p-1}{2} = \frac{19-1}{2} = 9$. Menggunakan $7^3 \equiv 1 \pmod{19}$:
+\[
+7^9 = (7^3)^3 \equiv 1^3 \equiv 1 \pmod{19}
+\]
+Karena $7^{\frac{19-1}{2}} \equiv 1 \pmod{19}$, maka $\left(\frac{7}{19}\right) = 1$.  
+Dengan demikian, \textbf{$7$ adalah residu kuadrat modulo $19$}.
+
+\vspace{0.1cm}
+\textbf{Langkah 3: Mencari akar dari $x^2 \equiv 7 \pmod{19}$.} \\
+Manfaatkan kesamaan $7^3 \equiv 1 \pmod{19}$ secara aljabar:
+\[
+7 \equiv 7 \times 1 \equiv 7 \times 7^3 = 7^4 = (7^2)^2 \pmod{19}
+\]
+Persamaan di atas membuktikan secara langsung bahwa $7^2$ adalah akar kuadrat dari $7 \pmod{19}$:
+\[
+x_1 \equiv 7^2 = 49 \equiv 11 \pmod{19}
+\]
+Akar kedua diperoleh dari simetri modulo 19:
+\[
+x_2 \equiv -x_1 \equiv -11 \equiv 19 - 11 = 8 \pmod{19}
+\]
+\textit{Verifikasi:} $11^2 = 121 = 6(19) + 7 \equiv 7 \pmod{19}$ dan $8^2 = 64 = 3(19) + 7 \equiv 7 \pmod{19} \quad \checkmark$.
+
+\vspace{0.1cm}
+\textbf{Kesimpulan Akhir:} $7$ adalah residu kuadrat modulo $19$, dengan akar-akarnya:
+\[
+\mathbf{x \equiv 8 \pmod{19} \quad \text{dan} \quad x \equiv 11 \pmod{19}}
+\]
+\end{solusibox}
+
+\vspace{0.3cm}
+
+% --- SOAL 3 ---
+\begin{soalbox}{Soal 3: Pengujian Residu Kuadrat Modulo 17 \& Sifat Multiplikatif}
+Tentukan apakah $2, 3,$ dan $6$ residu kuadrat modulo $17$. Hitung $2^8$ dan $3^8$ saja, lalu simpulkan nilai untuk $6$ tanpa menghitung $6^8$.
+\end{soalbox}
+
+\begin{solusibox}{Solusi Soal 3}
+Diketahui $p = 17$ (prima ganjil), sehingga $\frac{p-1}{2} = \frac{17-1}{2} = 8$.
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Pengujian untuk $a = 2$:}
+    \[
+    2^4 = 16 \equiv -1 \pmod{17} \implies 2^8 = (2^4)^2 \equiv (-1)^2 = 1 \pmod{17}
+    \]
+    Karena $2^8 \equiv 1 \pmod{17}$, maka $\left(\frac{2}{17}\right) = 1 \implies \mathbf{2 \text{ adalah residu kuadrat modulo } 17.}$
+
+    \item \textbf{Pengujian untuk $a = 3$:}
+    \begin{align*}
+    3^2 &= 9 \\
+    3^4 &= 9^2 = 81 = 4(17) + 13 \equiv 13 \equiv -4 \pmod{17} \\
+    3^8 &= (3^4)^2 \equiv (-4)^2 = 16 \equiv -1 \pmod{17}
+    \end{align*}
+    Karena $3^8 \equiv -1 \pmod{17}$, maka $\left(\frac{3}{17}\right) = -1 \implies \mathbf{3 \text{ bukan residu kuadrat modulo } 17.}$
+
+    \item \textbf{Menyimpulkan nilai untuk $a = 6$ tanpa menghitung $6^8$:} \\
+    Karena $6 = 2 \times 3$, menurut sifat multiplikatif simbol Legendre:
+    \[
+    \left(\frac{6}{17}\right) = \left(\frac{2 \times 3}{17}\right) = \left(\frac{2}{17}\right) \times \left(\frac{3}{17}\right) = (1) \times (-1) = \mathbf{-1}
+    \]
+    *(Secara eksponensial: $6^8 = (2 \times 3)^8 = 2^8 \times 3^8 \equiv (1)(-1) \equiv -1 \pmod{17}$).*
+\end{enumerate}
+
+\textbf{Kesimpulan Akhir:} $2$ adalah \textbf{residu kuadrat}, sedangkan $3$ dan $6$ adalah \textbf{bukan residu kuadrat} modulo $17$.
+\end{solusibox}
+
+\newpage
+
+% --- SOAL 4 ---
+\begin{soalbox}{Soal 4: Evaluasi Simbol Legendre dengan Kuadrat Berulang}
+Hitung $\left(\frac{10}{23}\right)$ menggunakan kriteria Euler dengan teknik kuadrat berulang ($10^2, 10^4, 10^8, \ldots$).
+\end{soalbox}
+
+\begin{solusibox}{Solusi Soal 4}
+Diketahui $p = 23$. Berdasarkan Kriteria Euler:
+\[
+\left(\frac{10}{23}\right) \equiv 10^{\frac{23-1}{2}} = 10^{11} \pmod{23}
+\]
+Representasi biner dari eksponen: $11 = 8 + 2 + 1 = 2^3 + 2^1 + 2^0$.  
+Maka:
+\[
+10^{11} \equiv 10^8 \times 10^2 \times 10^1 \pmod{23}
+\]
+
+\textbf{Langkah 1: Teknik Kuadrat Berulang (\textit{Repeated Squaring}) Modulo 23.}
+\begin{itemize}
+    \item $10^1 \equiv 10 \pmod{23}$
+    \item $10^2 = 100 = 4(23) + 8 \implies 10^2 \equiv 8 \pmod{23}$
+    \item $10^4 = (10^2)^2 \equiv 8^2 = 64 = 2(23) + 18 \implies 10^4 \equiv 18 \equiv -5 \pmod{23}$
+    \item $10^8 = (10^4)^2 \equiv (-5)^2 = 25 = 23 + 2 \implies 10^8 \equiv 2 \pmod{23}$
+\end{itemize}
+
+\textbf{Langkah 2: Perkalian komponen pangkat biner.}
+\begin{align*}
+10^{11} &= 10^8 \times 10^2 \times 10^1 \equiv 2 \times 8 \times 10 \pmod{23} \\
+&\equiv 16 \times 10 = 160 = 6(23) + 22 \equiv 22 \equiv -1 \pmod{23}
+\end{align*}
+
+\textbf{Kesimpulan Akhir:} Menurut Kriteria Euler, $\left(\frac{10}{23}\right) \equiv -1 \pmod{23}$, sehingga:
+\[
+\mathbf{\left(\frac{10}{23}\right) = -1}
+\]
+(Artinya $10$ bukan residu kuadrat modulo $23$).
+\end{solusibox}
+
+\vspace{0.3cm}
+
+% --- SOAL 5 ---
+\begin{soalbox}{Soal 5: Karakterisasi $-1$ sebagai Residu Kuadrat (Suplemen Pertama)}
+Tentukan apakah $-1$ residu kuadrat modulo $29$ dan modulo $31$. Kemudian buktikan secara umum bahwa $-1$ residu kuadrat modulo $p$ jika dan hanya jika $p \equiv 1 \pmod 4$. Untuk $p = 29$, carilah satu $x$ dengan $x^2 \equiv -1$.
+\end{soalbox}
+
+\begin{solusibox}{Solusi Soal 5}
+\textbf{Bagian 1: Pengujian Modulo 29 dan Modulo 31.} \\
+Menurut Kriteria Euler, $\left(\frac{-1}{p}\right) \equiv (-1)^{\frac{p-1}{2}} \pmod p$:
+\begin{itemize}
+    \item Modulo $29$: $\frac{29-1}{2} = 14$ (genap) $\implies \left(\frac{-1}{29}\right) \equiv (-1)^{14} = 1 \implies \mathbf{-1 \text{ adalah residu kuadrat modulo } 29.}$
+    \item Modulo $31$: $\frac{31-1}{2} = 15$ (ganjil) $\implies \left(\frac{-1}{31}\right) \equiv (-1)^{15} = -1 \implies \mathbf{-1 \text{ bukan residu kuadrat modulo } 31.}$
+\end{itemize}
+
+\textbf{Bagian 2: Bukti Umum ($-1$ residu kuadrat $\pmod p \iff p \equiv 1 \pmod 4$).}
+\begin{proof}
+Berdasarkan Kriteria Euler, $\left(\frac{-1}{p}\right) \equiv (-1)^{\frac{p-1}{2}} \pmod p$.
+\begin{itemize}[leftmargin=*]
+    \item[$(\Rightarrow)$] Jika $-1$ adalah residu kuadrat modulo $p$, maka $\left(\frac{-1}{p}\right) = 1$, sehingga $(-1)^{\frac{p-1}{2}} \equiv 1 \pmod p$.  
+    Jika $\frac{p-1}{2}$ ganjil, maka $(-1)^{\frac{p-1}{2}} = -1 \implies -1 \equiv 1 \pmod p \implies p \mid 2$, kontradiksi dengan $p$ prima ganjil.  
+    Oleh karena itu $\frac{p-1}{2}$ haruslah genap: $\frac{p-1}{2} = 2k \implies p = 4k + 1 \equiv 1 \pmod 4$.
+    
+    \item[$(\Leftarrow)$] Jika $p \equiv 1 \pmod 4$, maka $p = 4k + 1$. Maka $\frac{p-1}{2} = \frac{4k}{2} = 2k$ (genap).  
+    Sehingga $\left(\frac{-1}{p}\right) \equiv (-1)^{2k} = 1 \pmod p$. Karena $p > 2$, maka $\left(\frac{-1}{p}\right) = 1$.
+\end{itemize}
+\end{proof}
+
+\textbf{Bagian 3: Mencari satu $x$ dengan $x^2 \equiv -1 \pmod{29}$.} \\
+Uji nilai kuadrat: $12^2 = 144 = 5(29) - 1 = 145 - 1 \equiv -1 \pmod{29}$.  
+\textit{Verifikasi:} $12^2 = 144 = 4(29) + 28 \equiv 28 \equiv -1 \pmod{29} \quad \checkmark$. *(Akar lainnya: $x \equiv -12 \equiv 17$).*
+
+\vspace{0.1cm}
+\textbf{Kesimpulan Akhir:} Modulo $29$ adalah QR, modulo $31$ adalah QNR, dan salah satu akarnya adalah $\mathbf{x = 12}$ (atau $\mathbf{17}$).
+\end{solusibox}
+
+\newpage
+
+% --- SOAL 6 ---
+\begin{soalbox}{Soal 6: Algoritma Pencarian Akar Kuadrat Modular Kasus $p \equiv 3 \pmod 4$}
+Misalkan $p \equiv 3 \pmod 4$ dan $a$ residu kuadrat modulo $p$. Tunjukkan bahwa $x \equiv a^{\frac{p+1}{4}}$ memenuhi $x^2 \equiv a \pmod p$. Terapkan pada $p = 23, a = 2$ (periksa lebih dulu bahwa $2$ residu kuadrat), dan tentukan semua akarnya.
+\end{soalbox}
+
+\begin{solusibox}{Solusi Soal 6}
+\textbf{Bagian 1: Pembuktian Rumus Akar Kuadrat Modular.}
+\begin{proof}
+1. Karena $p \equiv 3 \pmod 4$, maka $p = 4k + 3 \implies \frac{p+1}{4} = k + 1 \in \mathbb{Z}$ (terdefinisi bulat).
+
+2. Kuadratkan $x \equiv a^{\frac{p+1}{4}} \pmod p$:
+\[
+x^2 \equiv \left(a^{\frac{p+1}{4}}\right)^2 = a^{\frac{2(p+1)}{4}} = a^{\frac{p+1}{2}} \pmod p
+\]
+3. Tuliskan $\frac{p+1}{2} = \frac{p-1}{2} + 1$. Maka:
+\[
+x^2 \equiv a^{\frac{p-1}{2} + 1} = a^{\frac{p-1}{2}} \cdot a^1 \pmod p
+\]
+4. Karena $a$ adalah residu kuadrat modulo $p$, menurut Kriteria Euler berlaku $a^{\frac{p-1}{2}} \equiv 1 \pmod p$.
+5. Substitusi memberikan:
+\[
+x^2 \equiv (1) \cdot a = a \pmod p
+\]
+Terbukti bahwa $x \equiv a^{\frac{p+1}{4}} \pmod p$ memenuhi $x^2 \equiv a \pmod p$.
+\end{proof}
+
+\textbf{Bagian 2: Penerapan pada $p = 23, a = 2$.}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Pemeriksaan apakah $2$ residu kuadrat modulo $23$:} \\
+    Eksponen Kriteria Euler: $\frac{p-1}{2} = 11$.
+    \begin{align*}
+    2^5 &= 32 \equiv 9 \pmod{23} \\
+    2^{10} &= (2^5)^2 \equiv 9^2 = 81 = 3(23) + 12 \equiv 12 \pmod{23} \\
+    2^{11} &= 2 \times 2^{10} \equiv 2 \times 12 = 24 = 23 + 1 \equiv 1 \pmod{23}
+    \end{align*}
+    Karena $2^{11} \equiv 1 \pmod{23}$, terbukti bahwa $\left(\frac{2}{23}\right) = 1 \implies \mathbf{2 \text{ adalah residu kuadrat modulo } 23.}$
+
+    \item \textbf{Menghitung nilai akar-akarnya:} \\
+    Karena $23 = 4(5) + 3 \equiv 3 \pmod 4$, gunakan rumus di atas:
+    \[
+    x_1 \equiv 2^{\frac{23+1}{4}} = 2^6 = 64 = 2(23) + 18 \implies \mathbf{x_1 \equiv 18 \pmod{23}}
+    \]
+    Akar kedua:
+    \[
+    x_2 \equiv -x_1 \equiv -18 \equiv 23 - 18 = \mathbf{5 \pmod{23}}
+    \]
+
+    \item \textbf{Verifikasi:}
+    $5^2 = 25 \equiv 2 \pmod{23} \quad \checkmark$ dan $18^2 = 324 = 14(23) + 2 \equiv 2 \pmod{23} \quad \checkmark$.
+\end{enumerate}
+
+\textbf{Kesimpulan Akhir:} $2$ adalah residu kuadrat modulo $23$, dan seluruh akarnya adalah:
+\[
+\mathbf{x \equiv 5 \pmod{23} \quad \text{dan} \quad x \equiv 18 \pmod{23}}
+\]
+\end{solusibox}
+
+\newpage
+
+% --- SOAL 7 ---
+\begin{soalbox}{Soal 7: Pembuktian Arah "Jika" Kriteria Euler \& Nilai Kemungkinan Akar}
+Buktikan: jika $a$ residu kuadrat modulo $p$, maka $a^{\frac{p-1}{2}} \equiv 1 \pmod p$. Buktikan juga bahwa untuk sembarang $a$ dengan $p \nmid a$, nilai $a^{\frac{p-1}{2}}$ hanya mungkin $1$ atau $-1$.
+\end{soalbox}
+
+\begin{solusibox}{Solusi Soal 7}
+\textbf{Bagian 1: Pembuktian bahwa jika $a$ residu kuadrat, maka $a^{\frac{p-1}{2}} \equiv 1 \pmod p$.}
+\begin{proof}
+1. Karena $a$ adalah residu kuadrat modulo $p$, terdapat $x \in \mathbb{Z}$ sehingga $x^2 \equiv a \pmod p$.  
+Karena $p \nmid a$, maka $p \nmid x$, sehingga $\gcd(x, p) = 1$.
+
+2. Pangkatkan kedua ruas dengan $\frac{p-1}{2}$:
+\[
+a^{\frac{p-1}{2}} \equiv (x^2)^{\frac{p-1}{2}} = x^{2 \cdot \frac{p-1}{2}} = x^{p-1} \pmod p
+\]
+3. Menurut \textbf{Teorema Kecil Fermat}, untuk setiap prima $p$ dan $\gcd(x, p) = 1$, berlaku $x^{p-1} \equiv 1 \pmod p$.  
+Akibatnya:
+\[
+a^{\frac{p-1}{2}} \equiv 1 \pmod p
+\]
+Terbukti.
+\end{proof}
+
+\vspace{0.2cm}
+\textbf{Bagian 2: Pembuktian bahwa untuk sembarang $a$ dengan $p \nmid a$, nilai $a^{\frac{p-1}{2}} \equiv \pm 1 \pmod p$.}
+\begin{proof}
+1. Misalkan $y = a^{\frac{p-1}{2}}$. Menurut Teorema Kecil Fermat:
+\[
+a^{p-1} \equiv 1 \pmod p \iff a^{p-1} - 1 \equiv 0 \pmod p
+\]
+2. Ruas kiri difaktorkan sebagai selisih dua kuadrat:
+\[
+\left(a^{\frac{p-1}{2}}\right)^2 - 1 = y^2 - 1 = (y - 1)(y + 1) \equiv 0 \pmod p
+\]
+Artinya $p \mid (y - 1)(y + 1)$.
+
+3. Karena $p$ adalah bilangan prima, menurut \textbf{Lemma Euclid}:
+\[
+p \mid (y - 1) \implies y \equiv 1 \pmod p \iff a^{\frac{p-1}{2}} \equiv 1 \pmod p
+\]
+atau
+\[
+p \mid (y + 1) \implies y \equiv -1 \pmod p \iff a^{\frac{p-1}{2}} \equiv -1 \pmod p
+\]
+Tidak ada kemungkinan nilai lain di $\mathbb{Z}_p$.
+\end{proof}
+\end{solusibox}
+
+\vspace{0.3cm}
+
+% --- SOAL 8 ---
+\begin{soalbox}{Soal 8: Kardinalitas Residu Kuadrat \& Pembuktian Arah "Hanya Jika" Kriteria Euler}
+Buktikan bahwa terdapat tepat $\frac{p-1}{2}$ residu kuadrat taknol modulo $p$. Lalu gunakan fakta bahwa polinomial berderajat $d$ atas $\mathbb{Z}_p$ memiliki paling banyak $d$ akar untuk membuktikan bahwa bukan residu kuadrat pasti memenuhi $a^{\frac{p-1}{2}} \equiv -1$ (bagian "hanya jika" pada kriteria Euler).
+\end{soalbox}
+
+\begin{solusibox}{Solusi Soal 8}
+\textbf{Bagian 1: Pembuktian terdapat tepat $\frac{p-1}{2}$ residu kuadrat taknol modulo $p$.}
+\begin{proof}
+1. Himpunan seluruh kelas residu taknol modulo $p$ adalah $\mathbb{Z}_p^\times = \{1, 2, \ldots, p-1\}$.  
+Karena $(p - k)^2 \equiv k^2 \pmod p$, setiap elemen dan invers aditifnya memiliki kuadrat yang kongruen:
+\[
+1^2 \equiv (p-1)^2, \quad 2^2 \equiv (p-2)^2, \quad \ldots, \quad \left(\frac{p-1}{2}\right)^2 \equiv \left(\frac{p+1}{2}\right)^2 \pmod p
+\]
+Sehingga seluruh variasi nilai kuadrat terwakili oleh himpunan $S = \left\{1^2, 2^2, \ldots, \left(\frac{p-1}{2}\right)^2\right\}$.
+
+2. Tunjukkan ke-$\frac{p-1}{2}$ elemen di $S$ **semuanya berbeda modulo $p$**:  
+Andaikan terdapat $u \neq v \in \{1, 2, \ldots, \frac{p-1}{2}\}$ sehingga $u^2 \equiv v^2 \pmod p$.  
+Maka $(u - v)(u + v) \equiv 0 \pmod p \implies p \mid (u - v)$ atau $p \mid (u + v)$.  
+Namun:
+\begin{itemize}
+    \item $0 < |u - v| \le \frac{p-1}{2} - 1 < p \implies p \nmid (u - v)$.
+    \item $2 \le u + v \le p - 2 < p \implies p \nmid (u + v)$.
+\end{itemize}
+Hal ini kontradiksi. Jadi terdapat tepat $\mathbf{\frac{p-1}{2}}$ residu kuadrat taknol yang berbeda modulo $p$.
+\end{proof}
+
+\textbf{Bagian 2: Pembuktian bahwa bukan residu kuadrat memenuhi $a^{\frac{p-1}{2}} \equiv -1 \pmod p$.}
+\begin{proof}
+1. Tinjau polinomial $f(x) = x^{\frac{p-1}{2}} - 1 \in \mathbb{Z}_p[x]$ berderajat $d = \frac{p-1}{2}$.  
+Menurut \textbf{Teorema Lagrange}, polinomial berderajat $d$ atas lapangan $\mathbb{Z}_p$ memiliki **paling banyak $d$ akar**.  
+Maka $x^{\frac{p-1}{2}} \equiv 1 \pmod p$ memiliki paling banyak $\frac{p-1}{2}$ akar berbeda.
+
+2. Dari Soal 7 (Bagian 1), setiap residu kuadrat taknol adalah akar dari $f(x)$. Karena terdapat tepat $\frac{p-1}{2}$ residu kuadrat yang berlainan, maka:  
+\textbf{Akar-akar dari $x^{\frac{p-1}{2}} \equiv 1 \pmod p$ tepat adalah semua residu kuadrat tersebut.}
+
+3. Jika $a$ bukan residu kuadrat, maka $a$ bukan akar dari $f(x)$, sehingga $a^{\frac{p-1}{2}} \not\equiv 1 \pmod p$.  
+Karena menurut Soal 7 nilai $a^{\frac{p-1}{2}}$ hanya mungkin bernilai $1$ atau $-1$, maka pastilah:
+\[
+a^{\frac{p-1}{2}} \equiv -1 \pmod p
+\]
+\end{proof}
+\end{solusibox}
+
+\newpage
+
+% --- SOAL 9 ---
+\begin{soalbox}{Soal 9: Pembuktian Sifat Perkalian Simbol Legendre \& Penerapan pada $\mathbb{Z}_7$}
+Buktikan sifat perkalian simbol Legendre, $\left(\frac{ab}{p}\right) = \left(\frac{a}{p}\right)\left(\frac{b}{p}\right)$, dengan kriteria Euler. Simpulkan tiga akibat: hasil kali dua non-residu, residu dengan non-residu, dan dua residu. Beri contoh dengan $p = 7$.
+\end{soalbox}
+
+\begin{solusibox}{Solusi Soal 9}
+\textbf{Bagian 1: Pembuktian Sifat Perkalian Simbol Legendre.}
+\begin{proof}
+Menurut Kriteria Euler, untuk sembarang $c \in \mathbb{Z}$ dan prima ganjil $p$: $\left(\frac{c}{p}\right) \equiv c^{\frac{p-1}{2}} \pmod p$.  
+Terapkan untuk $c = ab$:
+\[
+\left(\frac{ab}{p}\right) \equiv (ab)^{\frac{p-1}{2}} = a^{\frac{p-1}{2}} \cdot b^{\frac{p-1}{2}} \equiv \left(\frac{a}{p}\right)\left(\frac{b}{p}\right) \pmod p
+\]
+Karena kedua ruas berada dalam himpunan $\{-1, 0, 1\}$, selisihnya $\Delta = \left(\frac{ab}{p}\right) - \left(\frac{a}{p}\right)\left(\frac{b}{p}\right) \in \{-2, -1, 0, 1, 2\}$.  
+Karena $p \ge 3$ prima ganjil dan $p \mid \Delta$, satu-satunya kelipatan $p$ di rentang tersebut adalah $0$.  
+Oleh karena itu, berlaku kesamaan eksak:
+\[
+\left(\frac{ab}{p}\right) = \left(\frac{a}{p}\right)\left(\frac{b}{p}\right)
+\]
+\end{proof}
+
+\textbf{Bagian 2: Tiga Akibat Sifat Perkalian (untuk $a, b \not\equiv 0 \pmod p$).}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Dua Residu (QR $\times$ QR):} $\left(\frac{a}{p}\right) = 1, \left(\frac{b}{p}\right) = 1 \implies \left(\frac{ab}{p}\right) = (1)(1) = 1 \implies \mathbf{QR \times QR = QR}$.
+    \item \textbf{Residu dengan Non-Residu (QR $\times$ QNR):} $\left(\frac{a}{p}\right) = 1, \left(\frac{b}{p}\right) = -1 \implies \left(\frac{ab}{p}\right) = (1)(-1) = -1 \implies \mathbf{QR \times QNR = QNR}$.
+    \item \textbf{Dua Non-Residu (QNR $\times$ QNR):} $\left(\frac{a}{p}\right) = -1, \left(\frac{b}{p}\right) = -1 \implies \left(\frac{ab}{p}\right) = (-1)(-1) = 1 \implies \mathbf{QNR \times QNR = QR}$.
+\end{enumerate}
+
+\textbf{Bagian 3: Contoh Konkret dengan $p = 7$.} \\
+Kuadrat taknol modulo $7$: $1^2 \equiv 1, 2^2 \equiv 4, 3^2 \equiv 2, 4^2 \equiv 2, 5^2 \equiv 4, 6^2 \equiv 1 \pmod 7$.
+\begin{itemize}
+    \item Himpunan Residu Kuadrat: $\mathcal{R} = \{1, 2, 4\} \implies \left(\frac{r}{7}\right) = 1$.
+    \item Himpunan Bukan Residu Kuadrat: $\mathcal{N} = \{3, 5, 6\} \implies \left(\frac{n}{7}\right) = -1$.
+\end{itemize}
+\textit{Verifikasi ketiga akibat:}
+\begin{enumerate}
+    \item \textbf{QR $\times$ QR $\rightarrow$ QR:} Ambil $a = 2 \in \mathcal{R}, b = 4 \in \mathcal{R} \implies ab = 8 \equiv 1 \in \mathcal{R}$.  
+    $\left(\frac{8}{7}\right) = (1)(1) = 1 \quad \checkmark$
+    \item \textbf{QR $\times$ QNR $\rightarrow$ QNR:} Ambil $a = 2 \in \mathcal{R}, b = 3 \in \mathcal{N} \implies ab = 6 \in \mathcal{N}$.  
+    $\left(\frac{6}{7}\right) = (1)(-1) = -1 \quad \checkmark$
+    \item \textbf{QNR $\times$ QNR $\rightarrow$ QR:} Ambil $a = 3 \in \mathcal{N}, b = 5 \in \mathcal{N} \implies ab = 15 \equiv 1 \in \mathcal{R}$.  
+    $\left(\frac{15}{7}\right) = (-1)(-1) = 1 \quad \checkmark$
+\end{enumerate}
+\end{solusibox}
+
+\vspace{0.4cm}
+\begin{center}
+\textbf{--- Akhir Lembar Pembahasan Tugas ---}
+\end{center}
+
+\end{document}
