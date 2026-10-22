@@ -1,0 +1,779 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[indonesian]{babel}
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\newenvironment{proof}{\noindent\textbf{Bukti.}}{\hfill$\blacksquare$\vspace{0.3em}}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!80!black,
+    citecolor=blue!80!black,
+    urlcolor=blue!80!black,
+    pdftitle={Latihan Khusus & Pembahasan: Keamanan Sempurna & Teori Peluang Kriptografi},
+    pdfauthor={MA4151 Kriptografi ITB}
+}
+
+% Header & Footer Settings
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\textbf{MA4151 Kriptografi}}
+\lhead{Latihan Khusus: Keamanan Sempurna \& Peluang}
+\rfoot{Halaman \thepage}
+\setlength{\headheight}{14pt}
+
+% Color Definitions
+\definecolor{primary}{RGB}{20, 50, 130}       % Navy Blue
+\definecolor{accent}{RGB}{15, 110, 120}       % Deep Teal
+\definecolor{darkgreen}{RGB}{25, 110, 50}     % Emerald
+\definecolor{crimson}{RGB}{170, 30, 30}       % Deep Red / Alert
+\definecolor{boxbg}{RGB}{248, 250, 252}       % Crisp light slate
+\definecolor{solbg}{RGB}{252, 253, 255}
+\definecolor{tipbg}{RGB}{243, 250, 245}
+\definecolor{warnbg}{RGB}{254, 245, 245}
+
+\tcbuselibrary{skins,breakable}
+
+\tcbset{
+    arc=2mm,
+    left=3.5mm,
+    right=3.5mm,
+    top=3mm,
+    bottom=3mm,
+    fonttitle=\bfseries,
+    breakable
+}
+
+% Custom TColorBoxes
+\newtcolorbox{soalbox}[1]{
+    colback=boxbg,
+    colframe=primary,
+    title={#1}
+}
+
+\newtcolorbox{solusibox}[1]{
+    colback=solbg,
+    colframe=accent,
+    title={#1}
+}
+
+\newtcolorbox{tipsbox}[1]{
+    colback=tipbg,
+    colframe=darkgreen,
+    title={#1}
+}
+
+\newtcolorbox{warnbox}[1]{
+    colback=warnbg,
+    colframe=crimson,
+    title={#1}
+}
+
+% Section Title Formatting
+\titleformat{\section}{\large\bfseries\color{primary}}{\thesection}{1em}{}[\titlerule]
+\titleformat{\subsection}{\normalsize\bfseries\color{accent}}{\thesubsection}{1em}{}
+
+\title{
+    \vspace{-1.5cm}
+    \textbf{\huge PANDUAN LENGKAP \& LATIHAN INTENSIF}\\[0.2cm]
+    \textbf{\Large PEMBUKTIAN KEAMANAN SEMPURNA (\textit{PERFECT SECRECY})}\\[0.2cm]
+    \textbf{\Large \& ANALISIS TEORI PELUANG KRIPTOGRAFI}\\[0.3cm]
+    \large Mata Kuliah MA4151 Kriptografi -- Semester I Tahun Ajaran 2026/2027\\[0.1cm]
+    \large Institut Teknologi Bandung
+}
+\author{\textbf{Disusun Khusus Berdasarkan Karakteristik \& Gaya Ujian Dr. Pritta Etriana Putri}}
+\date{Oktober 2026}
+
+\begin{document}
+
+\maketitle
+\vspace{-0.5cm}
+
+\begin{abstract}
+Dokumen ini disusun sebagai panduan pemantapan materi dan bank latihan soal khusus yang mendalami topik \textbf{Keamanan Sempurna (\textit{Perfect Secrecy})} dan \textbf{Teori Peluang dalam Kriptografi} (Claude Shannon, 1949). Topik ini merupakan salah satu materi esai paling esensial dalam perkuliahan MA4151 Kriptografi yang diampu oleh \textbf{Dr. Pritta Etriana Putri}. Dokumen ini membedah: (1) Model probabilitas formal 5-tupel kriptosistem; (2) Dua jalur ekuivalen pengujian \textit{perfect secrecy} (Peluang Posterior Bayes $p(x|y)=p(x)$ vs Peluang Bersyarat Ciphertext $p(y|x)=p(y)$); (3) Penjelasan aljabar mengapa permutasi indeks $\sum p_P((y-k)\bmod m) = 1$ berlaku; (4) Teorema Batas Kardinalitas Shannon ($|\mathcal{K}| \ge |\mathcal{C}| \ge |\mathcal{P}|$) dan implikasi distribusi seragam $p_C(y) = 1/|\mathcal{C}|$ (UTS 2025/2026); (5) Analisis bahaya pemakaian ulang kunci pada Sandi Vernam (\textit{Two-Time Pad}); serta (6) Komputasi eksak Entropi $H(P), H(K), H(C)$ dan \textit{Key Equivocation} $H(K|C)$ pada matriks enkripsi berhingga (Diskusi Kelompok 1). Seluruh butir soal disertai \textbf{pembahasan analitis langkah-demi-langkah, pembuktian formal deduktif, dan template kalimat baku ujian ITB}.
+\end{abstract}
+
+\vspace{0.2cm}
+\hrule
+\vspace{0.3cm}
+
+\tableofcontents
+\newpage
+
+% =========================================================================
+\section{Kerangka Kerja Matematis: Probabilitas \& Keamanan Sempurna}
+% =========================================================================
+
+\subsection{Model Probabilitas Sistem Kripto (5-Tupel Formal)}
+Secara matematis, sistem kriptografi didefinisikan sebagai 5-tupel:
+\[
+(\mathcal{P}, \mathcal{C}, \mathcal{K}, \mathcal{E}, \mathcal{D})
+\]
+di mana $\mathcal{P}$ adalah ruang teks asal, $\mathcal{C}$ adalah ruang teks sandi, dan $\mathcal{K}$ adalah ruang kunci. Dalam kerangka teori peluang Shannon:
+\begin{enumerate}[leftmargin=*]
+    \item Teks asal dipandang sebagai peubah acak $X \in \mathcal{P}$ dengan distribusi peluang $p_{\mathcal{P}}(x) = P(X = x)$ sedemikian hingga $\sum_{x \in \mathcal{P}} p_{\mathcal{P}}(x) = 1$.
+    \item Kunci dipandang sebagai peubah acak $K \in \mathcal{K}$ dengan distribusi peluang $p_{\mathcal{K}}(k) = P(K = k)$ sedemikian hingga $\sum_{k \in \mathcal{K}} p_{\mathcal{K}}(k) = 1$.
+    \item \textbf{Aksioma Independensi Kunci:} Kunci dipilih secara independen terhadap teks asal yang dikirimkan:
+    \[
+    P(X = x, K = k) = p_{\mathcal{P}}(x) \cdot p_{\mathcal{K}}(k)
+    \]
+    \item Teks sandi yang disadap adalah peubah acak $Y \in \mathcal{C}$ yang ditentukan secara deterministik oleh fungsi enkripsi $y = e_k(x)$.
+\end{enumerate}
+
+\subsection{Tiga Formula Fundamental Probabilitas Kriptosistem}
+
+\begin{tipsbox}{Formula 1: Peluang Bersyarat Ciphertext bila Plaintext Diketahui, $p_{\mathcal{C}}(y|x)$}
+Peluang munculnya ciphertext $y$ jika pengirim memilih teks asal $x$ adalah jumlahan peluang seluruh kunci yang memetakan $x$ menjadi $y$:
+\begin{equation}
+\label{eq:pyx}
+p_{\mathcal{C}}(y|x) = \sum_{\{k \in \mathcal{K} \,:\, e_k(x) = y\}} p_{\mathcal{K}}(k)
+\end{equation}
+\textbf{Catatan Penting:} Nilai $p_{\mathcal{C}}(y|x)$ \textbf{sama sekali tidak bergantung pada distribusi teks asal $p_{\mathcal{P}}(x)$}. Nilai ini murni hanya bergantung pada struktur aturan enkripsi dan probabilitas pemilihan kunci $p_{\mathcal{K}}(k)$.
+\end{tipsbox}
+
+\begin{tipsbox}{Formula 2: Peluang Marginal Ciphertext, $p_{\mathcal{C}}(y)$}
+Berdasarkan Hukum Peluang Total (\textit{Law of Total Probability}):
+\begin{equation}
+\label{eq:py}
+p_{\mathcal{C}}(y) = \sum_{x \in \mathcal{P}} p_{\mathcal{P}}(x) \cdot p_{\mathcal{C}}(y|x) = \sum_{\{k \in \mathcal{K} \,:\, y \in C(k)\}} p_{\mathcal{K}}(k) \cdot p_{\mathcal{P}}(d_k(y))
+\end{equation}
+di mana $d_k(y)$ adalah teks asal yang didekripsi dari $y$ di bawah kunci $k$.
+\end{tipsbox}
+
+\begin{tipsbox}{Formula 3: Peluang A Posteriori Plaintext Menggunakan Aturan Bayes, $p_{\mathcal{P}}(x|y)$}
+Peluang bahwa teks asal yang dikirimkan adalah $x$ setelah penyerang menyadap ciphertext $y$:
+\begin{equation}
+\label{eq:pxy}
+p_{\mathcal{P}}(x|y) = \frac{P(X = x, Y = y)}{P(Y = y)} = \frac{p_{\mathcal{P}}(x) \cdot p_{\mathcal{C}}(y|x)}{p_{\mathcal{C}}(y)}
+\end{equation}
+\end{tipsbox}
+
+\subsection{Definisi \& Dua Jalur Ekuivalen Keamanan Sempurna}
+
+\begin{soalbox}{Definisi Keamanan Sempurna (\textit{Perfect Secrecy})}
+Suatu sistem kripto dikatakan mempunyai \textbf{keamanan sempurna} jika untuk setiap $x \in \mathcal{P}$ dan setiap $y \in \mathcal{C}$ dengan $p_{\mathcal{C}}(y) > 0$:
+\begin{equation}
+\label{eq:def_ps}
+p_{\mathcal{P}}(x|y) = p_{\mathcal{P}}(x)
+\end{equation}
+Artinya, menyadap teks sandi $y$ sama sekali tidak memberikan informasi tambahan apa pun mengenai teks asal $x$. Peluang \textit{a posteriori} sama persis dengan peluang \textit{a priori}.
+\end{soalbox}
+
+\begin{tipsbox}{Trik Master Ujian: Dua Jalur Membuktikan / Membantah Perfect Secrecy}
+Berdasarkan Aturan Bayes pada Persamaan~\eqref{eq:pxy}:
+\[
+p_{\mathcal{P}}(x|y) = p_{\mathcal{P}}(x) \iff \frac{p_{\mathcal{P}}(x) \cdot p_{\mathcal{C}}(y|x)}{p_{\mathcal{C}}(y)} = p_{\mathcal{P}}(x) \iff \mathbf{p_{\mathcal{C}}(y|x) = p_{\mathcal{C}}(y)}
+\]
+\textbf{Pedoman Strategi Menjawab Soal Ujian Bu Pritta:}
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Jalur 1 (Untuk MEMBANTAH / Menunjukkan TIDAK Aman Sempurna):}
+    Jangan hitung Aturan Bayes! Cukup cari \textbf{dua teks asal $x_1, x_2$} dan \textbf{satu teks sandi $y$} sedemikian hingga:
+    \[
+    p_{\mathcal{C}}(y|x_1) \ne p_{\mathcal{C}}(y|x_2)
+    \]
+    Jika ada perbedaan nilai peluang bersyarat ini, maka $p_{\mathcal{C}}(y|x)$ tidak konstan terhadap $x$, sehingga sistem \textbf{langsung terbukti TIDAK aman sempurna} hanya dalam 2--3 baris komputasi!
+    \item \textbf{Jalur 2 (Untuk MEMBUKTIKAN Aman Sempurna):}
+    Tunjukkan bahwa untuk sembarang $x \in \mathcal{P}$, nilai $p_{\mathcal{C}}(y|x) = \frac{1}{|\mathcal{C}|}$ (konstan tidak bergantung pada $x$).
+    \item \textbf{Jalur 3 (Khusus jika $|\mathcal{K}| = |\mathcal{C}| = |\mathcal{P}|$ via Teorema Shannon):}
+    Cukup periksa dua syarat perlu \& cukup:
+    \begin{enumerate}
+        \item Kunci dipilih seragam: $p_{\mathcal{K}}(k) = \frac{1}{|\mathcal{K}|}$ untuk setiap $k \in \mathcal{K}$.
+        \item Untuk setiap pasangan $(x, y)$, terdapat tepat satu kunci unik $k$ sedemikian hingga $e_k(x) = y$ (matriks enkripsi membentuk \textit{Latin Square}).
+    \end{enumerate}
+\end{itemize}
+\end{tipsbox}
+
+\newpage
+
+% =========================================================================
+\section{Kumpulan Soal Latihan Mandiri}
+% =========================================================================
+
+\begin{soalbox}{Soal 1: Sandi Geser atas $\mathbb{Z}_m$ \& Analisis Kunci Non-Seragam}
+Diberikan sistem sandi geser atas gelanggang bilangan bulat modulo $m$, dengan $\mathcal{P} = \mathcal{C} = \mathcal{K} = \mathbb{Z}_m$. Fungsi enkripsi adalah $e_k(x) \equiv x + k \pmod m$ dan dekripsi $d_k(y) \equiv y - k \pmod m$.
+\begin{enumerate}[label=(\alph*)]
+    \item Jika kunci dipilih secara acak seragam dengan $p_{\mathcal{K}}(k) = \frac{1}{m}$ untuk setiap $k \in \mathbb{Z}_m$, buktikan secara formal dan deduktif bahwa sistem memiliki \textbf{keamanan sempurna} untuk \textbf{sembarang} distribusi peluang teks asal $p_{\mathcal{P}}(x)$! Jelaskan secara eksplisit mengapa substitusi indeks pada jumlahan $\sum_{k=0}^{m-1} p_{\mathcal{P}}((y-k)\bmod m) = 1$ berlaku secara matematis.
+    \item Misalkan $m = 26$, namun kunci \textbf{tidak dipilih secara seragam}. Diketahui kunci $k = 0$ dipilih dengan peluang $p_{\mathcal{K}}(0) = \frac{1}{2}$, sedangkan 25 kunci lainnya masing-masing memiliki peluang $p_{\mathcal{K}}(k) = \frac{1}{50}$. Buktikan dengan menyajikan sebuah contoh penyangkal formal bahwa sistem ini \textbf{gagal memenuhi keamanan sempurna}!
+\end{enumerate}
+\end{soalbox}
+
+\vspace{0.4cm}
+
+\begin{soalbox}{Soal 2: Matriks Diskrit Berhingga \& Karakterisasi Latin Square}
+Pandang suatu sistem kripto dengan $\mathcal{P} = \{x_1, x_2, x_3\}$, $\mathcal{C} = \{y_1, y_2, y_3\}$, dan $\mathcal{K} = \{K_1, K_2, K_3\}$. Matriks enkripsinya didefinisikan sebagai berikut:
+\begin{center}
+\begin{tabular}{c|ccc}
+\toprule
+Kunci & $x_1$ & $x_2$ & $x_3$ \\
+\midrule
+$K_1$ & $y_1$ & $y_2$ & $y_3$ \\
+$K_2$ & $y_2$ & $y_3$ & $y_1$ \\
+$K_3$ & $y_3$ & $y_1$ & $y_2$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{enumerate}[label=(\alph*)]
+    \item Jika kunci dipilih dengan distribusi \textbf{tidak seragam}: $p_{\mathcal{K}}(K_1) = \frac{1}{2}$, $p_{\mathcal{K}}(K_2) = \frac{1}{4}$, dan $p_{\mathcal{K}}(K_3) = \frac{1}{4}$, buktikan dengan menghitung $p_{\mathcal{C}}(y_1 \mid x_1)$ dan $p_{\mathcal{C}}(y_1 \mid x_2)$ bahwa sistem ini \textbf{TIDAK memiliki keamanan sempurna}!
+    \item Tentukan syarat perlu dan cukup pada distribusi peluang kunci $(p_{\mathcal{K}}(K_1), p_{\mathcal{K}}(K_2), p_{\mathcal{K}}(K_3))$ agar sistem kripto di atas memenuhi keamanan sempurna untuk sembarang distribusi teks asal $p_{\mathcal{P}}(x)$!
+\end{enumerate}
+\end{soalbox}
+
+\vspace{0.4cm}
+
+\begin{soalbox}{Soal 3: Sandi Vernam (One-Time Pad) \& Bahaya Key-Reuse}
+Diberikan Sandi Vernam (\textit{One-Time Pad}) atas ruang vektor biner berdimensi $n$: $\mathcal{P} = \mathcal{C} = \mathcal{K} = \{0, 1\}^n$. Fungsi enkripsi didefinisikan sebagai operasi XOR bit-per-bit:
+\[
+y = e_k(x) = x \oplus k
+\]
+\begin{enumerate}[label=(\alph*)]
+    \item Buktikan bahwa jika kunci $k$ dipilih secara seragam dari $\{0, 1\}^n$ ($p_{\mathcal{K}}(k) = 2^{-n}$ untuk setiap $k$), maka sistem memiliki keamanan sempurna.
+    \item Misalkan pengirim menggunakan kunci rahasia $k$ yang sama untuk mengenkripsi dua pesan independen $x_1, x_2 \in \{0, 1\}^n$, menghasilkan teks sandi $y_1 = x_1 \oplus k$ dan $y_2 = x_2 \oplus k$. Buktikan secara matematis berbasis peluang bahwa pengamatan terhadap pasangan $(y_1, y_2)$ \textbf{merusak keamanan sempurna}, yakni buktikan bahwa:
+    \[
+    P(x_1 = x_2 \mid y_1, y_2) \ne P(x_1 = x_2)
+    \]
+\end{enumerate}
+\end{soalbox}
+
+\newpage
+
+\begin{soalbox}{Soal 4: Teorema Batas Kardinalitas Shannon \& Distribusi Seragam (UTS 2025/2026)}
+Misalkan suatu sistem kripto $(\mathcal{P}, \mathcal{C}, \mathcal{K}, \mathcal{E}, \mathcal{D})$ memiliki keamanan sempurna dan memenuhi kondisi $|\mathcal{K}| = |\mathcal{C}| = |\mathcal{P}|$.
+\begin{enumerate}[label=(\alph*)]
+    \item Buktikan bahwa untuk setiap $x \in \mathcal{P}$ dan setiap $y \in \mathcal{C}$, terdapat \textbf{tepat satu kunci unik} $k \in \mathcal{K}$ sedemikian hingga $e_k(x) = y$.
+    \item Buktikan bahwa distribusi marginal teks sandi \textbf{harus berdistribusi seragam}, yakni:
+    \[
+    p_{\mathcal{C}}(y) = \frac{1}{|\mathcal{C}|} \quad \forall y \in \mathcal{C}
+    \]
+    tanpa bergantung pada distribusi peluang teks asal $p_{\mathcal{P}}(x)$!
+\end{enumerate}
+\end{soalbox}
+
+\vspace{0.4cm}
+
+\begin{soalbox}{Soal 5: Komputasi Entropi Eksak \& Key Equivocation (Format Diskusi Kelompok 1)}
+Diberikan sistem kripto dengan ruang kata asal $\mathcal{P} = \{a, b, c\}$, ruang kunci $\mathcal{K} = \{K_1, K_2, K_3\}$, dan ruang teks sandi $\mathcal{C} = \{1, 2, 3, 4\}$. Matriks aturan enkripsi diberikan oleh tabel berikut:
+\begin{center}
+\begin{tabular}{c|ccc}
+\toprule
+Kunci & $a$ & $b$ & $c$ \\
+\midrule
+$K_1$ & 1 & 2 & 3 \\
+$K_2$ & 2 & 3 & 4 \\
+$K_3$ & 3 & 4 & 1 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Diketahui bahwa kunci dipilih secara seragam ($p_{\mathcal{K}}(K_1) = p_{\mathcal{K}}(K_2) = p_{\mathcal{K}}(K_3) = \frac{1}{3}$) dan distribusi teks asal adalah:
+\[
+p_{\mathcal{P}}(a) = \frac{1}{2}, \quad p_{\mathcal{P}}(b) = \frac{1}{3}, \quad p_{\mathcal{P}}(c) = \frac{1}{6}
+\]
+\begin{enumerate}[label=(\alph*)]
+    \item Hitung peluang marginal teks sandi $p_{\mathcal{C}}(y)$ untuk setiap $y \in \{1, 2, 3, 4\}$ dalam bentuk pecahan eksak paling sederhana!
+    \item Hitung nilai entropi teks asal $H(P)$, entropi kunci $H(K)$, dan entropi teks sandi $H(C)$ dalam satuan bit!
+    \item Menggunakan identitas *key equivocation* $H(K \mid C) = H(K) + H(P) - H(C)$, hitung nilai $H(K \mid C)$ dan buktikan bahwa sistem ini \textbf{mengalami kebocoran informasi} ($H(P \mid C) < H(P)$)!
+\end{enumerate}
+\end{soalbox}
+
+\vspace{0.4cm}
+
+\begin{soalbox}{Soal 6: Sandi Affine \& Karakteristik Keamanan 1 Huruf vs Multikarakter}
+Pandang sandi Affine atas alfabet Latin $\mathbb{Z}_{26}$ dengan aturan enkripsi $e_{(a,b)}(x) \equiv ax + b \pmod{26}$, di mana $a \in \mathbb{Z}_{26}^*$ dan $b \in \mathbb{Z}_{26}$. Ruang kunci memiliki ukuran $|\mathcal{K}| = 12 \times 26 = 312$.
+\begin{enumerate}[label=(\alph*)]
+    \item Jika kunci $K = (a, b)$ dipilih secara acak seragam dengan peluang $p_{\mathcal{K}}(a, b) = \frac{1}{312}$, buktikan bahwa sandi Affine untuk enkripsi \textbf{tepat satu karakter tunggal} ($n = 1$) memiliki \textbf{keamanan sempurna}!
+    \item Mengapa sandi Affine \textbf{kehilangan keamanan sempurna} ketika digunakan untuk mengenkripsi pesan berpanjang dua karakter atau lebih ($n \ge 2$) menggunakan kunci $(a, b)$ yang sama? Jelaskan secara analitis menggunakan perbandingan peluang atau rasio selisih kongruensi!
+\end{enumerate}
+\end{soalbox}
+
+\newpage
+
+% =========================================================================
+\section{Pembahasan Lengkap \& Penurunan Matematis Eksak}
+% =========================================================================
+
+\subsection{Pembahasan Soal 1: Sandi Geser atas $\mathbb{Z}_m$}
+
+\begin{solusibox}{Solusi Lengkap Soal 1(a): Pembuktian Formal Keamanan Sempurna}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Analisis Peluang Bersyarat $p_{\mathcal{C}}(y|x)$:}
+    Berdasarkan definisi aturan enkripsi sandi geser:
+    \[
+    e_k(x) \equiv x + k \equiv y \pmod m \iff k \equiv (y - x) \pmod m
+    \]
+    Untuk setiap pasangan teks asal $x \in \mathbb{Z}_m$ dan teks sandi $y \in \mathbb{Z}_m$ yang diberikan, terdapat tepat satu elemen kunci unik $k_0 \in \mathbb{Z}_m$ yang memenuhi kekongruenan di atas, yakni:
+    \[
+    k_0 = (y - x) \bmod m
+    \]
+    Akibatnya, himpunan kunci yang memetakan $x$ ke $y$ adalah himpunan tunggal $\{k_0\}$. Berdasarkan Formula~\eqref{eq:pyx}:
+    \[
+    p_{\mathcal{C}}(y|x) = \sum_{\{k \,:\, e_k(x) = y\}} p_{\mathcal{K}}(k) = p_{\mathcal{K}}((y - x) \bmod m)
+    \]
+    Karena diketahui bahwa kunci berdistribusi seragam $p_{\mathcal{K}}(k) = \frac{1}{m}$ untuk semua $k \in \mathbb{Z}_m$, maka:
+    \[
+    p_{\mathcal{C}}(y|x) = \frac{1}{m} \quad \text{untuk setiap } x \in \mathbb{Z}_m \text{ dan } y \in \mathbb{Z}_m
+    \]
+
+    \item \textbf{Analisis Peluang Marginal Ciphertext $p_{\mathcal{C}}(y)$ \& Penjelasan Permutasi Indeks:}
+    Menggunakan Hukum Peluang Total:
+    \[
+    p_{\mathcal{C}}(y) = \sum_{x \in \mathbb{Z}_m} p_{\mathcal{P}}(x) \cdot p_{\mathcal{C}}(y|x) = \sum_{x \in \mathbb{Z}_m} p_{\mathcal{P}}(x) \cdot \frac{1}{m} = \frac{1}{m} \sum_{x \in \mathbb{Z}_m} p_{\mathcal{P}}(x)
+    \]
+    Karena ruang sampel teks asal adalah $\mathcal{P} = \mathbb{Z}_m$, total probabilitas adalah $\sum_{x \in \mathbb{Z}_m} p_{\mathcal{P}}(x) = 1$. Sehingga:
+    \[
+    p_{\mathcal{C}}(y) = \frac{1}{m} \cdot 1 = \frac{1}{m} \quad \forall y \in \mathbb{Z}_m
+    \]
+
+    \textit{Penjelasan Alternatif Melalui Dekripsi:}
+    Jika dihitung melalui ruang kunci:
+    \[
+    p_{\mathcal{C}}(y) = \sum_{k=0}^{m-1} p_{\mathcal{K}}(k) \cdot p_{\mathcal{P}}(d_k(y)) = \frac{1}{m} \sum_{k=0}^{m-1} p_{\mathcal{P}}((y - k) \bmod m)
+    \]
+    Pandang fungsi pemetaan indeks $\sigma_y: \mathbb{Z}_m \to \mathbb{Z}_m$ dengan aturan $\sigma_y(k) = (y - k) \bmod m$.
+    \begin{itemize}
+        \item Fungsi $\sigma_y$ adalah pemetaan injektif: Jika $(y - k_1) \equiv (y - k_2) \pmod m \iff -k_1 \equiv -k_2 \pmod m \iff k_1 \equiv k_2 \pmod m$.
+        \item Karena domain dan kodomain berukuran sama ($m$), pemetaan injektif pada himpunan berhingga otomatis bersifat \textbf{bijektif} (sebuah permutasi atas himpunan $\mathbb{Z}_m$).
+    \end{itemize}
+    Dengan demikian, ketika indeks $k$ berjalan melintasi $\{0, 1, \dots, m-1\}$, nilai $(y - k) \bmod m$ menjelajahi setiap elemen dalam $\mathbb{Z}_m$ tepat satu kali tanpa ada yang terlewat. Akibatnya:
+    \[
+    \sum_{k=0}^{m-1} p_{\mathcal{P}}((y - k) \bmod m) = \sum_{z \in \mathbb{Z}_m} p_{\mathcal{P}}(z) = 1 \implies p_{\mathcal{C}}(y) = \frac{1}{m}
+    \]
+
+    \item \textbf{Penerapan Aturan Bayes:}
+    Substitusikan kedua hasil di atas ke dalam Aturan Bayes:
+    \[
+    p_{\mathcal{P}}(x|y) = \frac{p_{\mathcal{P}}(x) \cdot p_{\mathcal{C}}(y|x)}{p_{\mathcal{C}}(y)} = \frac{p_{\mathcal{P}}(x) \cdot \frac{1}{m}}{\frac{1}{m}} = p_{\mathcal{P}}(x)
+    \]
+    Karena kesamaan $p_{\mathcal{P}}(x|y) = p_{\mathcal{P}}(x)$ terbukti berlaku untuk setiap $x \in \mathcal{P}$ dan setiap $y \in \mathcal{C}$, terbukti secara formal bahwa sandi geser dengan kunci seragam memenuhi **keamanan sempurna**.
+\end{enumerate}
+\end{solusibox}
+
+\vspace{0.3cm}
+
+\begin{solusibox}{Solusi Lengkap Soal 1(b): Contoh Penyangkal Kunci Non-Seragam}
+Diketahui distribusi kunci: $p_{\mathcal{K}}(0) = \frac{1}{2}$ dan $p_{\mathcal{K}}(k) = \frac{1}{50}$ untuk $k \in \{1, 2, \dots, 25\}$.
+Tinjau teks sandi tertentu, misalkan $y = 0$:
+\begin{itemize}
+    \item Untuk teks asal $x_1 = 0$:
+    Kunci yang diperlukan untuk menghasilkan $y = 0$ adalah:
+    \[
+    k \equiv y - x_1 \equiv 0 - 0 = 0 \pmod{26} \implies p_{\mathcal{C}}(0 \mid 0) = p_{\mathcal{K}}(0) = \frac{1}{2} = 0.50
+    \]
+    \item Untuk teks asal $x_2 = 1$:
+    Kunci yang diperlukan untuk menghasilkan $y = 0$ adalah:
+    \[
+    k \equiv y - x_2 \equiv 0 - 1 \equiv 25 \pmod{26} \implies p_{\mathcal{C}}(0 \mid 1) = p_{\mathcal{K}}(25) = \frac{1}{50} = 0.02
+    \]
+\end{itemize}
+Karena:
+\[
+p_{\mathcal{C}}(0 \mid 0) = \frac{1}{2} \ne \frac{1}{50} = p_{\mathcal{C}}(0 \mid 1)
+\]
+peluang bersyarat kemunculan teks sandi $y = 0$ bergantung pada teks asal yang dikirimkan ($p_{\mathcal{C}}(y|x) \ne p_{\mathcal{C}}(y)$).
+Maka menurut Aturan Bayes, $p_{\mathcal{P}}(x|y) \ne p_{\mathcal{P}}(x)$.
+Sistem terbukti secara formal \textbf{TIDAK memiliki keamanan sempurna}.
+\end{solusibox}
+
+\newpage
+
+\subsection{Pembahasan Soal 2: Matriks Diskrit Berhingga \& Latin Square}
+
+\begin{solusibox}{Solusi Lengkap Soal 2(a): Uji Kolom Cepat untuk Membantah Perfect Secrecy}
+Perhatikan matriks enkripsi berukuran $3 \times 3$:
+\begin{itemize}
+    \item Tinjau ciphertext $y_1$ pada kolom teks asal $x_1$:
+    Ciphertext $y_1$ muncul pada baris kunci $K_1$. Maka:
+    \[
+    p_{\mathcal{C}}(y_1 \mid x_1) = P(K = K_1) = p_{\mathcal{K}}(K_1) = \frac{1}{2}
+    \]
+    \item Tinjau ciphertext $y_1$ pada kolom teks asal $x_2$:
+    Ciphertext $y_1$ muncul pada baris kunci $K_3$. Maka:
+    \[
+    p_{\mathcal{C}}(y_1 \mid x_2) = P(K = K_3) = p_{\mathcal{K}}(K_3) = \frac{1}{4}
+    \]
+\end{itemize}
+Karena:
+\[
+p_{\mathcal{C}}(y_1 \mid x_1) = \frac{1}{2} \ne \frac{1}{4} = p_{\mathcal{C}}(y_1 \mid x_2)
+\]
+distribusi ciphertext bersyarat tidak independen terhadap teks asal yang dikirimkan.
+Dengan demikian, sistem kripto ini \textbf{TIDAK memiliki keamanan sempurna}.
+\end{solusibox}
+
+\vspace{0.3cm}
+
+\begin{solusibox}{Solusi Lengkap Soal 2(b): Syarat Perlu dan Cukup Distribusi Kunci}
+Agar sistem kripto memiliki keamanan sempurna untuk sembarang distribusi teks asal, haruslah berlaku kondisi ekuivalen:
+\[
+p_{\mathcal{C}}(y \mid x_1) = p_{\mathcal{C}}(y \mid x_2) = p_{\mathcal{C}}(y \mid x_3) = p_{\mathcal{C}}(y) \quad \forall y \in \{y_1, y_2, y_3\}
+\]
+Mari kita uraikan nilai peluang bersyarat untuk masing-masing $y$:
+\begin{enumerate}
+    \item Untuk $y = y_1$:
+    \begin{align*}
+    p_{\mathcal{C}}(y_1 \mid x_1) &= p_{\mathcal{K}}(K_1) \\
+    p_{\mathcal{C}}(y_1 \mid x_2) &= p_{\mathcal{K}}(K_3) \\
+    p_{\mathcal{C}}(y_1 \mid x_3) &= p_{\mathcal{K}}(K_2)
+    \end{align*}
+    Agar ketiga nilai ini sama, disyaratkan:
+    \[
+    p_{\mathcal{K}}(K_1) = p_{\mathcal{K}}(K_2) = p_{\mathcal{K}}(K_3)
+    \]
+    \item Untuk $y = y_2$ dan $y = y_3$, peninjauan kolom menghasilkan kondisi kesamaan yang persis identik.
+\end{enumerate}
+Mengingat aksioma dasar peluang bahwa total peluang pada ruang sampel kunci harus sama dengan satu:
+\[
+p_{\mathcal{K}}(K_1) + p_{\mathcal{K}}(K_2) + p_{\mathcal{K}}(K_3) = 1
+\]
+Substitusikan syarat kesamaan $p_{\mathcal{K}}(K_1) = p_{\mathcal{K}}(K_2) = p_{\mathcal{K}}(K_3) = p$:
+\[
+3p = 1 \iff p = \frac{1}{3}
+\]
+\textbf{Kesimpulan Formal:} Syarat perlu dan cukup agar sistem memenuhi keamanan sempurna adalah kunci harus dipilih menurut \textbf{distribusi seragam}:
+\[
+\mathbf{p_{\mathcal{K}}(K_1) = p_{\mathcal{K}}(K_2) = p_{\mathcal{K}}(K_3) = \frac{1}{3}}
+\]
+\end{solusibox}
+
+\newpage
+
+\subsection{Pembahasan Soal 3: Sandi Vernam (OTP) \& Key-Reuse}
+
+\begin{solusibox}{Solusi Lengkap Soal 3(a): Pembuktian Formal Keamanan Sempurna OTP}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Kardinalitas Ruang:} $\mathcal{P} = \mathcal{C} = \mathcal{K} = \{0, 1\}^n$, sehingga $|\mathcal{K}| = |\mathcal{C}| = |\mathcal{P}| = 2^n$.
+    \item \textbf{Keunikan Kunci:} Operasi penjumlahan modulo 2 bit-per-bit ($\oplus$) membentuk grup Abelian $(\{0, 1\}^n, \oplus)$ di mana setiap elemen merupakan inversnya sendiri ($k \oplus k = 0^n$). Maka:
+    \[
+    y = x \oplus k \iff k = x \oplus y
+    \]
+    Untuk setiap pasangan teks asal $x \in \{0, 1\}^n$ dan teks sandi $y \in \{0, 1\}^n$, terdapat \textbf{tepat satu kunci unik} $k_0 = x \oplus y$ yang memenuhi $e_k(x) = y$.
+    \item \textbf{Peluang Bersyarat:}
+    \[
+    p_{\mathcal{C}}(y|x) = P(K = x \oplus y) = p_{\mathcal{K}}(x \oplus y)
+    \]
+    Karena kunci dipilih secara acak seragam dari $\{0, 1\}^n$, maka $p_{\mathcal{K}}(k) = \frac{1}{2^n}$ untuk setiap $k$. Sehingga:
+    \[
+    p_{\mathcal{C}}(y|x) = \frac{1}{2^n} \quad \forall x \in \{0, 1\}^n, \, \forall y \in \{0, 1\}^n
+    \]
+    \item \textbf{Peluang Marginal Ciphertext:}
+    \[
+    p_{\mathcal{C}}(y) = \sum_{x \in \{0, 1\}^n} p_{\mathcal{P}}(x) \cdot p_{\mathcal{C}}(y|x) = \frac{1}{2^n} \sum_{x \in \{0, 1\}^n} p_{\mathcal{P}}(x) = \frac{1}{2^n} \cdot 1 = \frac{1}{2^n}
+    \]
+    \item \textbf{Aturan Bayes:}
+    \[
+    p_{\mathcal{P}}(x|y) = \frac{p_{\mathcal{P}}(x) \cdot p_{\mathcal{C}}(y|x)}{p_{\mathcal{C}}(y)} = \frac{p_{\mathcal{P}}(x) \cdot 2^{-n}}{2^{-n}} = p_{\mathcal{P}}(x)
+    \]
+    Terbukti Sandi Vernam dengan kunci seragam memenuhi \textbf{keamanan sempurna}.
+\end{enumerate}
+\end{solusibox}
+
+\vspace{0.3cm}
+
+\begin{solusibox}{Solusi Lengkap Soal 3(b): Bukti Peluang Kerusakan Keamanan Sempurna (Two-Time Pad)}
+Diberikan $y_1 = x_1 \oplus k$ dan $y_2 = x_2 \oplus k$ dengan kunci $k$ yang sama.
+Penyerang yang menyadap pasangan $(y_1, y_2)$ melakukan operasi XOR:
+\[
+y_1 \oplus y_2 = (x_1 \oplus k) \oplus (x_2 \oplus k) = x_1 \oplus x_2 \oplus (k \oplus k) = x_1 \oplus x_2
+\]
+Kunci rahasia $k$ tereliminasi sepenuhnya!
+Tinjau kejadian $E$: ``Kedua teks asal adalah identik'' ($x_1 = x_2$).
+\begin{enumerate}
+    \item \textbf{Peluang A Priori (Sebelum Menyadap Ciphertext):}
+    Karena $x_1$ dan $x_2$ adalah dua pesan independen dengan distribusi seragam atas $\{0, 1\}^n$:
+    \[
+    P(x_1 = x_2) = \sum_{w \in \{0, 1\}^n} P(x_1 = w, x_2 = w) = \sum_{w \in \{0, 1\}^n} \frac{1}{2^n} \cdot \frac{1}{2^n} = 2^n \cdot \frac{1}{2^{2n}} = \mathbf{\frac{1}{2^n}}
+    \]
+    \item \textbf{Peluang A Posteriori (Setelah Menyadap $y_1, y_2$):}
+    \begin{itemize}
+        \item Kasus 1: Jika teramati $y_1 = y_2$, maka $y_1 \oplus y_2 = 0^n$, yang berakibat $x_1 \oplus x_2 = 0^n \iff x_1 = x_2$ dengan kepastian mutlak:
+        \[
+        P(x_1 = x_2 \mid y_1 = y_2) = 1 \ne \frac{1}{2^n}
+        \]
+        \item Kasus 2: Jika teramati $y_1 \ne y_2$, maka $y_1 \oplus y_2 \ne 0^n$, yang berakibat mustahil $x_1 = x_2$:
+        \[
+        P(x_1 = x_2 \mid y_1 \ne y_2) = 0 \ne \frac{1}{2^n}
+        \]
+    \end{itemize}
+\end{enumerate}
+Karena $P(x_1 = x_2 \mid y_1, y_2) \ne P(x_1 = x_2)$, pengamatan terhadap teks sandi mengubah probabilitas teks asal secara deterministik.
+Dengan demikian, **keamanan sempurna rusak total**.
+\end{solusibox}
+
+\newpage
+
+\subsection{Pembahasan Soal 4: Teorema Kardinalitas Shannon (UTS 2025/2026)}
+
+\begin{solusibox}{Solusi Lengkap Soal 4(a): Bukti Formal Keunikan Kunci}
+\begin{proof}
+Asumsikan sistem memiliki keamanan sempurna dan $|\mathcal{K}| = |\mathcal{C}| = |\mathcal{P}|$.
+\begin{enumerate}
+    \item Dari definisi keamanan sempurna: untuk setiap $x \in \mathcal{P}$ dan $y \in \mathcal{C}$ dengan $p_{\mathcal{C}}(y) > 0$, berlaku $p_{\mathcal{P}}(x|y) = p_{\mathcal{P}}(x)$. Berdasarkan Aturan Bayes:
+    \[
+    p_{\mathcal{C}}(y|x) = \frac{p_{\mathcal{P}}(x|y) \cdot p_{\mathcal{C}}(y)}{p_{\mathcal{P}}(x)} = p_{\mathcal{C}}(y) > 0
+    \]
+    Karena $p_{\mathcal{C}}(y|x) > 0$ untuk setiap pasangan $(x, y)$, maka harus ada setidaknya satu kunci $k \in \mathcal{K}$ sedemikian hingga $e_k(x) = y$.
+    
+    \item Untuk suatu teks asal $x \in \mathcal{P}$ yang dipilih tetap, definisikan himpunan kunci yang memetakan $x$ ke ciphertext $y$:
+    \[
+    K_{x,y} = \{k \in \mathcal{K} : e_k(x) = y\}
+    \]
+    Karena fungsi enkripsi bersifat deterministik (satu kunci hanya menghasilkan satu ciphertext unik untuk $x$ tertentu), maka untuk sembarang $y_1 \ne y_2$:
+    \[
+    K_{x,y_1} \cap K_{x,y_2} = \emptyset
+    \]
+    Selain itu, setiap kunci $k \in \mathcal{K}$ pasti menghasilkan suatu ciphertext dalam $\mathcal{C}$, sehingga keluarga himpunan $\{K_{x,y}\}_{y \in \mathcal{C}}$ membentuk \textbf{partisi} atas ruang kunci $\mathcal{K}$:
+    \[
+    \bigcup_{y \in \mathcal{C}} K_{x,y} = \mathcal{K} \implies |\mathcal{K}| = \sum_{y \in \mathcal{C}} |K_{x,y}|
+    \]
+    
+    \item Berdasarkan langkah 1, $|K_{x,y}| \ge 1$ untuk setiap $y \in \mathcal{C}$. Maka:
+    \[
+    |\mathcal{K}| = \sum_{y \in \mathcal{C}} |K_{x,y}| \ge \sum_{y \in \mathcal{C}} 1 = |\mathcal{C}|
+    \]
+    Namun pada hipotesis soal diketahui bahwa $|\mathcal{K}| = |\mathcal{C}|$. Jumlahan sebanyak $|\mathcal{C}|$ buah bilangan bulat positif $|K_{x,y}| \ge 1$ yang bernilai tepat sama dengan $|\mathcal{C}|$ hanya dapat dipenuhi jika dan hanya jika \textbf{setiap suku bernilai tepat 1}:
+    \[
+    |K_{x,y}| = 1 \quad \forall y \in \mathcal{C}
+    \]
+    Terbukti untuk setiap pasangan $x \in \mathcal{P}$ dan $y \in \mathcal{C}$, terdapat tepat satu kunci unik $k \in \mathcal{K}$ sedemikian hingga $e_k(x) = y$.
+\end{enumerate}
+\end{proof}
+\end{solusibox}
+
+\vspace{0.3cm}
+
+\begin{solusibox}{Solusi Lengkap Soal 4(b): Bukti Distribusi Ciphertext Seragam $p_{\mathcal{C}}(y) = \frac{1}{|\mathcal{C}|}$}
+\begin{proof}
+Dari hasil bagian (a), untuk setiap pasangan $(x, y)$, terdapat tepat satu kunci unik $k_{x,y}$ sedemikian hingga $e_{k_{x,y}}(x) = y$.
+\begin{enumerate}
+    \item Peluang bersyarat kemunculan ciphertext $y$ jika teks asal $x$ dikirimkan adalah:
+    \[
+    p_{\mathcal{C}}(y|x) = p_{\mathcal{K}}(k_{x,y})
+    \]
+    \item Berdasarkan syarat keamanan sempurna, $p_{\mathcal{C}}(y|x) = p_{\mathcal{C}}(y)$ tidak bergantung pada $x$. Hal ini berarti nilai probabilitas kunci $p_{\mathcal{K}}(k_{x,y})$ harus bernilai konstan sama dengan $p_{\mathcal{C}}(y)$ untuk semua $x \in \mathcal{P}$.
+    \item Pilih teks asal $x_0 \in \mathcal{P}$ sembarang. Ketika $y$ menjelajahi seluruh elemen $\mathcal{C}$, kunci unik $k_{x_0, y}$ menjelajahi seluruh elemen $\mathcal{K}$ tepat satu kali. Oleh karena itu, probabilitas pemilihan setiap kunci $k \in \mathcal{K}$ harus seragam:
+    \[
+    p_{\mathcal{K}}(k) = \frac{1}{|\mathcal{K}|} \quad \forall k \in \mathcal{K}
+    \]
+    \item Karena untuk setiap $y \in \mathcal{C}$, $p_{\mathcal{C}}(y) = p_{\mathcal{C}}(y \mid x_0) = p_{\mathcal{K}}(k_{x_0, y})$, dan diketahui $p_{\mathcal{K}}(k) = \frac{1}{|\mathcal{K}|}$, maka:
+    \[
+    p_{\mathcal{C}}(y) = \frac{1}{|\mathcal{K}|}
+    \]
+    Mengingat $|\mathcal{K}| = |\mathcal{C}|$, disimpulkan secara formal bahwa:
+    \[
+    \mathbf{p_{\mathcal{C}}(y) = \frac{1}{|\mathcal{C}|} \quad \forall y \in \mathcal{C}}
+    \]
+    Distribusi marginal teks sandi terbukti seragam sempurna tanpa bergantung pada distribusi teks asal $p_{\mathcal{P}}(x)$.
+\end{enumerate}
+\end{proof}
+\end{solusibox}
+
+\newpage
+
+\subsection{Pembahasan Soal 5: Komputasi Entropi \& Equivocation (Diskusi Kelompok 1)}
+
+\begin{solusibox}{Solusi Lengkap Soal 5(a): Peluang Marginal Ciphertext $p_{\mathcal{C}}(y)$}
+Diketahui $p_{\mathcal{K}}(K_1) = p_{\mathcal{K}}(K_2) = p_{\mathcal{K}}(K_3) = \frac{1}{3}$. Peluang bersama pasangan $(K, x)$ adalah:
+\[
+P(K = K_i, X = x) = p_{\mathcal{K}}(K_i) \cdot p_{\mathcal{P}}(x) = \frac{1}{3} p_{\mathcal{P}}(x)
+\]
+Hitung peluang marginal untuk setiap ciphertext $y \in \{1, 2, 3, 4\}$ berdasarkan sel kemunculannya pada matriks enkripsi:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Untuk $y = 1$:} Dihasilkan oleh pasangan $(K_1, a)$ dan $(K_3, c)$:
+    \[
+    p_{\mathcal{C}}(1) = \frac{1}{3} p_{\mathcal{P}}(a) + \frac{1}{3} p_{\mathcal{P}}(c) = \frac{1}{3}\left(\frac{1}{2}\right) + \frac{1}{3}\left(\frac{1}{6}\right) = \frac{1}{6} + \frac{1}{18} = \frac{4}{18} = \mathbf{\frac{2}{9}}
+    \]
+    \item \textbf{Untuk $y = 2$:} Dihasilkan oleh pasangan $(K_1, b)$ dan $(K_2, a)$:
+    \[
+    p_{\mathcal{C}}(2) = \frac{1}{3} p_{\mathcal{P}}(b) + \frac{1}{3} p_{\mathcal{P}}(a) = \frac{1}{3}\left(\frac{1}{3}\right) + \frac{1}{3}\left(\frac{1}{2}\right) = \frac{1}{9} + \frac{1}{6} = \frac{2}{18} + \frac{3}{18} = \mathbf{\frac{5}{18}}
+    \]
+    \item \textbf{Untuk $y = 3$:} Dihasilkan oleh pasangan $(K_1, c)$, $(K_2, b)$, dan $(K_3, a)$:
+    \[
+    p_{\mathcal{C}}(3) = \frac{1}{3}\left[p_{\mathcal{P}}(c) + p_{\mathcal{P}}(b) + p_{\mathcal{P}}(a)\right] = \frac{1}{3}\left(\frac{1}{6} + \frac{1}{3} + \frac{1}{2}\right) = \frac{1}{3}(1) = \frac{1}{3} = \mathbf{\frac{6}{18}}
+    \]
+    \item \textbf{Untuk $y = 4$:} Dihasilkan oleh pasangan $(K_2, c)$ dan $(K_3, b)$:
+    \[
+    p_{\mathcal{C}}(4) = \frac{1}{3} p_{\mathcal{P}}(c) + \frac{1}{3} p_{\mathcal{P}}(b) = \frac{1}{3}\left(\frac{1}{6}\right) + \frac{1}{3}\left(\frac{1}{3}\right) = \frac{1}{18} + \frac{1}{9} = \frac{3}{18} = \mathbf{\frac{1}{6}}
+    \]
+\end{itemize}
+\textit{Pemeriksaan Total Peluang:} $\sum p_{\mathcal{C}}(y) = \frac{4 + 5 + 6 + 3}{18} = \frac{18}{18} = 1$ (Konsisten).
+\end{solusibox}
+
+\vspace{0.3cm}
+
+\begin{solusibox}{Solusi Lengkap Soal 5(b): Perhitungan Entropi $H(P), H(K), H(C)$}
+Gunakan definisi entropi Shannon: $H(Z) = -\sum p(z) \log_2 p(z)$ (bit):
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Entropi Teks Asal $H(P)$:}
+    \begin{align*}
+    H(P) &= -\left[\frac{1}{2}\log_2\left(\frac{1}{2}\right) + \frac{1}{3}\log_2\left(\frac{1}{3}\right) + \frac{1}{6}\log_2\left(\frac{1}{6}\right)\right] \\
+    &= \frac{1}{2}(1) + \frac{1}{3}(1.58496) + \frac{1}{6}(2.58496) \\
+    &= 0.5000 + 0.5283 + 0.4308 = \mathbf{1.4591 \text{ bit}}
+    \end{align*}
+    \item \textbf{Entropi Kunci $H(K)$:}
+    Karena kunci berdistribusi seragam atas 3 elemen:
+    \[
+    H(K) = \log_2(3) \approx \mathbf{1.5850 \text{ bit}}
+    \]
+    \item \textbf{Entropi Teks Sandi $H(C)$:}
+    \begin{align*}
+    H(C) &= -\left[\frac{4}{18}\log_2\left(\frac{4}{18}\right) + \frac{5}{18}\log_2\left(\frac{5}{18}\right) + \frac{6}{18}\log_2\left(\frac{6}{18}\right) + \frac{3}{18}\log_2\left(\frac{3}{18}\right)\right] \\
+    &= -\left[0.2222(-2.1699) + 0.2778(-1.8480) + 0.3333(-1.5850) + 0.1667(-2.5850)\right] \\
+    &= -[-0.4822 - 0.5133 - 0.5283 - 0.4308] = \mathbf{1.9546 \text{ bit}}
+    \end{align*}
+\end{enumerate}
+\end{solusibox}
+
+\vspace{0.3cm}
+
+\begin{solusibox}{Solusi Lengkap Soal 5(c): Perhitungan Equivocation \& Bukti Kebocoran Informasi}
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Menghitung Key Equivocation $H(K \mid C)$:}
+    Gunakan identitas aturan rantai entropi Shannon:
+    \[
+    H(K \mid C) = H(K) + H(P) - H(C)
+    \]
+    Substitusikan nilai yang telah dihitung:
+    \[
+    H(K \mid C) = 1.5850 + 1.4591 - 1.9546 = \mathbf{1.0895 \text{ bit}}
+    \]
+    \textit{Catatan Aljabar:} Nilai $H(K \mid C) = 1.0895 < H(K) = 1.5850$, yang menunjukkan bahwa ketidakpastian penyerang mengenai kunci berkurang sebesar $1.5850 - 1.0895 = 0.4955$ bit setelah menyadap teks sandi.
+    
+    \item \textbf{Menghitung Message Equivocation $H(P \mid C)$ \& Informasi Saling $I(P; C)$:}
+    Karena enkripsi deterministik, $H(C \mid P, K) = 0$, dan pemilihan pesan serta kunci saling bebas, maka $H(C \mid P) = H(K) = 1.5850$ bit. Informasi saling (*Mutual Information*) antara teks asal dan teks sandi adalah:
+    \[
+    I(P; C) = H(C) - H(C \mid P) = 1.9546 - 1.5850 = \mathbf{0.3696 \text{ bit}}
+    \]
+    Berdasarkan relasi simetri informasi saling:
+    \[
+    H(P \mid C) = H(P) - I(P; C) = 1.4591 - 0.3696 = \mathbf{1.0895 \text{ bit}}
+    \]
+    \item \textbf{Kesimpulan:}
+    Karena $H(P \mid C) = 1.0895 < 1.4591 = H(P)$ dan $I(P; C) = 0.3696 > 0$, pengamatan terhadap ciphertext $C$ secara parsial membocorkan informasi tentang teks asal $P$.
+    Sistem ini terbukti secara definitif \textbf{TIDAK memiliki keamanan sempurna}.
+\end{enumerate}
+\end{solusibox}
+
+\newpage
+
+\subsection{Pembahasan Soal 6: Sandi Affine (Karakter Tunggal vs Multikarakter)}
+
+\begin{solusibox}{Solusi Lengkap Soal 6(a): Bukti Keamanan Sempurna untuk $n = 1$}
+\begin{proof}
+Tinjau sandi Affine untuk pesan satu karakter: $\mathcal{P} = \mathcal{C} = \mathbb{Z}_{26}$.
+Ruang kunci adalah $\mathcal{K} = \mathbb{Z}_{26}^* \times \mathbb{Z}_{26}$, sehingga $|\mathcal{K}| = \varphi(26) \times 26 = 12 \times 26 = 312$.
+Aturan enkripsi: $y \equiv ax + b \pmod{26}$.
+\begin{enumerate}
+    \item Pilih sembarang pasangan teks asal $x \in \mathbb{Z}_{26}$ dan teks sandi $y \in \mathbb{Z}_{26}$.
+    Kekongruenan enkripsi ekuivalen dengan:
+    \[
+    b \equiv y - ax \pmod{26}
+    \]
+    Perhatikan bahwa untuk \textbf{setiap} pilihan $a \in \mathbb{Z}_{26}^*$ (terdapat 12 pilihan nilai $a$), nilai $b$ langsung terdeterminasi secara unik di dalam $\mathbb{Z}_{26}$ melalui rumus $b = (y - ax) \bmod 26$.
+    \item Dengan demikian, terdapat tepat 12 pasangan kunci $(a, b) \in \mathcal{K}$ yang memetakan $x$ ke $y$:
+    \[
+    K_{x,y} = \{(a, (y - ax) \bmod 26) : a \in \mathbb{Z}_{26}^*\} \implies |K_{x,y}| = 12
+    \]
+    \item Karena kunci dipilih secara seragam dari ruang berukuran 312:
+    \[
+    p_{\mathcal{C}}(y|x) = \sum_{(a,b) \in K_{x,y}} p_{\mathcal{K}}(a, b) = \sum_{a \in \mathbb{Z}_{26}^*} \frac{1}{312} = 12 \times \frac{1}{312} = \mathbf{\frac{1}{26}}
+    \]
+    Nilai $p_{\mathcal{C}}(y|x) = \frac{1}{26}$ konstan tidak bergantung pada nilai $x$ maupun $y$.
+    \item Peluang marginal ciphertext:
+    \[
+    p_{\mathcal{C}}(y) = \sum_{x \in \mathbb{Z}_{26}} p_{\mathcal{P}}(x) \cdot \frac{1}{26} = \frac{1}{26} \sum_{x} p_{\mathcal{P}}(x) = \frac{1}{26}
+    \]
+    \item Berdasarkan Aturan Bayes, $p_{\mathcal{P}}(x|y) = p_{\mathcal{P}}(x)$ untuk semua $x, y$.
+\end{enumerate}
+Terbukti sandi Affine untuk enkripsi 1 karakter memiliki \textbf{keamanan sempurna}.
+\end{proof}
+\end{solusibox}
+
+\vspace{0.3cm}
+
+\begin{solusibox}{Solusi Lengkap Soal 6(b): Hilangnya Keamanan Sempurna untuk $n \ge 2$}
+Misalkan pesan terdiri atas 2 karakter: $x = (x_1, x_2) \in \mathbb{Z}_{26}^2$ dienkripsi dengan kunci yang sama menjadi $y = (y_1, y_2) \in \mathbb{Z}_{26}^2$.
+\begin{align*}
+y_1 &\equiv ax_1 + b \pmod{26} \\
+y_2 &\equiv ax_2 + b \pmod{26}
+\end{align*}
+Kurangkan kedua persamaan:
+\[
+y_1 - y_2 \equiv a(x_1 - x_2) \pmod{26}
+\]
+\textbf{Analisis Kebocoran Informasi:}
+\begin{itemize}
+    \item Jika teks asal memiliki dua huruf identik ($x_1 = x_2$), maka selisihnya $x_1 - x_2 = 0$, sehingga wajib berlaku $y_1 - y_2 = 0 \iff y_1 = y_2$.
+    \item Sebaliknya, jika penyerang menyadap teks sandi dengan $y_1 = y_2$, maka karena $a \in \mathbb{Z}_{26}^*$ (memiliki invers modulo 26):
+    \[
+    a(x_1 - x_2) \equiv 0 \pmod{26} \iff x_1 - x_2 \equiv 0 \pmod{26} \iff x_1 = x_2
+    \]
+    Penyerang langsung mengetahui dengan kepastian 100\% ($P(x_1 = x_2 \mid y_1 = y_2) = 1$) bahwa kedua karakter plaintext adalah sama!
+    Padahal peluang *a priori* bahwa dua huruf teks asal sama hanyalah $\sum p(x)^2 \ll 1$.
+\end{itemize}
+Karena $P(x \mid y) \ne P(x)$, sandi Affine untuk $n \ge 2$ \textbf{gagal total memenuhi keamanan sempurna}.
+\end{solusibox}
+
+\newpage
+
+% =========================================================================
+\section{Ringkasan Rumus Cepat \& Checklist Ujian}
+% =========================================================================
+
+\subsection{Tabel Rangkuman Rumus Teori Shannon}
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{p{4.5cm}p{5.5cm}p{5.2cm}}
+\toprule
+\textbf{Besaran / Konsep} & \textbf{Definisi \& Rumus Matematis} & \textbf{Kondisi Keamanan Sempurna} \\
+\midrule
+\textbf{Peluang Bersyarat} $p_{\mathcal{C}}(y|x)$ & $\sum_{\{k : e_k(x) = y\}} p_{\mathcal{K}}(k)$ & $p_{\mathcal{C}}(y|x) = p_{\mathcal{C}}(y) = \frac{1}{|\mathcal{C}|}$ \\
+\textbf{Peluang Marginal} $p_{\mathcal{C}}(y)$ & $\sum_x p_{\mathcal{P}}(x) p_{\mathcal{C}}(y|x)$ & $p_{\mathcal{C}}(y) = \frac{1}{|\mathcal{C}|}$ (Distribusi Seragam) \\
+\textbf{Peluang Posterior Bayes} $p_{\mathcal{P}}(x|y)$ & $\frac{p_{\mathcal{P}}(x) p_{\mathcal{C}}(y|x)}{p_{\mathcal{C}}(y)}$ & $p_{\mathcal{P}}(x|y) = p_{\mathcal{P}}(x) \quad (\forall x, y)$ \\
+\textbf{Kardinalitas Kunci} & Teorema Shannon (1949) & $|\mathcal{K}| \ge |\mathcal{C}| \ge |\mathcal{P}|$ \\
+\textbf{Entropi Shannon} $H(X)$ & $-\sum p(x) \log_2 p(x)$ & $H(P \mid C) = H(P)$ \\
+\textbf{Key Equivocation} $H(K \mid C)$ & $H(K) + H(P) - H(C)$ & $H(K \mid C) = H(K)$ \\
+\textbf{Informasi Saling} $I(P; C)$ & $H(P) - H(P \mid C) = H(C) - H(C \mid P)$ & $I(P; C) = 0$ (Nol kebocoran) \\
+\bottomrule
+\end{tabular}
+\caption{Matriks Perbandingan Rumus Teori Probabilitas Kriptosistem Shannon}
+\end{table}
+
+\subsection{Checklist Langkah Menjawab Soal Pembuktian di Lembar Ujian}
+
+\begin{tipsbox}{Checklist Rubrik Ujian Bu Pritta}
+Saat Anda menghadapi soal pembuktian *Perfect Secrecy*, lakukan langkah-langkah berikut:
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Tuliskan Ruang Sampel Eksplisit:} Nyatakan secara jelas $\mathcal{P}, \mathcal{C}, \mathcal{K}$ beserta ukuran kardinalitasnya ($|\mathcal{P}|, |\mathcal{C}|, |\mathcal{K}|$).
+    \item \textbf{Cek Kardinalitas:} Jika $|\mathcal{K}| < |\mathcal{P}|$, langsung nyatakan bahwa sistem **tidak mungkin aman sempurna** berdasarkan Teorema Batas Shannon.
+    \item \textbf{Jika Diminta Membuktikan TIDAK Aman:}
+    \begin{itemize}
+        \item Ambil $y_0 \in \mathcal{C}$.
+        \item Hitung $p(y_0 \mid x_1) = \sum_{\{k : e_k(x_1) = y_0\}} p(k)$.
+        \item Hitung $p(y_0 \mid x_2) = \sum_{\{k : e_k(x_2) = y_0\}} p(k)$.
+        \item Tunjukkan bahwa nilainya berbeda ($p(y_0 \mid x_1) \ne p(y_0 \mid x_2)$).
+        \item Tuliskan: \textit{``Karena peluang bersyarat kemunculan teks sandi bergantung pada teks asal yang dikirimkan, maka $p(y|x) \ne p(y)$, sehingga menurut Aturan Bayes $p(x|y) \ne p(x)$. Terbukti sistem tidak memenuhi keamanan sempurna.''}
+    \end{itemize}
+    \item \textbf{Jika Diminta Membuktikan AMAN Sempurna:}
+    \begin{itemize}
+        \item Buktikan bahwa untuk sembarang $x, y$, banyaknya kunci unik adalah sama.
+        \item Tunjukkan $p(y \mid x) = \frac{1}{|\mathcal{C}|}$ konstan untuk semua $x$.
+        \item Tunjukkan $p(y) = \frac{1}{|\mathcal{C}|}$ seragam via Hukum Peluang Total.
+        \item Terapkan Aturan Bayes: $p(x \mid y) = \frac{p(x) \cdot (1/|\mathcal{C}|)}{1/|\mathcal{C}|} = p(x)$.
+    \end{itemize}
+\end{enumerate}
+\end{tipsbox}
+
+\end{document}
